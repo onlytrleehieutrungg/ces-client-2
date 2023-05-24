@@ -28,7 +28,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx"
-  ],
+, "src/pages/login/components/DarkModeButton"  ],
   "exclude": [
     "node_modules"
   ]
