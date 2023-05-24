@@ -5,6 +5,8 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import InboxIcon from '@mui/icons-material/Inbox'
 import MailIcon from '@mui/icons-material/Mail'
 import MenuIcon from '@mui/icons-material/Menu'
+import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked'
+import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked'
 import {
   Box,
   Checkbox,
@@ -54,7 +56,7 @@ const DrawerHeader = styled('div')<DrawerHeaderProps & SxProps>(({ theme, open =
   display: 'flex',
   alignItems: 'center',
   justifyContent: open ? 'space-between' : 'center',
-  padding: theme.spacing(0, 1),
+  padding: theme.spacing(0, 2),
 
   // height: HEADER_HEIGHT_DESKTOP,
   // necessary for content to be below app bar
@@ -178,7 +180,7 @@ export function MainLayout({ children }: LayoutProps) {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap component="div" color={'red'}>
-            Mini variant drawer
+            Header here
           </Typography>
         </Toolbar>
       </AppBar>
@@ -192,7 +194,14 @@ export function MainLayout({ children }: LayoutProps) {
         >
           <DrawerHeader open={open}>
             <Logo />
-            {open && <Checkbox checked={check} onChange={() => setCheck(!check)} />}
+            {open && (
+              <Checkbox
+                icon={<RadioButtonUncheckedIcon />}
+                checkedIcon={<RadioButtonCheckedIcon />}
+                checked={check}
+                onChange={() => setCheck(!check)}
+              />
+            )}
           </DrawerHeader>
           <Divider />
           <List>
