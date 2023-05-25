@@ -21,6 +21,7 @@ type JWTAuthPayload = {
   };
   [Types.Login]: {
     user: AuthUser;
+    // refreshToken: string;
   };
   [Types.Logout]: undefined;
   [Types.Register]: {
@@ -48,7 +49,7 @@ const JWTReducer = (state: AuthState, action: JWTActions) => {
       return {
         ...state,
         isAuthenticated: true,
-        user: action.payload.user,
+        // user: action.payload.user,
       };
     case 'LOGOUT':
       return {
@@ -89,7 +90,9 @@ function AuthProvider({ children }: AuthProviderProps) {
         if (accessToken && isValidToken(accessToken)) {
           setSession(accessToken);
 
-          const response = await axios.get('/api/account/my-account');
+          // const response = await axios.get('/api/account/my-account');
+          const response = await axios.get('/api/account');
+
           const { user } = response.data;
 
           dispatch({
@@ -124,13 +127,15 @@ function AuthProvider({ children }: AuthProviderProps) {
   }, []);
 
   const login = async (email: string, password: string) => {
-    const response = await axios.post('/api/account/login', {
+    const response = await axios.post('/api/login', {
       email,
       password,
     });
-    const { accessToken, user } = response.data;
+    const { accessToken, refreshToken, user } = response.data.data;
+    // console.log(accessToken, refreshToken, user);
 
     setSession(accessToken);
+    // setSession(refreshToken);
 
     dispatch({
       type: Types.Login,

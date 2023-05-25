@@ -74,7 +74,7 @@ export default function Login() {
     <GuestGuard>
       <Page title="Login">
         <RootStyle>
-          <HeaderStyle>
+          {/* <HeaderStyle>
             <Logo />
             {smUp && (
               <Typography variant="body2" sx={{ mt: { md: -2 } }}>
@@ -84,7 +84,7 @@ export default function Login() {
                 </NextLink>
               </Typography>
             )}
-          </HeaderStyle>
+          </HeaderStyle> */}
 
           {mdUp && (
             <SectionStyle>
@@ -125,7 +125,7 @@ export default function Login() {
               </Stack>
 
               <Alert severity="info" sx={{ mb: 3 }}>
-                Use email : <strong>demo@minimals.cc</strong> / password :<strong> demo1234</strong>
+                Use email : <strong>trung@gmail.com</strong> / password :<strong> 123</strong>
               </Alert>
 
               <LoginForm />
