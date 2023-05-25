@@ -1,11 +1,11 @@
 // ----------------------------------------------------------------------
 
 function path(root: string, sublink: string) {
-  return `${root}${sublink}`;
+  return `${root}${sublink}`
 }
 
-const ROOTS_AUTH = '/auth';
-const ROOTS_DASHBOARD = '/dashboard';
+const ROOTS_AUTH = '/auth'
+const ROOTS_DASHBOARD = '/dashboard'
 
 // ----------------------------------------------------------------------
 
@@ -18,7 +18,7 @@ export const PATH_AUTH = {
   verify: path(ROOTS_AUTH, '/verify'),
   resetPassword: path(ROOTS_AUTH, '/reset-password'),
   newPassword: path(ROOTS_AUTH, '/new-password'),
-};
+}
 
 export const PATH_PAGE = {
   comingSoon: '/coming-soon',
@@ -32,7 +32,18 @@ export const PATH_PAGE = {
   page404: '/404',
   page500: '/500',
   components: '/components',
-};
+}
+
+const ROOTS_CES = '/@ces'
+
+export const PATH_CES = {
+  root: ROOTS_CES,
+  account: {
+    root: path(ROOTS_CES, '/account'),
+    new: path(ROOTS_CES, '/account/new'),
+    edit: (id: string) => path(ROOTS_CES, `/account/${id}/edit`),
+  },
+}
 
 export const PATH_DASHBOARD = {
   root: ROOTS_DASHBOARD,
@@ -92,6 +103,6 @@ export const PATH_DASHBOARD = {
     view: (title: string) => path(ROOTS_DASHBOARD, `/blog/post/${title}`),
     demoView: path(ROOTS_DASHBOARD, '/blog/post/apply-these-7-secret-techniques-to-improve-event'),
   },
-};
+}
 
-export const PATH_DOCS = 'https://docs-minimals.vercel.app/introduction';
+export const PATH_DOCS = 'https://docs-minimals.vercel.app/introduction'
