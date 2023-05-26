@@ -128,7 +128,7 @@ function AuthProvider({ children }: AuthProviderProps) {
   const login = async (email: string, password: string) => {
     if (email === 'test@gmail.com' && password === 'test') {
       setSession(
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoic3RyaW5nIiwiZW1haWwiOiJ0cnVuZ0BnbWFpbC5jb20iLCJzdWIiOiJ0cnVuZ0BnbWFpbC5jb20iLCJqdGkiOiI4NWFjMGQwYy0yZDA3LTQ2ODEtYjNlMS0zOTljMTYwOGNiNTAiLCJVc2VyTmFtZSI6InN0cmluZyIsIlVzZXJJZCI6IjQwZTQ1Nzc0LThiNmUtNDdkNi04ZTE1LTMyMjA2OWE0MDdmOCIsInJvbGUiOiJTeXN0ZW1BZG1pbiIsIlRva2VuSWQiOiI4ZmZiNzViNy0wMDc4LTRlMDgtYjA1OC04M2VkNmU2Yzg2ZGUiLCJuYmYiOjE2ODUwODU5MzEsImV4cCI6MTY4NTA5MzEzMSwiaWF0IjoxNjg1MDg1OTMxfQ.tcLIDcQmseBPORyKPBfH0rBHjVDjIrXycwGD_G9Frg4'
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoic3RyaW5nIiwiZW1haWwiOiJ0cnVuZ0BnbWFpbC5jb20iLCJzdWIiOiJ0cnVuZ0BnbWFpbC5jb20iLCJqdGkiOiI4NWFjMGQwYy0yZDA3LTQ2ODEtYjNlMS0zOTljMTYwOGNiNTAiLCJVc2VyTmFtZSI6InN0cmluZyIsIlVzZXJJZCI6IjQwZTQ1Nzc0LThiNmUtNDdkNi04ZTE1LTMyMjA2OWE0MDdmOCIsInJvbGUiOiJTeXN0ZW1BZG1pbiIsIlRva2VuSWQiOiI4ZmZiNzViNy0wMDc4LTRlMDgtYjA1OC04M2VkNmU2Yzg2ZGUiLCJuYmYiOjE2ODUwODU5MzEsImV4cCI6MTkwNjAxODA5MywiaWF0IjoxNjg1MDg1OTMxfQ.eHwYi_tNwcJu2tO5ZSWBWgEdvp1L2ziDLzcAod4LTxc'
       )
       dispatch({
         type: Types.Login,
