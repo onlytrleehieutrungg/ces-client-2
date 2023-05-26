@@ -1,15 +1,15 @@
 // routes
-import { PATH_DASHBOARD } from '../../../routes/paths';
+import { PATH_CES, PATH_DASHBOARD } from '../../../routes/paths'
 // components
-import Label from '../../../components/Label';
-import Iconify from '../../../components/Iconify';
-import SvgIconStyle from '../../../components/SvgIconStyle';
+import Label from '../../../components/Label'
+import Iconify from '../../../components/Iconify'
+import SvgIconStyle from '../../../components/SvgIconStyle'
 
 // ----------------------------------------------------------------------
 
 const getIcon = (name: string) => (
   <SvgIconStyle src={`/assets/icons/navbar/${name}.svg`} sx={{ width: 1, height: 1 }} />
-);
+)
 
 const ICONS = {
   blog: getIcon('ic_blog'),
@@ -26,9 +26,15 @@ const ICONS = {
   analytics: getIcon('ic_analytics'),
   dashboard: getIcon('ic_dashboard'),
   menuItem: getIcon('ic_menu_item'),
-};
+}
 
 const navConfig = [
+  // CES-ADMIN
+  {
+    subheader: 'CES-CLIENT',
+    items: [{ title: 'account', path: PATH_CES.account.root, icon: ICONS.user }],
+  },
+
   // GENERAL
   // ----------------------------------------------------------------------
   {
@@ -167,6 +173,6 @@ const navConfig = [
       { title: 'item_caption', path: '#caption', icon: ICONS.menuItem, caption: 'description' },
     ],
   },
-];
+]
 
-export default navConfig;
+export default navConfig
