@@ -44,7 +44,7 @@ const HeaderStyle = styled('header')(({ theme }) => ({
 
 const SectionStyle = styled(Card)(({ theme }) => ({
   width: '100%',
-  maxWidth: 464,
+  maxWidth: 664,
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'center',
@@ -88,13 +88,13 @@ export default function Login() {
 
           {mdUp && (
             <SectionStyle>
-              <Typography variant="h3" sx={{ px: 5, mt: 10, mb: 5 }}>
+              <Typography variant="h3" sx={{ px: 5, mt: 4, mb: 5 }}>
                 Hi, Welcome Back
               </Typography>
               <Image
                 visibleByDefault
                 disabledEffect
-                src="/assets/illustrations/illustration_login.png"
+                src="/assets/shtp.png"
                 alt="login"
               />
             </SectionStyle>
@@ -105,11 +105,11 @@ export default function Login() {
               <Stack direction="row" alignItems="center" sx={{ mb: 5 }}>
                 <Box sx={{ flexGrow: 1 }}>
                   <Typography variant="h4" gutterBottom>
-                    Sign in to Minimal
+                    Đăng nhập vào hệ thống
                   </Typography>
-                  <Typography sx={{ color: 'text.secondary' }}>
+                  {/* <Typography sx={{ color: 'text.secondary' }}>
                     Enter your details below.
-                  </Typography>
+                  </Typography> */}
                 </Box>
 
                 <Tooltip title={capitalCase(method)} placement="right">

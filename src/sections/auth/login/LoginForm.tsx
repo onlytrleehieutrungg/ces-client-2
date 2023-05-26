@@ -95,9 +95,9 @@ export default function LoginForm() {
 
       <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 2 }}>
         <RHFCheckbox name="remember" label="Remember me" />
-        <NextLink href={PATH_AUTH.resetPassword} passHref>
+        {/* <NextLink href={PATH_AUTH.resetPassword} passHref>
           <Link variant="subtitle2">Forgot password?</Link>
-        </NextLink>
+        </NextLink> */}
       </Stack>
 
       <LoadingButton

@@ -91,7 +91,7 @@ export default function Login() {
             <Image
               visibleByDefault
               disabledEffect
-              src="/assets/illustrations/illustration_login.png"
+              src="/assets/shtp.png"
               alt="login"
             />
           </SectionStyle>
