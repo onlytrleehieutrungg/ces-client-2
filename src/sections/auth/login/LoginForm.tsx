@@ -1,21 +1,19 @@
-import * as Yup from 'yup';
 import { useState } from 'react';
+import * as Yup from 'yup';
 // next
-import NextLink from 'next/link';
 // form
-import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { useForm } from 'react-hook-form';
 // @mui
-import { Link, Stack, Alert, IconButton, InputAdornment } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
+import { Alert, IconButton, InputAdornment, Stack } from '@mui/material';
 // routes
-import { PATH_AUTH } from '../../../routes/paths';
 // hooks
 import useAuth from '../../../hooks/useAuth';
 import useIsMountedRef from '../../../hooks/useIsMountedRef';
 // components
 import Iconify from '../../../components/Iconify';
-import { FormProvider, RHFTextField, RHFCheckbox } from '../../../components/hook-form';
+import { FormProvider, RHFCheckbox, RHFTextField } from '../../../components/hook-form';
 
 // ----------------------------------------------------------------------
 
@@ -39,8 +37,8 @@ export default function LoginForm() {
   });
 
   const defaultValues = {
-    email: 'trung@gmail.com',
-    password: '123',
+    email: 'test@gmail.com',
+    password: 'test',
     remember: true,
   };
 
