@@ -12,7 +12,7 @@ export const useConfirmDialogStore = create<ConfirmDialogStore>((set) => ({
   close: () => set({ onSubmit: undefined }),
 }))
 
-export const confirmDiaglog = (message: string, onSubmit: () => void) => {
+export const confirmDialog = (message: string, onSubmit: () => void) => {
   useConfirmDialogStore.setState({
     message,
     onSubmit,

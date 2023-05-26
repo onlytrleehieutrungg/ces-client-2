@@ -37,7 +37,7 @@ import useTable, { emptyRows, getComparator } from 'src/hooks/useTable'
 import useTabs from 'src/hooks/useTabs'
 import { PATH_CES } from 'src/routes/paths'
 import { UserTableRow, UserTableToolbar } from 'src/sections/@dashboard/user/list'
-import { confirmDiaglog } from 'src/utils/confirmDialog'
+import { confirmDialog } from 'src/utils/confirmDialog'
 
 // ----------------------------------------------------------------------
 
@@ -115,7 +115,7 @@ export default function AccountPage() {
   }
 
   const handleDeleteRow = (id: string) => {
-    confirmDiaglog('Do you really want to delete this account ?', () => {
+    confirmDialog('Do you really want to delete this account ?', () => {
       const deleteRow = tableData.filter((row) => row.id !== id)
       setSelected([])
       setTableData(deleteRow)
