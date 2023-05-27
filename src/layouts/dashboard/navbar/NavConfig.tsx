@@ -26,13 +26,17 @@ const ICONS = {
   analytics: getIcon('ic_analytics'),
   dashboard: getIcon('ic_dashboard'),
   menuItem: getIcon('ic_menu_item'),
+  group: getIcon('ic_group'),
 }
 
 const navConfig = [
   // CES-ADMIN
   {
     subheader: 'CES-CLIENT',
-    items: [{ title: 'account', path: PATH_CES.account.root, icon: ICONS.user }],
+    items: [
+      { title: 'account', path: PATH_CES.account.root, icon: ICONS.user },
+      { title: 'group', path: PATH_CES.group.root, icon: ICONS.group },
+    ],
   },
 
   // GENERAL
