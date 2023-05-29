@@ -14,12 +14,13 @@ type Props = {
 };
 
 export default function AuthGuard({ children }: Props) {
-  const { isAuthenticated, isInitialized } = useAuth();
+  const { isAuthenticated, isInitialized, user } = useAuth();
 
   const { pathname, push } = useRouter();
 
   const [requestedLocation, setRequestedLocation] = useState<string | null>(null);
-
+  console.log("role",user?.roleId);
+  
   useEffect(() => {
     if (requestedLocation && pathname !== requestedLocation) {
       push(requestedLocation);
