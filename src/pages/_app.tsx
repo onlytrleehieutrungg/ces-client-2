@@ -63,6 +63,8 @@ import MotionLazyContainer from '../components/animate/MotionLazyContainer'
 
 import { AuthProvider } from '../contexts/JWTContext'
 import ConfirmDialog from 'src/components/ConfirmDialog'
+import { SWRConfig } from 'swr'
+import axiosInstance from 'src/utils/axios'
 // import { AuthProvider } from '../contexts/Auth0Context';
 // import { AuthProvider } from '../contexts/FirebaseContext';
 // import { AuthProvider } from '../contexts/AwsCognitoContext';
@@ -89,28 +91,32 @@ export default function MyApp(props: MyAppProps) {
         <meta name="viewport" content="initial-scale=1, width=device-width" />
       </Head>
 
-      <AuthProvider>
-        <ReduxProvider store={store}>
-          <LocalizationProvider dateAdapter={AdapterDateFns}>
-            <CollapseDrawerProvider>
-              <SettingsProvider defaultSettings={settings}>
-                <MotionLazyContainer>
-                  <ThemeProvider>
-                    <ThemeSettings>
-                      <NotistackProvider>
-                        <ChartStyle />
-                        <ProgressBar />
-                        <ConfirmDialog />
-                        {getLayout(<Component {...pageProps} />)}
-                      </NotistackProvider>
-                    </ThemeSettings>
-                  </ThemeProvider>
-                </MotionLazyContainer>
-              </SettingsProvider>
-            </CollapseDrawerProvider>
-          </LocalizationProvider>
-        </ReduxProvider>
-      </AuthProvider>
+      <SWRConfig
+        value={{ fetcher: (url: string) => axiosInstance.get(url), shouldRetryOnError: false }}
+      >
+        <AuthProvider>
+          <ReduxProvider store={store}>
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+              <CollapseDrawerProvider>
+                <SettingsProvider defaultSettings={settings}>
+                  <MotionLazyContainer>
+                    <ThemeProvider>
+                      <ThemeSettings>
+                        <NotistackProvider>
+                          <ChartStyle />
+                          <ProgressBar />
+                          <ConfirmDialog />
+                          {getLayout(<Component {...pageProps} />)}
+                        </NotistackProvider>
+                      </ThemeSettings>
+                    </ThemeProvider>
+                  </MotionLazyContainer>
+                </SettingsProvider>
+              </CollapseDrawerProvider>
+            </LocalizationProvider>
+          </ReduxProvider>
+        </AuthProvider>
+      </SWRConfig>
     </>
   )
 }
