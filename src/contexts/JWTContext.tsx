@@ -20,8 +20,8 @@ type JWTAuthPayload = {
     user: AuthUser
   }
   [Types.Login]: {
-    user: AuthUser
-    // refreshToken: string;
+    // user: AuthUser
+    account: AuthUser
   }
   [Types.Logout]: undefined
   [Types.Register]: {
@@ -49,7 +49,7 @@ const JWTReducer = (state: AuthState, action: JWTActions) => {
       return {
         ...state,
         isAuthenticated: true,
-        // user: action.payload.user,
+        user: action.payload.account,
       }
     case 'LOGOUT':
       return {
@@ -133,7 +133,7 @@ function AuthProvider({ children }: AuthProviderProps) {
       dispatch({
         type: Types.Login,
         payload: {
-          user: {},
+          account: {},
         },
       })
     } else {
@@ -141,16 +141,18 @@ function AuthProvider({ children }: AuthProviderProps) {
         email,
         password,
       })
-      const { accessToken, refreshToken, user } = response.data.data
+      // const { accessToken, refreshToken, user } = response.data.data
       // console.log(accessToken, refreshToken, user);
+      const { account, token } = response.data.data
+      console.log(account, token?.accessToken);
 
-      setSession(accessToken)
+      setSession(token?.accessToken)
       // setSession(refreshToken);
 
       dispatch({
         type: Types.Login,
         payload: {
-          user,
+          account,
         },
       })
     }
