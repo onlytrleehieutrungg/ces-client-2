@@ -7,7 +7,7 @@ import { _userList } from 'src/_mock'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
 import Page from 'src/components/Page'
 import Layout from 'src/layouts'
-import UserNewEditForm from 'src/sections/@dashboard/user/UserNewEditForm'
+import AccountNewEditForm from 'src/sections/@ces/account/AccountNewEditForm'
 
 AccountEditPage.getLayout = function getLayout(page: React.ReactElement) {
   return <Layout>{page}</Layout>
@@ -34,7 +34,7 @@ export default function AccountEditPage() {
           ]}
         />
 
-        <UserNewEditForm isEdit currentUser={currentUser} />
+        <AccountNewEditForm isEdit currentUser={currentUser} />
       </Container>
     </Page>
   )

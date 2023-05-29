@@ -22,8 +22,8 @@ import {
 import { paramCase } from 'change-case'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
-import { UserManager } from 'src/@types/user'
-import { _userList } from 'src/_mock'
+// import { UserManager } from 'src/@types/user'
+// import { _userList } from 'src/_mock'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
 import Iconify from 'src/components/Iconify'
 import Scrollbar from 'src/components/Scrollbar'
@@ -36,32 +36,87 @@ import {
 import useTable, { emptyRows, getComparator } from 'src/hooks/useTable'
 import useTabs from 'src/hooks/useTabs'
 import { PATH_CES } from 'src/routes/paths'
-import { UserTableRow, UserTableToolbar } from 'src/sections/@dashboard/user/list'
+import AccountTableRow from 'src/sections/@ces/account/AccountTableRow'
+import { UserTableToolbar } from 'src/sections/@dashboard/user/list'
 import { confirmDialog } from 'src/utils/confirmDialog'
 
 // ----------------------------------------------------------------------
 
-const STATUS_OPTIONS = ['all', 'active', 'banned']
+const STATUS_OPTIONS = ['all', '1', '2', '3']
 
-const ROLE_OPTIONS = [
-  'all',
-  'ux designer',
-  'full stack designer',
-  'backend developer',
-  'project manager',
-  'leader',
-  'ui designer',
-  'ui/ux designer',
-  'front end developer',
-  'full stack developer',
+const ROLE_OPTIONS = ['all', '1', '2', '3']
+
+interface UserData {
+  Id: number
+  Name: string
+  Email: string
+  Address: string
+  Phone: string
+  UpdatedAt: string
+  CreatedAt: string
+  ImageUrl: string
+  Status: number
+  Role: number
+  CompanyId: number
+  Password: string
+}
+
+const account_list: UserData[] = [
+  {
+    Id: 101,
+    Name: 'John Doe',
+    Email: 'johndoe@example.com',
+    Address: '123 Main Street',
+    Phone: '123-456-7890',
+    UpdatedAt: '2023-05-26T10:30:00',
+    CreatedAt: '2023-05-25T15:45:00',
+    ImageUrl: 'https://example.com/images/johndoe.jpg',
+    Status: 1,
+    Role: 3,
+    CompanyId: 1,
+    Password: 'hashed_password_101',
+  },
+  {
+    Id: 102,
+    Name: 'Jane Smith',
+    Email: 'janesmith@example.com',
+    Address: '456 Elm Street',
+    Phone: '987-654-3210',
+    UpdatedAt: '2023-05-26T09:15:00',
+    CreatedAt: '2023-05-24T11:20:00',
+    ImageUrl: 'https://example.com/images/janesmith.jpg',
+    Status: 1,
+    Role: 3,
+    CompanyId: 1,
+    Password: 'hashed_password_102',
+  },
+  {
+    Id: 103,
+    Name: 'Michael Johnson',
+    Email: 'michaeljohnson@example.com',
+    Address: '789 Oak Street',
+    Phone: '555-123-4567',
+    UpdatedAt: '2023-05-26T08:00:00',
+    CreatedAt: '2023-05-23T09:00:00',
+    ImageUrl: 'https://example.com/images/michaeljohnson.jpg',
+    Status: 1,
+    Role: 3,
+    CompanyId: 1,
+    Password: 'hashed_password_103',
+  },
 ]
 
+// const TABLE_HEAD = Object.keys(jsonData).map((key) => ({
+//   id: key.toLowerCase(),
+//   label: key.charAt(0).toUpperCase() + key.slice(1),
+//   align: 'left'
+// }));
+
 const TABLE_HEAD = [
-  { id: 'name', label: 'Name', align: 'left' },
-  { id: 'company', label: 'Company', align: 'left' },
-  { id: 'role', label: 'Role', align: 'left' },
-  { id: 'isVerified', label: 'Verified', align: 'center' },
-  { id: 'status', label: 'Status', align: 'left' },
+  { id: 'Name', label: 'Name', align: 'left' },
+  { id: 'Email', label: 'Email', align: 'left' },
+  { id: 'Phone', label: 'Phone', align: 'left' },
+  { id: 'Status', label: 'Status', align: 'left' },
   { id: '' },
 ]
 
@@ -97,7 +152,7 @@ export default function AccountPage() {
 
   const { push } = useRouter()
 
-  const [tableData, setTableData] = useState(_userList)
+  const [tableData, setTableData] = useState(account_list)
 
   const [filterName, setFilterName] = useState('')
 
@@ -116,16 +171,18 @@ export default function AccountPage() {
 
   const handleDeleteRow = (id: string) => {
     confirmDialog('Do you really want to delete this account ?', () => {
-      const deleteRow = tableData.filter((row) => row.id !== id)
-      setSelected([])
-      setTableData(deleteRow)
+      // const deleteRow = tableData.filter((row) => row.id !== id)
+      // setSelected([])
+      // setTableData(deleteRow)
+      console.log('delete account action')
     })
   }
 
   const handleDeleteRows = (selected: string[]) => {
-    const deleteRows = tableData.filter((row) => !selected.includes(row.id))
-    setSelected([])
-    setTableData(deleteRows)
+    // const deleteRows = tableData.filter((row) => !selected.includes(row.id))
+    // setSelected([])
+    // setTableData(deleteRows)
+    console.log('delete all account action')
   }
 
   const handleEditRow = (id: string) => {
@@ -148,15 +205,15 @@ export default function AccountPage() {
     (!dataFiltered.length && !!filterStatus)
 
   return (
-    <Page title="User: List">
+    <Page title="Account: List">
       <Container>
         <HeaderBreadcrumbs
-          heading="User List"
-          links={[{ name: 'Dashboard', href: '' }, { name: 'User', href: '' }, { name: 'List' }]}
+          heading="Account List"
+          links={[{ name: 'Dashboard', href: '' }, { name: 'Account', href: '' }, { name: 'List' }]}
           action={
             <NextLink href={PATH_CES.account.new} passHref>
               <Button variant="contained" startIcon={<Iconify icon={'eva:plus-fill'} />}>
-                New User
+                New Account
               </Button>
             </NextLink>
           }
@@ -196,7 +253,7 @@ export default function AccountPage() {
                   onSelectAllRows={(checked) =>
                     onSelectAllRows(
                       checked,
-                      tableData.map((row) => row.id)
+                      tableData.map((row) => `${row.Id}`)
                     )
                   }
                   actions={
@@ -220,7 +277,7 @@ export default function AccountPage() {
                   onSelectAllRows={(checked) =>
                     onSelectAllRows(
                       checked,
-                      tableData.map((row) => row.id)
+                      tableData.map((row) => `${row.Id}`)
                     )
                   }
                 />
@@ -229,13 +286,13 @@ export default function AccountPage() {
                   {dataFiltered
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row) => (
-                      <UserTableRow
-                        key={row.id}
+                      <AccountTableRow
+                        key={`${row.Id}`}
                         row={row}
-                        selected={selected.includes(row.id)}
-                        onSelectRow={() => onSelectRow(row.id)}
-                        onDeleteRow={() => handleDeleteRow(row.id)}
-                        onEditRow={() => handleEditRow(row.name)}
+                        selected={selected.includes(`${row.Id}`)}
+                        onSelectRow={() => onSelectRow(`${row.Id}`)}
+                        onDeleteRow={() => handleDeleteRow(`${row.Id}`)}
+                        onEditRow={() => handleEditRow(row.Name)}
                       />
                     ))}
 
@@ -282,7 +339,7 @@ function applySortFilter({
   filterStatus,
   filterRole,
 }: {
-  tableData: UserManager[]
+  tableData: UserData[]
   comparator: (a: any, b: any) => number
   filterName: string
   filterStatus: string
@@ -301,16 +358,16 @@ function applySortFilter({
   if (filterName) {
     tableData = tableData.filter(
       (item: Record<string, any>) =>
-        item.name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
+        item.Name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
     )
   }
 
   if (filterStatus !== 'all') {
-    tableData = tableData.filter((item: Record<string, any>) => item.status === filterStatus)
+    tableData = tableData.filter((item: Record<string, any>) => item.Status == filterStatus)
   }
 
   if (filterRole !== 'all') {
-    tableData = tableData.filter((item: Record<string, any>) => item.role === filterRole)
+    tableData = tableData.filter((item: Record<string, any>) => item.Role == filterRole)
   }
 
   return tableData
