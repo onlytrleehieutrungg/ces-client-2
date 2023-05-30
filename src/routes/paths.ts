@@ -45,6 +45,12 @@ export const PATH_CES = {
   },
 }
 
+const ROOTSYSADMIN = '/systemAdmin'
+
+export const PATH_SYS = {
+  root: ROOTSYSADMIN,
+}
+
 export const PATH_DASHBOARD = {
   root: ROOTS_DASHBOARD,
   general: {

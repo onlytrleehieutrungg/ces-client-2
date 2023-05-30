@@ -16,11 +16,11 @@ import Logo from '../../../components/Logo';
 import Scrollbar from '../../../components/Scrollbar';
 import { NavSectionVertical } from '../../../components/nav-section';
 //
-import navConfig, { navCESConfig } from './NavConfig';
 import NavbarDocs from './NavbarDocs';
 import NavbarAccount from './NavbarAccount';
 import CollapseButton from './CollapseButton';
 import useAuth from 'src/hooks/useAuth';
+import navConfig from './NavConfig';
 
 // ----------------------------------------------------------------------
 
@@ -87,7 +87,7 @@ export default function NavbarVertical({ isOpenSidebar, onCloseSidebar }: Props)
         <NavbarAccount isCollapse={isCollapse} />
       </Stack>
 
-      <NavSectionVertical navConfig={role === 0 ? navCESConfig : navConfig} isCollapse={isCollapse} />
+      <NavSectionVertical navConfig={navConfig} isCollapse={isCollapse} />
 
       <Box sx={{ flexGrow: 1 }} />
 
