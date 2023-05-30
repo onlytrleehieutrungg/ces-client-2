@@ -39,6 +39,7 @@ import { PATH_CES } from 'src/routes/paths'
 import AccountTableRow from 'src/sections/@ces/account/AccountTableRow'
 import { UserTableToolbar } from 'src/sections/@dashboard/user/list'
 import { confirmDialog } from 'src/utils/confirmDialog'
+import { RouterGuard, UserRole } from 'src/guards/RouterGuard'
 
 // ----------------------------------------------------------------------
 
@@ -205,128 +206,134 @@ export default function AccountPage() {
     (!dataFiltered.length && !!filterStatus)
 
   return (
-    <Page title="Account: List">
-      <Container>
-        <HeaderBreadcrumbs
-          heading="Account List"
-          links={[{ name: 'Dashboard', href: '' }, { name: 'Account', href: '' }, { name: 'List' }]}
-          action={
-            <NextLink href={PATH_CES.account.new} passHref>
-              <Button variant="contained" startIcon={<Iconify icon={'eva:plus-fill'} />}>
-                New Account
-              </Button>
-            </NextLink>
-          }
-        />
-
-        <Card>
-          <Tabs
-            allowScrollButtonsMobile
-            variant="scrollable"
-            scrollButtons="auto"
-            value={filterStatus}
-            onChange={onChangeFilterStatus}
-            sx={{ px: 2, bgcolor: 'background.neutral' }}
-          >
-            {STATUS_OPTIONS.map((tab) => (
-              <Tab disableRipple key={tab} label={tab} value={tab} />
-            ))}
-          </Tabs>
-
-          <Divider />
-
-          <UserTableToolbar
-            filterName={filterName}
-            filterRole={filterRole}
-            onFilterName={handleFilterName}
-            onFilterRole={handleFilterRole}
-            optionsRole={ROLE_OPTIONS}
+    <RouterGuard acceptRoles={[UserRole.EMPLOYEEA]}>
+      <Page title="Account: List">
+        <Container>
+          <HeaderBreadcrumbs
+            heading="Account List"
+            links={[
+              { name: 'Dashboard', href: '' },
+              { name: 'Account', href: '' },
+              { name: 'List' },
+            ]}
+            action={
+              <NextLink href={PATH_CES.account.new} passHref>
+                <Button variant="contained" startIcon={<Iconify icon={'eva:plus-fill'} />}>
+                  New Account
+                </Button>
+              </NextLink>
+            }
           />
 
-          <Scrollbar>
-            <TableContainer sx={{ minWidth: 800, position: 'relative' }}>
-              {selected.length > 0 && (
-                <TableSelectedActions
-                  dense={dense}
-                  numSelected={selected.length}
-                  rowCount={tableData.length}
-                  onSelectAllRows={(checked) =>
-                    onSelectAllRows(
-                      checked,
-                      tableData.map((row) => `${row.Id}`)
-                    )
-                  }
-                  actions={
-                    <Tooltip title="Delete">
-                      <IconButton color="primary" onClick={() => handleDeleteRows(selected)}>
-                        <Iconify icon={'eva:trash-2-outline'} />
-                      </IconButton>
-                    </Tooltip>
-                  }
-                />
-              )}
+          <Card>
+            <Tabs
+              allowScrollButtonsMobile
+              variant="scrollable"
+              scrollButtons="auto"
+              value={filterStatus}
+              onChange={onChangeFilterStatus}
+              sx={{ px: 2, bgcolor: 'background.neutral' }}
+            >
+              {STATUS_OPTIONS.map((tab) => (
+                <Tab disableRipple key={tab} label={tab} value={tab} />
+              ))}
+            </Tabs>
 
-              <Table size={dense ? 'small' : 'medium'}>
-                <TableHeadCustom
-                  order={order}
-                  orderBy={orderBy}
-                  headLabel={TABLE_HEAD}
-                  rowCount={tableData.length}
-                  numSelected={selected.length}
-                  onSort={onSort}
-                  onSelectAllRows={(checked) =>
-                    onSelectAllRows(
-                      checked,
-                      tableData.map((row) => `${row.Id}`)
-                    )
-                  }
-                />
+            <Divider />
 
-                <TableBody>
-                  {dataFiltered
-                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                    .map((row) => (
-                      <AccountTableRow
-                        key={`${row.Id}`}
-                        row={row}
-                        selected={selected.includes(`${row.Id}`)}
-                        onSelectRow={() => onSelectRow(`${row.Id}`)}
-                        onDeleteRow={() => handleDeleteRow(`${row.Id}`)}
-                        onEditRow={() => handleEditRow(row.Name)}
-                      />
-                    ))}
+            <UserTableToolbar
+              filterName={filterName}
+              filterRole={filterRole}
+              onFilterName={handleFilterName}
+              onFilterRole={handleFilterRole}
+              optionsRole={ROLE_OPTIONS}
+            />
 
-                  <TableEmptyRows
-                    height={denseHeight}
-                    emptyRows={emptyRows(page, rowsPerPage, tableData.length)}
+            <Scrollbar>
+              <TableContainer sx={{ minWidth: 800, position: 'relative' }}>
+                {selected.length > 0 && (
+                  <TableSelectedActions
+                    dense={dense}
+                    numSelected={selected.length}
+                    rowCount={tableData.length}
+                    onSelectAllRows={(checked) =>
+                      onSelectAllRows(
+                        checked,
+                        tableData.map((row) => `${row.Id}`)
+                      )
+                    }
+                    actions={
+                      <Tooltip title="Delete">
+                        <IconButton color="primary" onClick={() => handleDeleteRows(selected)}>
+                          <Iconify icon={'eva:trash-2-outline'} />
+                        </IconButton>
+                      </Tooltip>
+                    }
+                  />
+                )}
+
+                <Table size={dense ? 'small' : 'medium'}>
+                  <TableHeadCustom
+                    order={order}
+                    orderBy={orderBy}
+                    headLabel={TABLE_HEAD}
+                    rowCount={tableData.length}
+                    numSelected={selected.length}
+                    onSort={onSort}
+                    onSelectAllRows={(checked) =>
+                      onSelectAllRows(
+                        checked,
+                        tableData.map((row) => `${row.Id}`)
+                      )
+                    }
                   />
 
-                  <TableNoData isNotFound={isNotFound} />
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Scrollbar>
+                  <TableBody>
+                    {dataFiltered
+                      .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                      .map((row) => (
+                        <AccountTableRow
+                          key={`${row.Id}`}
+                          row={row}
+                          selected={selected.includes(`${row.Id}`)}
+                          onSelectRow={() => onSelectRow(`${row.Id}`)}
+                          onDeleteRow={() => handleDeleteRow(`${row.Id}`)}
+                          onEditRow={() => handleEditRow(row.Name)}
+                        />
+                      ))}
 
-          <Box sx={{ position: 'relative' }}>
-            <TablePagination
-              rowsPerPageOptions={[5, 10, 25]}
-              component="div"
-              count={dataFiltered.length}
-              rowsPerPage={rowsPerPage}
-              page={page}
-              onPageChange={onChangePage}
-              onRowsPerPageChange={onChangeRowsPerPage}
-            />
+                    <TableEmptyRows
+                      height={denseHeight}
+                      emptyRows={emptyRows(page, rowsPerPage, tableData.length)}
+                    />
 
-            <FormControlLabel
-              control={<Switch checked={dense} onChange={onChangeDense} />}
-              label="Dense"
-              sx={{ px: 3, py: 1.5, top: 0, position: { md: 'absolute' } }}
-            />
-          </Box>
-        </Card>
-      </Container>
-    </Page>
+                    <TableNoData isNotFound={isNotFound} />
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Scrollbar>
+
+            <Box sx={{ position: 'relative' }}>
+              <TablePagination
+                rowsPerPageOptions={[5, 10, 25]}
+                component="div"
+                count={dataFiltered.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={onChangePage}
+                onRowsPerPageChange={onChangeRowsPerPage}
+              />
+
+              <FormControlLabel
+                control={<Switch checked={dense} onChange={onChangeDense} />}
+                label="Dense"
+                sx={{ px: 3, py: 1.5, top: 0, position: { md: 'absolute' } }}
+              />
+            </Box>
+          </Card>
+        </Container>
+      </Page>
+    </RouterGuard>
   )
 }
 
