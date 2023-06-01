@@ -16,6 +16,7 @@ module.exports = withTM({
     // HOST
     HOST_API_KEY: 'https://minimal-assets-api-dev.vercel.app',
     LOCAL_HOST_API_KEY: 'https://localhost:7077',
+    CES_HOST_API_KEY: 'https://api.ces.bio/api',
     // MAPBOX
     MAPBOX_API: '',
     // FIREBASE

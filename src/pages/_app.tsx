@@ -11,20 +11,20 @@ import 'simplebar/src/simplebar.css'
 import 'react-image-lightbox/style.css'
 
 // map
-import '../utils/mapboxgl'
 import 'mapbox-gl/dist/mapbox-gl.css'
+import '../utils/mapboxgl'
 
 // editor
 import 'react-quill/dist/quill.snow.css'
 
 // slick-carousel
-import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
+import 'slick-carousel/slick/slick.css'
 
 // lazy image
+import 'react-lazy-load-image-component/src/effects/black-and-white.css'
 import 'react-lazy-load-image-component/src/effects/blur.css'
 import 'react-lazy-load-image-component/src/effects/opacity.css'
-import 'react-lazy-load-image-component/src/effects/black-and-white.css'
 
 // fullcalendar
 import '@fullcalendar/common/main.min.css'
@@ -34,8 +34,8 @@ import cookie from 'cookie'
 import { ReactElement, ReactNode } from 'react'
 // next
 import { NextPage } from 'next'
+import App, { AppContext, AppProps } from 'next/app'
 import Head from 'next/head'
-import App, { AppProps, AppContext } from 'next/app'
 //
 import { Provider as ReduxProvider } from 'react-redux'
 // @mui
@@ -46,25 +46,25 @@ import { store } from '../redux/store'
 // utils
 import { getSettings } from '../utils/getSettings'
 // contexts
-import { SettingsProvider } from '../contexts/SettingsContext'
 import { CollapseDrawerProvider } from '../contexts/CollapseDrawerContext'
+import { SettingsProvider } from '../contexts/SettingsContext'
 // theme
 import ThemeProvider from '../theme'
 // components
+import NotistackProvider from '../components/NotistackProvider'
+import ProgressBar from '../components/ProgressBar'
+import MotionLazyContainer from '../components/animate/MotionLazyContainer'
+import { ChartStyle } from '../components/chart'
 import ThemeSettings from '../components/settings'
 import { SettingsValueProps } from '../components/settings/type'
-import { ChartStyle } from '../components/chart'
-import ProgressBar from '../components/ProgressBar'
-import NotistackProvider from '../components/NotistackProvider'
-import MotionLazyContainer from '../components/animate/MotionLazyContainer'
 
 // Check our docs
 // https://docs-minimals.vercel.app/authentication/ts-version
 
-import { AuthProvider } from '../contexts/JWTContext'
+import axiosClient from 'src/api-client/axiosClient'
 import ConfirmDialog from 'src/components/ConfirmDialog'
 import { SWRConfig } from 'swr'
-import axiosInstance from 'src/utils/axios'
+import { AuthProvider } from '../contexts/JWTContext'
 // import { AuthProvider } from '../contexts/Auth0Context';
 // import { AuthProvider } from '../contexts/FirebaseContext';
 // import { AuthProvider } from '../contexts/AwsCognitoContext';
@@ -92,7 +92,7 @@ export default function MyApp(props: MyAppProps) {
       </Head>
 
       <SWRConfig
-        value={{ fetcher: (url: string) => axiosInstance.get(url), shouldRetryOnError: false }}
+        value={{ fetcher: (url: string) => axiosClient.get(url), shouldRetryOnError: false }}
       >
         <AuthProvider>
           <ReduxProvider store={store}>
