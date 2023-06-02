@@ -48,6 +48,16 @@ export const PATH_CES = {
     new: path(ROOTS_CES, '/group/new'),
     edit: (id: string) => path(ROOTS_CES, `/group/${id}/edit`),
   },
+  product: {
+    root: path(ROOTS_CES, '/product'),
+    new: path(ROOTS_CES, '/product/new'),
+    edit: (id: string) => path(ROOTS_CES, `/product/${id}/edit`),
+  },
+  category: {
+    root: path(ROOTS_CES, '/category'),
+    new: path(ROOTS_CES, '/category/new'),
+    edit: (id: string) => path(ROOTS_CES, `/category/${id}/edit`),
+  },
 }
 
 const ROOTSYSADMIN = '/systemAdmin'
