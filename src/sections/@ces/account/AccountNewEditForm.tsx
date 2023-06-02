@@ -1,111 +1,108 @@
-import * as Yup from 'yup'
 import { useCallback, useEffect, useMemo } from 'react'
-import { useSnackbar } from 'notistack'
+import * as Yup from 'yup'
 // next
-import { useRouter } from 'next/router'
 // form
-import { useForm, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
+import { Controller, useForm } from 'react-hook-form'
 // @mui
 import { LoadingButton } from '@mui/lab'
-import { Box, Card, Grid, Stack, Switch, Typography, FormControlLabel } from '@mui/material'
+import { Box, Card, FormControlLabel, Grid, Stack, Switch, Typography } from '@mui/material'
 // utils
 import { fData } from '../../../utils/formatNumber'
 // routes
-import { PATH_DASHBOARD } from '../../../routes/paths'
 // @types
-import { UserManager } from '../../../@types/user'
 // _mock
-import { countries } from '../../../_mock'
 // components
+import { useRouter } from 'next/router'
+import { AccountData, AccountPayload } from 'src/@types/@ces/account'
 import Label from '../../../components/Label'
 import {
   FormProvider,
   RHFSelect,
-  RHFSwitch,
   RHFTextField,
   RHFUploadAvatar,
 } from '../../../components/hook-form'
+import { accountApi } from 'src/api-client'
 
 //
 const roleList = [
   {
-    code: '1',
+    code: 1,
+    label: 'Supplier Admin',
+  },
+  {
+    code: 2,
     label: 'Enterprise Admin',
   },
   {
-    code: '2',
-    label: 'Supplier Admin',
+    code: 3,
+    label: 'Employee',
   },
 ]
-const statusList = [
+export const statusList = [
   {
-    code: '1',
+    code: 1,
     label: 'Active',
   },
   {
-    code: '2',
-    label: 'Not yet',
-  },
-  {
-    code: '3',
+    code: 2,
     label: 'Banned',
   },
 ]
 
-const companyList: {
-  code: string
-  label: string
-}[] = []
+const companyList = [
+  {
+    code: 1,
+    label: 'Company 1',
+  },
+  {
+    code: 2,
+    label: 'Company 2',
+  },
+  {
+    code: 3,
+    label: 'Company 3',
+  },
+]
 
 // ----------------------------------------------------------------------
 
-type FormValuesProps = UserManager
-
 type Props = {
   isEdit?: boolean
-  currentUser?: UserManager
+  currentUser?: AccountData
 }
 
 export default function AccountNewEditForm({ isEdit = false, currentUser }: Props) {
   const { push } = useRouter()
 
-  const { enqueueSnackbar } = useSnackbar()
-
   const NewUserSchema = Yup.object().shape({
     name: Yup.string().required('Name is required'),
     email: Yup.string().required('Email is required').email(),
-    phoneNumber: Yup.string().required('Phone number is required'),
     address: Yup.string().required('Address is required'),
-    country: Yup.string().required('country is required'),
-    company: Yup.string().required('Company is required'),
-    state: Yup.string().required('State is required'),
-    city: Yup.string().required('City is required'),
-    role: Yup.string().required('Role Number is required'),
-    avatarUrl: Yup.mixed().test('required', 'Avatar is required', (value) => value !== ''),
+    phone: Yup.string().required('Phone is required'),
+    // imageUrl: Yup.string().required('Image is required'),
+    status: Yup.number().required('Status is required'),
+    roleId: Yup.number().required('Role is required'),
+    companyId: Yup.number().required('Company is required'),
+    password: Yup.string().required('Password is required'),
   })
 
   const defaultValues = useMemo(
     () => ({
       name: currentUser?.name || '',
       email: currentUser?.email || '',
-      phoneNumber: currentUser?.phoneNumber || '',
       address: currentUser?.address || '',
-      country: currentUser?.country || '',
-      state: currentUser?.state || '',
-      city: currentUser?.city || '',
-      zipCode: currentUser?.zipCode || '',
-      avatarUrl: currentUser?.avatarUrl || '',
-      isVerified: currentUser?.isVerified || true,
-      status: currentUser?.status,
-      company: currentUser?.company || '',
-      role: currentUser?.role || '',
+      phone: currentUser?.phone || '',
+      imageUrl: currentUser?.imageUrl !== 'string' ? currentUser?.imageUrl : '',
+      status: currentUser ? currentUser?.status : statusList[0]?.code,
+      roleId: currentUser?.roleId,
+      companyId: currentUser?.companyId,
+      password: '',
     }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [currentUser]
   )
 
-  const methods = useForm<FormValuesProps>({
+  const methods = useForm<AccountPayload>({
     resolver: yupResolver(NewUserSchema),
     defaultValues,
   })
@@ -131,12 +128,15 @@ export default function AccountNewEditForm({ isEdit = false, currentUser }: Prop
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isEdit, currentUser])
 
-  const onSubmit = async (data: FormValuesProps) => {
+  const onSubmit = async (payload: AccountPayload) => {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500))
-      reset()
-      enqueueSnackbar(!isEdit ? 'Create success!' : 'Update success!')
-      push(PATH_DASHBOARD.user.list)
+      if (!isEdit) {
+        await accountApi.create(payload)
+      } else {
+        await accountApi.update(payload)
+      }
+      // enqueueSnackbar(!isEdit ? 'Create success!' : 'Update success!')
+      // push(PATH_CES.account.root)
     } catch (error) {
       console.error(error)
     }
@@ -148,7 +148,7 @@ export default function AccountNewEditForm({ isEdit = false, currentUser }: Prop
 
       if (file) {
         setValue(
-          'avatarUrl',
+          'imageUrl',
           Object.assign(file, {
             preview: URL.createObjectURL(file),
           })
@@ -165,16 +165,16 @@ export default function AccountNewEditForm({ isEdit = false, currentUser }: Prop
           <Card sx={{ py: 10, px: 3 }}>
             {isEdit && (
               <Label
-                color={values.status !== 'active' ? 'error' : 'success'}
+                color={values.status !== 1 ? 'error' : 'success'}
                 sx={{ textTransform: 'uppercase', position: 'absolute', top: 24, right: 24 }}
               >
-                {values.status}
+                {values.status === 1 ? 'Active' : 'Deactive'}
               </Label>
             )}
 
             <Box sx={{ mb: 5 }}>
               <RHFUploadAvatar
-                name="avatarUrl"
+                name="imageUrl"
                 accept="image/*"
                 maxSize={3145728}
                 onDrop={handleDrop}
@@ -206,10 +206,8 @@ export default function AccountNewEditForm({ isEdit = false, currentUser }: Prop
                     render={({ field }) => (
                       <Switch
                         {...field}
-                        checked={field.value !== 'active'}
-                        onChange={(event) =>
-                          field.onChange(event.target.checked ? 'banned' : 'active')
-                        }
+                        checked={field.value !== 1}
+                        onChange={(event) => field.onChange(event.target.checked ? 2 : 1)}
                       />
                     )}
                   />
@@ -227,22 +225,6 @@ export default function AccountNewEditForm({ isEdit = false, currentUser }: Prop
                 sx={{ mx: 0, mb: 3, width: 1, justifyContent: 'space-between' }}
               />
             )}
-
-            {/* <RHFSwitch
-              name="isVerified"
-              labelPlacement="start"
-              label={
-                <>
-                  <Typography variant="subtitle2" sx={{ mb: 0.5 }}>
-                    Email Verified
-                  </Typography>
-                  <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                    Disabling this will automatically send the user a verification email
-                  </Typography>
-                </>
-              }
-              sx={{ mx: 0, width: 1, justifyContent: 'space-between' }}
-            /> */}
           </Card>
         </Grid>
 
@@ -256,53 +238,44 @@ export default function AccountNewEditForm({ isEdit = false, currentUser }: Prop
                 gridTemplateColumns: { xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)' },
               }}
             >
-              <RHFTextField name="Name" label="Full Name" />
-              <RHFTextField name="Email" label="Email Address" />
-              <RHFTextField name="Phone" label="Phone Number" />
-              <RHFTextField name="Address" label="Address" />
-              {/* <RHFTextField name="Status" label="Status" /> */}
-              <RHFSelect name="country" label="Status" placeholder="Status">
-                <option value="" />
-                {statusList.map((option) => (
-                  <option key={option.code} value={option.label}>
-                    {option.label}
-                  </option>
-                ))}
-              </RHFSelect>
-              {/* <RHFTextField name="Role" label="Role" /> */}
-              <RHFSelect name="country" label="Role" placeholder="Role">
-                <option value="" />
-                {roleList.map((option) => (
-                  <option key={option.code} value={option.label}>
-                    {option.label}
-                  </option>
-                ))}
-              </RHFSelect>
-              {/* <RHFTextField name="CompanyId" label="CompanyId" /> */}
-
-              <RHFSelect name="country" label="Company" placeholder="Company">
-                <option value="" />
-                {companyList.map((option) => (
-                  <option key={option.code} value={option.label}>
-                    {option.label}
-                  </option>
-                ))}
-              </RHFSelect>
-              {/* <RHFSelect name="country" label="Country" placeholder="Country">
-                <option value="" />
-                {countries.map((option) => (
-                  <option key={option.code} value={option.label}>
-                    {option.label}
-                  </option>
-                ))}
-              </RHFSelect>
-
-              <RHFTextField name="state" label="State/Region" />
-              <RHFTextField name="city" label="City" />
+              <RHFTextField name="name" label="Name" />
+              <RHFTextField name="email" label="Email Address" />
+              {!isEdit && <RHFTextField name="password" label="Password" type="password" />}
+              <RHFTextField name="phone" label="Phone Number" />
               <RHFTextField name="address" label="Address" />
-              <RHFTextField name="zipCode" label="Zip/Code" />
-              <RHFTextField name="company" label="Company" />
-              <RHFTextField name="role" label="Role" /> */}
+              <RHFSelect name="status" label="Status" placeholder="Status">
+                {statusList.map((option) => (
+                  <option key={option.code} value={option.code}>
+                    {option.label}
+                  </option>
+                ))}
+              </RHFSelect>
+
+              {/* <RHFSelect name="roleId" label="Role" placeholder="Role">
+                <option value={undefined} />
+                {roleList.map((option) => (
+                  <option key={option.code} value={option.code}>
+                    {option.label}
+                  </option>
+                ))}
+              </RHFSelect> */}
+              <RHFSelect name="roleId" label="Role" placeholder="Role">
+                <option value={undefined} />
+                {roleList.map((option) => (
+                  <option key={option.code} value={option.code}>
+                    {option.label}
+                  </option>
+                ))}
+              </RHFSelect>
+
+              <RHFSelect name="companyId" label="Company" placeholder="Company">
+                <option value={undefined} />
+                {companyList.map((option) => (
+                  <option key={option.code} value={option.code}>
+                    {option.label}
+                  </option>
+                ))}
+              </RHFSelect>
             </Box>
 
             <Stack alignItems="flex-end" sx={{ mt: 3 }}>

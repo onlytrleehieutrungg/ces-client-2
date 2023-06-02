@@ -21,6 +21,7 @@ type Props = {
   onEditRow: VoidFunction
   onSelectRow: VoidFunction
   onDeleteRow: VoidFunction
+  onClickRow?: VoidFunction
 }
 
 export default function AccountTableRow({
@@ -29,10 +30,11 @@ export default function AccountTableRow({
   onEditRow,
   onSelectRow,
   onDeleteRow,
+  onClickRow,
 }: Props) {
   const theme = useTheme()
 
-  const { Name, ImageUrl, Phone, Email, Status } = row
+  const { name, imageUrl, phone, email, status } = row
 
   const [openMenu, setOpenMenuActions] = useState<HTMLElement | null>(null)
 
@@ -45,49 +47,49 @@ export default function AccountTableRow({
   }
 
   return (
-    <TableRow hover selected={selected}>
-      <TableCell padding="checkbox">
-        <Checkbox checked={selected} onClick={onSelectRow} />
+    <TableRow hover selected={selected} sx={{ cursor: 'pointer' }} onClick={onClickRow}>
+      <TableCell
+        padding="checkbox"
+        onClick={(e) => {
+          e.stopPropagation()
+        }}
+      >
+        <Checkbox
+          checked={selected}
+          onClick={(e) => {
+            e.stopPropagation()
+            onSelectRow()
+          }}
+        />
       </TableCell>
 
       <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
-        <Avatar alt={Name} src={ImageUrl} sx={{ mr: 2 }} />
+        <Avatar alt={name} src={imageUrl} sx={{ mr: 2 }} />
         <Typography variant="subtitle2" noWrap>
-          {Name}
+          {name}
         </Typography>
       </TableCell>
 
-      <TableCell align="left">{Email}</TableCell>
+      <TableCell align="left">{email}</TableCell>
 
-      <TableCell align="left">{Phone}</TableCell>
-
-      {/* <TableCell align="left" sx={{ textTransform: 'capitalize' }}>
-        {}
-      </TableCell> */}
-
-      {/* <TableCell align="center">
-        <Iconify
-          icon={isVerified ? 'eva:checkmark-circle-fill' : 'eva:clock-outline'}
-          sx={{
-            width: 20,
-            height: 20,
-            color: 'success.main',
-            ...(!isVerified && { color: 'warning.main' }),
-          }}
-        />
-      </TableCell> */}
+      <TableCell align="left">{phone}</TableCell>
 
       <TableCell align="left">
         <Label
           variant={theme.palette.mode === 'light' ? 'ghost' : 'filled'}
-          color={(Status === 2 && 'error') || 'success'}
+          color={(status === 2 && 'error') || 'success'}
           sx={{ textTransform: 'capitalize' }}
         >
-          {Status}
+          {status === 1 ? 'Active' : 'Deactive'}
         </Label>
       </TableCell>
 
-      <TableCell align="right">
+      <TableCell
+        align="right"
+        onClick={(e) => {
+          e.stopPropagation()
+        }}
+      >
         <TableMoreMenu
           open={openMenu}
           onOpen={handleOpenMenu}

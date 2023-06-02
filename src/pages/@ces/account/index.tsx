@@ -24,6 +24,7 @@ import { useRouter } from 'next/router'
 import { useState } from 'react'
 // import { UserManager } from 'src/@types/user'
 // import { _userList } from 'src/_mock'
+import { AccountData } from 'src/@types/@ces/account'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
 import Iconify from 'src/components/Iconify'
 import Scrollbar from 'src/components/Scrollbar'
@@ -39,71 +40,44 @@ import { PATH_CES } from 'src/routes/paths'
 import AccountTableRow from 'src/sections/@ces/account/AccountTableRow'
 import { UserTableToolbar } from 'src/sections/@dashboard/user/list'
 import { confirmDialog } from 'src/utils/confirmDialog'
-import { RouterGuard, UserRole } from 'src/guards/RouterGuard'
+import useSWR from 'swr'
+import { accountApi } from 'src/api-client'
+import { useSnackbar } from 'notistack'
+import AccountTableToolbar from 'src/sections/@ces/account/AccountTableToolbar'
 
 // ----------------------------------------------------------------------
 
-const STATUS_OPTIONS = ['all', '1', '2', '3']
-
-const ROLE_OPTIONS = ['all', '1', '2', '3']
-
-interface UserData {
-  Id: number
-  Name: string
-  Email: string
-  Address: string
-  Phone: string
-  UpdatedAt: string
-  CreatedAt: string
-  ImageUrl: string
-  Status: number
-  Role: number
-  CompanyId: number
-  Password: string
-}
-
-const account_list: UserData[] = [
+const STATUS_OPTIONS = [
   {
-    Id: 101,
-    Name: 'John Doe',
-    Email: 'johndoe@example.com',
-    Address: '123 Main Street',
-    Phone: '123-456-7890',
-    UpdatedAt: '2023-05-26T10:30:00',
-    CreatedAt: '2023-05-25T15:45:00',
-    ImageUrl: 'https://example.com/images/johndoe.jpg',
-    Status: 1,
-    Role: 3,
-    CompanyId: 1,
-    Password: 'hashed_password_101',
+    code: 'all',
+    label: 'all',
   },
   {
-    Id: 102,
-    Name: 'Jane Smith',
-    Email: 'janesmith@example.com',
-    Address: '456 Elm Street',
-    Phone: '987-654-3210',
-    UpdatedAt: '2023-05-26T09:15:00',
-    CreatedAt: '2023-05-24T11:20:00',
-    ImageUrl: 'https://example.com/images/janesmith.jpg',
-    Status: 1,
-    Role: 3,
-    CompanyId: 1,
-    Password: 'hashed_password_102',
+    code: 1,
+    label: 'active',
   },
   {
-    Id: 103,
-    Name: 'Michael Johnson',
-    Email: 'michaeljohnson@example.com',
-    Address: '789 Oak Street',
-    Phone: '555-123-4567',
-    UpdatedAt: '2023-05-26T08:00:00',
-    CreatedAt: '2023-05-23T09:00:00',
-    ImageUrl: 'https://example.com/images/michaeljohnson.jpg',
-    Status: 1,
-    Role: 3,
-    CompanyId: 1,
-    Password: 'hashed_password_103',
+    code: 2,
+    label: 'deactive',
+  },
+]
+
+const ROLE_OPTIONS = [
+  {
+    code: 'all',
+    label: 'all',
+  },
+  {
+    code: 1,
+    label: 'Supplier Admin',
+  },
+  {
+    code: 2,
+    label: 'Enterprise Admin',
+  },
+  {
+    code: 3,
+    label: 'Employee',
   },
 ]
 
@@ -153,7 +127,11 @@ export default function AccountPage() {
 
   const { push } = useRouter()
 
-  const [tableData, setTableData] = useState(account_list)
+  const { enqueueSnackbar } = useSnackbar()
+
+  // const [tableData, setTableData] = useState(account_list)
+  const { data, mutate } = useSWR('/account')
+  const accountList: AccountData[] = data?.data ?? []
 
   const [filterName, setFilterName] = useState('')
 
@@ -171,18 +149,14 @@ export default function AccountPage() {
   }
 
   const handleDeleteRow = (id: string) => {
-    confirmDialog('Do you really want to delete this account ?', () => {
-      // const deleteRow = tableData.filter((row) => row.id !== id)
-      // setSelected([])
-      // setTableData(deleteRow)
-      console.log('delete account action')
+    confirmDialog('Do you really want to delete this account ?', async () => {
+      await accountApi.delete(id)
+      mutate()
+      enqueueSnackbar('Delete successfull')
     })
   }
 
   const handleDeleteRows = (selected: string[]) => {
-    // const deleteRows = tableData.filter((row) => !selected.includes(row.id))
-    // setSelected([])
-    // setTableData(deleteRows)
     console.log('delete all account action')
   }
 
@@ -190,8 +164,12 @@ export default function AccountPage() {
     push(PATH_CES.account.edit(paramCase(id)))
   }
 
+  const handleClickRow = (id: string) => {
+    push(PATH_CES.account.detail(paramCase(id)))
+  }
+
   const dataFiltered = applySortFilter({
-    tableData,
+    tableData: accountList,
     comparator: getComparator(order, orderBy),
     filterName,
     filterRole,
@@ -206,134 +184,132 @@ export default function AccountPage() {
     (!dataFiltered.length && !!filterStatus)
 
   return (
-    <RouterGuard acceptRoles={[UserRole.EMPLOYEEA]}>
-      <Page title="Account: List">
-        <Container>
-          <HeaderBreadcrumbs
-            heading="Account List"
-            links={[
-              { name: 'Dashboard', href: '' },
-              { name: 'Account', href: '' },
-              { name: 'List' },
-            ]}
-            action={
-              <NextLink href={PATH_CES.account.new} passHref>
-                <Button variant="contained" startIcon={<Iconify icon={'eva:plus-fill'} />}>
-                  New Account
-                </Button>
-              </NextLink>
-            }
+    <Page title="Account: List">
+      <Container>
+        <HeaderBreadcrumbs
+          heading="Account List"
+          links={[{ name: 'Dashboard', href: '' }, { name: 'Account', href: '' }, { name: 'List' }]}
+          action={
+            <NextLink href={PATH_CES.account.new} passHref>
+              <Button variant="contained" startIcon={<Iconify icon={'eva:plus-fill'} />}>
+                New Account
+              </Button>
+            </NextLink>
+          }
+        />
+
+        <Card>
+          <Tabs
+            allowScrollButtonsMobile
+            variant="scrollable"
+            scrollButtons="auto"
+            value={filterStatus}
+            onChange={onChangeFilterStatus}
+            sx={{ px: 2, bgcolor: 'background.neutral' }}
+          >
+            {STATUS_OPTIONS.map((tab) => (
+              <Tab disableRipple key={tab.code} label={tab.label} value={tab.code} />
+            ))}
+          </Tabs>
+
+          <Divider />
+
+          <AccountTableToolbar
+            filterName={filterName}
+            filterRole={filterRole}
+            onFilterName={handleFilterName}
+            onFilterRole={handleFilterRole}
+            optionsRole={ROLE_OPTIONS}
           />
 
-          <Card>
-            <Tabs
-              allowScrollButtonsMobile
-              variant="scrollable"
-              scrollButtons="auto"
-              value={filterStatus}
-              onChange={onChangeFilterStatus}
-              sx={{ px: 2, bgcolor: 'background.neutral' }}
-            >
-              {STATUS_OPTIONS.map((tab) => (
-                <Tab disableRipple key={tab} label={tab} value={tab} />
-              ))}
-            </Tabs>
+          <Scrollbar>
+            <TableContainer sx={{ minWidth: 800, position: 'relative' }}>
+              {selected.length > 0 && (
+                <TableSelectedActions
+                  dense={dense}
+                  numSelected={selected.length}
+                  rowCount={accountList.length}
+                  onSelectAllRows={(checked) =>
+                    onSelectAllRows(
+                      checked,
+                      accountList.map((row) => `${row.id}`)
+                    )
+                  }
+                  actions={
+                    <Tooltip title="Delete">
+                      <IconButton color="primary" onClick={() => handleDeleteRows(selected)}>
+                        <Iconify icon={'eva:trash-2-outline'} />
+                      </IconButton>
+                    </Tooltip>
+                  }
+                />
+              )}
 
-            <Divider />
+              <Table size={dense ? 'small' : 'medium'}>
+                <TableHeadCustom
+                  order={order}
+                  orderBy={orderBy}
+                  headLabel={TABLE_HEAD}
+                  rowCount={accountList.length}
+                  numSelected={selected.length}
+                  onSort={onSort}
+                  onSelectAllRows={(checked) =>
+                    onSelectAllRows(
+                      checked,
+                      accountList.map((row: any) => `${row.id}`)
+                    )
+                  }
+                />
 
-            <UserTableToolbar
-              filterName={filterName}
-              filterRole={filterRole}
-              onFilterName={handleFilterName}
-              onFilterRole={handleFilterRole}
-              optionsRole={ROLE_OPTIONS}
+                <TableBody>
+                  {dataFiltered
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map((row) => (
+                      <AccountTableRow
+                        key={`${row.id}`}
+                        row={row}
+                        selected={selected.includes(`${row.id}`)}
+                        onSelectRow={() => onSelectRow(`${row.id}`)}
+                        onDeleteRow={() => handleDeleteRow(`${row.id}`)}
+                        onEditRow={() => handleEditRow(row.id)}
+                        onClickRow={() => handleClickRow(`${row.id}`)}
+                      />
+                    ))}
+
+                  <TableEmptyRows
+                    height={denseHeight}
+                    emptyRows={emptyRows(page, rowsPerPage, accountList.length)}
+                  />
+
+                  <TableNoData isNotFound={isNotFound} />
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Scrollbar>
+
+          <Box sx={{ position: 'relative' }}>
+            <TablePagination
+              rowsPerPageOptions={[5, 10, 25]}
+              component="div"
+              count={dataFiltered.length}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              // onPageChange={(e) => {
+              //   onChangePage(e, page)
+              // }}
+              onPageChange={onChangePage}
+              onRowsPerPageChange={onChangeRowsPerPage}
             />
 
-            <Scrollbar>
-              <TableContainer sx={{ minWidth: 800, position: 'relative' }}>
-                {selected.length > 0 && (
-                  <TableSelectedActions
-                    dense={dense}
-                    numSelected={selected.length}
-                    rowCount={tableData.length}
-                    onSelectAllRows={(checked) =>
-                      onSelectAllRows(
-                        checked,
-                        tableData.map((row) => `${row.Id}`)
-                      )
-                    }
-                    actions={
-                      <Tooltip title="Delete">
-                        <IconButton color="primary" onClick={() => handleDeleteRows(selected)}>
-                          <Iconify icon={'eva:trash-2-outline'} />
-                        </IconButton>
-                      </Tooltip>
-                    }
-                  />
-                )}
-
-                <Table size={dense ? 'small' : 'medium'}>
-                  <TableHeadCustom
-                    order={order}
-                    orderBy={orderBy}
-                    headLabel={TABLE_HEAD}
-                    rowCount={tableData.length}
-                    numSelected={selected.length}
-                    onSort={onSort}
-                    onSelectAllRows={(checked) =>
-                      onSelectAllRows(
-                        checked,
-                        tableData.map((row) => `${row.Id}`)
-                      )
-                    }
-                  />
-
-                  <TableBody>
-                    {dataFiltered
-                      .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                      .map((row) => (
-                        <AccountTableRow
-                          key={`${row.Id}`}
-                          row={row}
-                          selected={selected.includes(`${row.Id}`)}
-                          onSelectRow={() => onSelectRow(`${row.Id}`)}
-                          onDeleteRow={() => handleDeleteRow(`${row.Id}`)}
-                          onEditRow={() => handleEditRow(row.Name)}
-                        />
-                      ))}
-
-                    <TableEmptyRows
-                      height={denseHeight}
-                      emptyRows={emptyRows(page, rowsPerPage, tableData.length)}
-                    />
-
-                    <TableNoData isNotFound={isNotFound} />
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            </Scrollbar>
-
-            <Box sx={{ position: 'relative' }}>
-              <TablePagination
-                rowsPerPageOptions={[5, 10, 25]}
-                component="div"
-                count={dataFiltered.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                onPageChange={onChangePage}
-                onRowsPerPageChange={onChangeRowsPerPage}
-              />
-
-              <FormControlLabel
-                control={<Switch checked={dense} onChange={onChangeDense} />}
-                label="Dense"
-                sx={{ px: 3, py: 1.5, top: 0, position: { md: 'absolute' } }}
-              />
-            </Box>
-          </Card>
-        </Container>
-      </Page>
-    </RouterGuard>
+            <FormControlLabel
+              control={<Switch checked={dense} onChange={onChangeDense} />}
+              label="Dense"
+              sx={{ px: 3, py: 1.5, top: 0, position: { md: 'absolute' } }}
+            />
+          </Box>
+        </Card>
+      </Container>
+    </Page>
   )
 }
 
@@ -346,7 +322,7 @@ function applySortFilter({
   filterStatus,
   filterRole,
 }: {
-  tableData: UserData[]
+  tableData: AccountData[]
   comparator: (a: any, b: any) => number
   filterName: string
   filterStatus: string
@@ -365,16 +341,16 @@ function applySortFilter({
   if (filterName) {
     tableData = tableData.filter(
       (item: Record<string, any>) =>
-        item.Name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
+        item.name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
     )
   }
 
   if (filterStatus !== 'all') {
-    tableData = tableData.filter((item: Record<string, any>) => item.Status == filterStatus)
+    tableData = tableData.filter((item: Record<string, any>) => item.status == filterStatus)
   }
 
   if (filterRole !== 'all') {
-    tableData = tableData.filter((item: Record<string, any>) => item.Role == filterRole)
+    tableData = tableData.filter((item: Record<string, any>) => item.roleId == filterRole)
   }
 
   return tableData
