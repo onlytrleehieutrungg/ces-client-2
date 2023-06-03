@@ -1,9 +1,10 @@
 import { createContext, ReactNode, useEffect, useReducer } from 'react'
 // utils
-import axios from '../utils/axios'
+// import axios from '../utils/axios'
 import { isValidToken, setSession } from '../utils/jwt'
 // @types
 import { ActionMap, AuthState, AuthUser, JWTContextType } from '../@types/auth'
+import axiosClient from 'src/api-client/axiosClient'
 
 // ----------------------------------------------------------------------
 
@@ -90,15 +91,15 @@ function AuthProvider({ children }: AuthProviderProps) {
           setSession(accessToken)
 
           // const response = await axios.get('/api/account/my-account');
-          const response = await axios.get('/api/account')
+          // const response = await axiosClient.get('/api/account')
 
-          const { user } = response.data
+          // const { user } = response.data
 
           dispatch({
             type: Types.Initial,
             payload: {
               isAuthenticated: true,
-              user,
+              user: {},
             },
           })
         } else {
@@ -137,14 +138,14 @@ function AuthProvider({ children }: AuthProviderProps) {
         },
       })
     } else {
-      const response = await axios.post('/api/login', {
+      const response = await axiosClient.post('/login', {
         email,
         password,
       })
       // const { accessToken, refreshToken, user } = response.data.data
       // console.log(accessToken, refreshToken, user);
-      const { account, token } = response.data.data
-      console.log(account, token?.accessToken);
+      const { account, token } = response.data
+      // console.log(account, token?.accessToken)
 
       setSession(token?.accessToken)
       // setSession(refreshToken);
@@ -159,7 +160,7 @@ function AuthProvider({ children }: AuthProviderProps) {
   }
 
   const register = async (email: string, password: string, firstName: string, lastName: string) => {
-    const response = await axios.post('/api/account/register', {
+    const response = await axiosClient.post('/api/account/register', {
       email,
       password,
       firstName,

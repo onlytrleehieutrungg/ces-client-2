@@ -7,7 +7,7 @@ const withTM = require('next-transpile-modules')([
   '@fullcalendar/react',
   '@fullcalendar/timegrid',
   '@fullcalendar/timeline',
-]);
+])
 
 module.exports = withTM({
   swcMinify: false,
@@ -16,6 +16,8 @@ module.exports = withTM({
     // HOST
     HOST_API_KEY: 'https://minimal-assets-api-dev.vercel.app',
     LOCAL_HOST_API_KEY: 'https://localhost:7077',
+    CES_HOST_DEV_API_KEY: 'https://api-dev.ces.bio/api',
+    CES_HOST_PROD_API_KEY: 'https://api.ces.bio/api',
     // MAPBOX
     MAPBOX_API: '',
     // FIREBASE
@@ -33,4 +35,4 @@ module.exports = withTM({
     AUTH0_CLIENT_ID: '',
     AUTH0_DOMAIN: '',
   },
-});
+})

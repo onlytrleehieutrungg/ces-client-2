@@ -1,16 +1,19 @@
-import { Stack, InputAdornment, TextField, MenuItem } from '@mui/material';
-import Iconify from 'src/components/Iconify';
+import { Stack, InputAdornment, TextField, MenuItem } from '@mui/material'
+import Iconify from 'src/components/Iconify'
 // components
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  optionsRole: string[];
-  filterName: string;
-  filterRole: string;
-  onFilterName: (value: string) => void;
-  onFilterRole: (event: React.ChangeEvent<HTMLInputElement>) => void;
-};
+  optionsRole: {
+    code: number | string
+    label: string
+  }[]
+  filterName: string
+  filterRole: string
+  onFilterName: (value: string) => void
+  onFilterRole: (event: React.ChangeEvent<HTMLInputElement>) => void
+}
 
 export default function AccountTableToolbar({
   filterName,
@@ -39,8 +42,8 @@ export default function AccountTableToolbar({
       >
         {optionsRole.map((option) => (
           <MenuItem
-            key={option}
-            value={option}
+            key={option.code}
+            value={option.code}
             sx={{
               mx: 1,
               my: 0.5,
@@ -49,7 +52,7 @@ export default function AccountTableToolbar({
               textTransform: 'capitalize',
             }}
           >
-            {option}
+            {option.label}
           </MenuItem>
         ))}
       </TextField>
@@ -71,5 +74,5 @@ export default function AccountTableToolbar({
         }}
       />
     </Stack>
-  );
+  )
 }
