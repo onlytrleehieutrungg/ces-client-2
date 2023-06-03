@@ -5,21 +5,18 @@ import { Box, Container, Tab, Tabs } from '@mui/material'
 
 // sections
 
-import { _userAddressBook, _userInvoices, _userPayment } from 'src/_mock'
+import { useRouter } from 'next/router'
+import { _userInvoices } from 'src/_mock'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
 import Iconify from 'src/components/Iconify'
 import Page from 'src/components/Page'
 import useSettings from 'src/hooks/useSettings'
 import useTabs from 'src/hooks/useTabs'
 import Layout from 'src/layouts'
-import { PATH_CES, PATH_DASHBOARD } from 'src/routes/paths'
+import { PATH_CES } from 'src/routes/paths'
 import AccountNewEditForm from 'src/sections/@ces/account/AccountNewEditForm'
-import { AccountBilling } from 'src/sections/@dashboard/user/account'
-import { useRouter } from 'next/router'
-import useSWR from 'swr'
-import LoadingScreen from 'src/components/LoadingScreen'
 import AccountWallet from 'src/sections/@ces/account/wallet/AccountWallet'
-import { AccountData } from 'src/@types/@ces/account'
+import useSWR from 'swr'
 
 // ----------------------------------------------------------------------
 

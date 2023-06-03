@@ -12,7 +12,7 @@ export const accountApi = {
   delete(id: string) {
     return axiosClient.delete(`/account/${id}`)
   },
-  update(payload: AccountPayload) {
-    return axiosClient.put('/account', payload)
+  update(id: string, payload: AccountPayload) {
+    return axiosClient.put(`/account/${id}`, payload)
   },
 }

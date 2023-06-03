@@ -44,6 +44,7 @@ import useSWR from 'swr'
 import { accountApi } from 'src/api-client'
 import { useSnackbar } from 'notistack'
 import AccountTableToolbar from 'src/sections/@ces/account/AccountTableToolbar'
+import { useAccount } from 'src/hooks/@ces'
 
 // ----------------------------------------------------------------------
 
@@ -129,9 +130,9 @@ export default function AccountPage() {
 
   const { enqueueSnackbar } = useSnackbar()
 
-  // const [tableData, setTableData] = useState(account_list)
-  const { data, mutate } = useSWR('/account')
-  const accountList: AccountData[] = data?.data ?? []
+  // const { data ,mutate} = useSWR('/account')
+  const { accounts, mutate } = useAccount()
+  const accountList: AccountData[] = accounts?.data ?? []
 
   const [filterName, setFilterName] = useState('')
 
@@ -294,10 +295,10 @@ export default function AccountPage() {
               count={dataFiltered.length}
               rowsPerPage={rowsPerPage}
               page={page}
-              // onPageChange={(e) => {
-              //   onChangePage(e, page)
-              // }}
               onPageChange={onChangePage}
+              // onPageChange={(e, newPage) => {
+              //   onChangePage(e, newPage)
+              // }}
               onRowsPerPageChange={onChangeRowsPerPage}
             />
 
