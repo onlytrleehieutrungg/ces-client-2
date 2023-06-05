@@ -1,9 +1,14 @@
 import { Container } from '@mui/material'
+import { useRouter } from 'next/router'
+import { useSnackbar } from 'notistack'
+import { AccountPayload } from 'src/@types/@ces'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
 import Page from 'src/components/Page'
+import { useAccount } from 'src/hooks/@ces'
 import Layout from 'src/layouts'
 import { PATH_CES } from 'src/routes/paths'
 import AccountNewEditForm from 'src/sections/@ces/account/AccountNewEditForm'
+
 // ----------------------------------------------------------------------
 
 AccountCreatePage.getLayout = function getLayout(page: React.ReactElement) {
@@ -13,6 +18,24 @@ AccountCreatePage.getLayout = function getLayout(page: React.ReactElement) {
 // ----------------------------------------------------------------------
 
 export default function AccountCreatePage() {
+  const { enqueueSnackbar } = useSnackbar()
+
+  const { push } = useRouter()
+
+  const { create } = useAccount()
+
+  const handleCreateAccountSubmit = async (payload: AccountPayload) => {
+    try {
+      await create(payload)
+
+      enqueueSnackbar('Create success!')
+      push(PATH_CES.account.root)
+    } catch (error) {
+      enqueueSnackbar('Create failed!')
+      console.error(error)
+    }
+  }
+
   return (
     <Page title="Account: Create a new Account">
       <Container>
@@ -24,7 +47,7 @@ export default function AccountCreatePage() {
             { name: 'New Account' },
           ]}
         />
-        <AccountNewEditForm />
+        <AccountNewEditForm onSubmit={handleCreateAccountSubmit} />
       </Container>
     </Page>
   )

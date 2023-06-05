@@ -1,4 +1,4 @@
-import { AccountPayload } from 'src/@types/@ces/account'
+import { AccountPayload } from 'src/@types/@ces'
 import axiosClient from './axiosClient'
 
 export const accountApi = {

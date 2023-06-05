@@ -13,7 +13,6 @@ import { fData } from '../../../utils/formatNumber'
 // @types
 // _mock
 // components
-import { useRouter } from 'next/router'
 import { AccountData, AccountPayload } from 'src/@types/@ces/account'
 import Label from '../../../components/Label'
 import {
@@ -22,7 +21,6 @@ import {
   RHFTextField,
   RHFUploadAvatar,
 } from '../../../components/hook-form'
-import { accountApi } from 'src/api-client'
 
 //
 const roleList = [
@@ -70,11 +68,10 @@ const companyList = [
 type Props = {
   isEdit?: boolean
   currentUser?: AccountData
+  onSubmit?: (payload: AccountPayload) => void
 }
 
-export default function AccountNewEditForm({ isEdit = false, currentUser }: Props) {
-  const { push } = useRouter()
-
+export default function AccountNewEditForm({ isEdit = false, currentUser, onSubmit }: Props) {
   const NewUserSchema = Yup.object().shape({
     name: Yup.string().required('Name is required'),
     email: Yup.string().required('Email is required').email(),
@@ -84,7 +81,7 @@ export default function AccountNewEditForm({ isEdit = false, currentUser }: Prop
     status: Yup.number().required('Status is required'),
     roleId: Yup.number().required('Role is required'),
     companyId: Yup.number().required('Company is required'),
-    password: Yup.string().required('Password is required'),
+    // password: Yup.string().required('Password is required'),
   })
 
   const defaultValues = useMemo(
@@ -128,18 +125,8 @@ export default function AccountNewEditForm({ isEdit = false, currentUser }: Prop
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isEdit, currentUser])
 
-  const onSubmit = async (payload: AccountPayload) => {
-    try {
-      if (!isEdit) {
-        await accountApi.create(payload)
-      } else {
-        await accountApi.update(payload)
-      }
-      // enqueueSnackbar(!isEdit ? 'Create success!' : 'Update success!')
-      // push(PATH_CES.account.root)
-    } catch (error) {
-      console.error(error)
-    }
+  const handleFormSubmit = async (payload: AccountPayload) => {
+    await onSubmit?.(payload)
   }
 
   const handleDrop = useCallback(
@@ -159,7 +146,7 @@ export default function AccountNewEditForm({ isEdit = false, currentUser }: Prop
   )
 
   return (
-    <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
+    <FormProvider methods={methods} onSubmit={handleSubmit(handleFormSubmit)}>
       <Grid container spacing={3}>
         <Grid item xs={12} md={4}>
           <Card sx={{ py: 10, px: 3 }}>
@@ -251,14 +238,6 @@ export default function AccountNewEditForm({ isEdit = false, currentUser }: Prop
                 ))}
               </RHFSelect>
 
-              {/* <RHFSelect name="roleId" label="Role" placeholder="Role">
-                <option value={undefined} />
-                {roleList.map((option) => (
-                  <option key={option.code} value={option.code}>
-                    {option.label}
-                  </option>
-                ))}
-              </RHFSelect> */}
               <RHFSelect name="roleId" label="Role" placeholder="Role">
                 <option value={undefined} />
                 {roleList.map((option) => (

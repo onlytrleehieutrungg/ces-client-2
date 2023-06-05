@@ -1,22 +1,20 @@
 import { capitalCase } from 'change-case'
 // @mui
 import { Box, Container, Tab, Tabs } from '@mui/material'
-// routes
-
-// sections
-
 import { useRouter } from 'next/router'
+import { useSnackbar } from 'notistack'
+import { AccountPayload } from 'src/@types/@ces'
 import { _userInvoices } from 'src/_mock'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
 import Iconify from 'src/components/Iconify'
 import Page from 'src/components/Page'
+import { useAccount } from 'src/hooks/@ces'
 import useSettings from 'src/hooks/useSettings'
 import useTabs from 'src/hooks/useTabs'
 import Layout from 'src/layouts'
 import { PATH_CES } from 'src/routes/paths'
 import AccountNewEditForm from 'src/sections/@ces/account/AccountNewEditForm'
 import AccountWallet from 'src/sections/@ces/account/wallet/AccountWallet'
-import useSWR from 'swr'
 
 // ----------------------------------------------------------------------
 
@@ -31,17 +29,31 @@ export default function UserAccount() {
 
   const { currentTab, onChangeTab } = useTabs('general')
 
-  const { query } = useRouter()
+  const { enqueueSnackbar } = useSnackbar()
 
+  const { query } = useRouter()
   const { accountId } = query
 
-  const { data } = useSWR(`/account/${accountId}`)
+  const { data, update } = useAccount(`${accountId}`)
+
+  const handleEditAccountSubmit = async (payload: AccountPayload) => {
+    try {
+      await update(data?.data.id, payload)
+
+      enqueueSnackbar('Update success!')
+    } catch (error) {
+      enqueueSnackbar('Update failed!')
+      console.error(error)
+    }
+  }
 
   const ACCOUNT_TABS = [
     {
       value: 'general',
       icon: <Iconify icon={'ic:round-account-box'} width={20} height={20} />,
-      component: data && <AccountNewEditForm isEdit currentUser={data?.data} />,
+      component: data && (
+        <AccountNewEditForm isEdit currentUser={data?.data} onSubmit={handleEditAccountSubmit} />
+      ),
     },
     {
       value: 'wallet',

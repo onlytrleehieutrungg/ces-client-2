@@ -21,10 +21,10 @@ import {
 } from '@mui/material'
 import { paramCase } from 'change-case'
 import { useRouter } from 'next/router'
+import { useSnackbar } from 'notistack'
 import { useState } from 'react'
-// import { UserManager } from 'src/@types/user'
-// import { _userList } from 'src/_mock'
 import { AccountData } from 'src/@types/@ces/account'
+import { accountApi } from 'src/api-client'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
 import Iconify from 'src/components/Iconify'
 import Scrollbar from 'src/components/Scrollbar'
@@ -34,17 +34,13 @@ import {
   TableNoData,
   TableSelectedActions,
 } from 'src/components/table'
+import { useAccount } from 'src/hooks/@ces'
 import useTable, { emptyRows, getComparator } from 'src/hooks/useTable'
 import useTabs from 'src/hooks/useTabs'
 import { PATH_CES } from 'src/routes/paths'
 import AccountTableRow from 'src/sections/@ces/account/AccountTableRow'
-import { UserTableToolbar } from 'src/sections/@dashboard/user/list'
-import { confirmDialog } from 'src/utils/confirmDialog'
-import useSWR from 'swr'
-import { accountApi } from 'src/api-client'
-import { useSnackbar } from 'notistack'
 import AccountTableToolbar from 'src/sections/@ces/account/AccountTableToolbar'
-import { useAccount } from 'src/hooks/@ces'
+import { confirmDialog } from 'src/utils/confirmDialog'
 
 // ----------------------------------------------------------------------
 
@@ -82,12 +78,6 @@ const ROLE_OPTIONS = [
   },
 ]
 
-// const TABLE_HEAD = Object.keys(jsonData).map((key) => ({
-//   id: key.toLowerCase(),
-//   label: key.charAt(0).toUpperCase() + key.slice(1),
-//   align: 'left'
-// }));
-
 const TABLE_HEAD = [
   { id: 'Name', label: 'Name', align: 'left' },
   { id: 'Email', label: 'Email', align: 'left' },
@@ -95,8 +85,6 @@ const TABLE_HEAD = [
   { id: 'Status', label: 'Status', align: 'left' },
   { id: '' },
 ]
-
-// ----------------------------------------------------------------------
 
 // ----------------------------------------------------------------------
 
@@ -130,9 +118,8 @@ export default function AccountPage() {
 
   const { enqueueSnackbar } = useSnackbar()
 
-  // const { data ,mutate} = useSWR('/account')
-  const { accounts, mutate } = useAccount()
-  const accountList: AccountData[] = accounts?.data ?? []
+  const { data, mutate } = useAccount()
+  const accountList: AccountData[] = data?.data ?? []
 
   const [filterName, setFilterName] = useState('')
 
