@@ -35,6 +35,7 @@ import {
   TableSelectedActions,
 } from 'src/components/table'
 import { useAccount } from 'src/hooks/@ces'
+import useSettings from 'src/hooks/useSettings'
 import useTable, { emptyRows, getComparator } from 'src/hooks/useTable'
 import useTabs from 'src/hooks/useTabs'
 import { PATH_CES } from 'src/routes/paths'
@@ -116,6 +117,8 @@ export default function AccountPage() {
 
   const { push } = useRouter()
 
+  const { themeStretch } = useSettings()
+
   const { enqueueSnackbar } = useSnackbar()
 
   const { data, mutate } = useAccount()
@@ -173,7 +176,7 @@ export default function AccountPage() {
 
   return (
     <Page title="Account: List">
-      <Container>
+      <Container maxWidth={themeStretch ? false : 'lg'}>
         <HeaderBreadcrumbs
           heading="Account List"
           links={[{ name: 'Dashboard', href: '' }, { name: 'Account', href: '' }, { name: 'List' }]}
