@@ -3,27 +3,23 @@ import { accountApi } from 'src/api-client'
 import useSWR from 'swr'
 import { PublicConfiguration } from 'swr/_internal'
 
-export function useAccount(options?: Partial<PublicConfiguration>) {
-  const {
-    data: accounts,
-    error,
-    mutate,
-  } = useSWR('/account', {
+export function useAccount(id?: string, options?: Partial<PublicConfiguration>) {
+  const { data, error, mutate } = useSWR(id ? `/account/${id}` : '/account', {
     ...options,
   })
 
-  async function createAccount(payload: AccountPayload) {
+  async function create(payload: AccountPayload) {
     await accountApi.create(payload)
   }
-  async function updateAccount(id: string, payload: AccountPayload) {
+  async function update(id: string, payload: AccountPayload) {
     await accountApi.update(id, payload)
   }
 
   return {
-    accounts,
+    data,
     error,
     mutate,
-    createAccount,
-    updateAccount,
+    create,
+    update,
   }
 }
