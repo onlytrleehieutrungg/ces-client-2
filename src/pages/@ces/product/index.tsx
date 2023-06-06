@@ -21,7 +21,7 @@ import {
 } from '@mui/material'
 import { paramCase } from 'change-case'
 import { useRouter } from 'next/router'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 // import { UserManager } from 'src/@types/user'
 // import { _userList } from 'src/_mock'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
@@ -42,6 +42,10 @@ import { confirmDialog } from 'src/utils/confirmDialog'
 import { RouterGuard, UserRole } from 'src/guards/RouterGuard'
 import { type } from 'os'
 import ProductTableRow from 'src/sections/@ces/product/ProductTableRow'
+import { productApi } from 'src/api-client/product'
+import { Product } from 'src/@types/@ces/product'
+import { useProduct } from 'src/hooks/@ces/useProduct'
+import useSWR from 'swr'
 
 // ----------------------------------------------------------------------
 
@@ -50,20 +54,7 @@ const STATUS_OPTIONS = ['all', '1', '2', '3']
 const ROLE_OPTIONS = ['all', '1', '2', '3']
 
 
-export type Product = {
-  Id: string
-  Name: string
-  Price: number
-  avatarUrl: string;
-  Quantity: number
-  Status: string
-  UpdatedAt: string
-  CreatedAt: string
-  Description: string
-  ServiceDuration: string
-  Type: string
-  CategoryId: string
-}
+
 
 export type Category = {
   Id: string
@@ -116,7 +107,6 @@ const TABLE_HEAD = [
   { id: 'Price', label: 'Price', align: 'left' },
   { id: 'Quantity', label: 'Quantity', align: 'left' },
   { id: 'CategoryId', label: 'CategoryId', align: 'left' },
-
   { id: '' },
 ]
 
@@ -151,11 +141,15 @@ export default function ProductPage() {
   } = useTable()
 
   const { push } = useRouter()
+  const { products, mutate } = useProduct()
 
-  const [tableData, setTableData] = useState(productData)
+  const accountList: Product[] = products?.data ?? []
+
+  const [tableData, setTableData] = useState<Product[]>(accountList)
+  console.log(tableData);
+  // const { data } = useSWR()
 
   const [filterName, setFilterName] = useState('')
-
   const [filterRole, setFilterRole] = useState('all')
 
   const { currentTab: filterStatus, onChangeTab: onChangeFilterStatus } = useTabs('all')
@@ -197,13 +191,14 @@ export default function ProductPage() {
     filterStatus,
   })
 
+
+
   const denseHeight = dense ? 52 : 72
 
   const isNotFound =
     (!dataFiltered.length && !!filterName) ||
     (!dataFiltered.length && !!filterRole) ||
     (!dataFiltered.length && !!filterStatus)
-
   return (
     // <RouterGuard acceptRoles={[UserRole.EMPLOYEEA]}>
     <Page title="Product: List">
@@ -223,7 +218,6 @@ export default function ProductPage() {
             </NextLink>
           }
         />
-
         <Card>
           <Tabs
             allowScrollButtonsMobile

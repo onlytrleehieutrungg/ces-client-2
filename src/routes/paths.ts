@@ -42,6 +42,7 @@ export const PATH_CES = {
     root: path(ROOTS_CES, '/account'),
     new: path(ROOTS_CES, '/account/new'),
     edit: (id: string) => path(ROOTS_CES, `/account/${id}/edit`),
+    detail: (id: string) => path(ROOTS_CES, `/account/${id}`),
   },
   group: {
     root: path(ROOTS_CES, '/group'),

@@ -5,7 +5,7 @@ import { Avatar, Checkbox, TableRow, TableCell, Typography, MenuItem } from '@mu
 import { TableMoreMenu } from 'src/components/table';
 import Iconify from 'src/components/Iconify';
 import Label from 'src/components/Label';
-import { Product } from 'src/pages/@ces/product';
+import { Product } from 'src/@types/@ces/product';
 // @types
 
 // components
