@@ -26,7 +26,7 @@ const ICONS = {
   analytics: getIcon('ic_analytics'),
   dashboard: getIcon('ic_dashboard'),
   menuItem: getIcon('ic_menu_item'),
-  group: getIcon('ic_group'),
+  project: getIcon('ic_group'),
 }
 
 const navConfig = [
@@ -35,7 +35,7 @@ const navConfig = [
     subheader: 'CES-CLIENT',
     items: [
       { title: 'account', path: PATH_CES.account.root, icon: ICONS.user },
-      { title: 'group', path: PATH_CES.group.root, icon: ICONS.group },
+      { title: 'project', path: PATH_CES.project.root, icon: ICONS.project },
     ],
   },
   {

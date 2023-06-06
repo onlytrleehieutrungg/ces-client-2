@@ -41,12 +41,14 @@ export const PATH_CES = {
   account: {
     root: path(ROOTS_CES, '/account'),
     new: path(ROOTS_CES, '/account/new'),
+    detail: (id: string) => path(ROOTS_CES, `/account/${id}`),
     edit: (id: string) => path(ROOTS_CES, `/account/${id}/edit`),
   },
-  group: {
-    root: path(ROOTS_CES, '/group'),
-    new: path(ROOTS_CES, '/group/new'),
-    edit: (id: string) => path(ROOTS_CES, `/group/${id}/edit`),
+  project: {
+    root: path(ROOTS_CES, '/project'),
+    new: path(ROOTS_CES, '/project/new'),
+    detail: (id: string) => path(ROOTS_CES, `/project/${id}`),
+    edit: (id: string) => path(ROOTS_CES, `/project/${id}/edit`),
   },
 }
 

@@ -21,9 +21,9 @@ import {
 } from '@mui/material'
 import { paramCase } from 'change-case'
 import { useRouter } from 'next/router'
+import { useSnackbar } from 'notistack'
 import { useState } from 'react'
-import { UserManager } from 'src/@types/user'
-import { _userList } from 'src/_mock'
+import { ProjectData } from 'src/@types/@ces/project'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
 import Iconify from 'src/components/Iconify'
 import Scrollbar from 'src/components/Scrollbar'
@@ -33,35 +33,61 @@ import {
   TableNoData,
   TableSelectedActions,
 } from 'src/components/table'
+import { useProject } from 'src/hooks/@ces'
 import useTable, { emptyRows, getComparator } from 'src/hooks/useTable'
 import useTabs from 'src/hooks/useTabs'
 import { PATH_CES } from 'src/routes/paths'
-import { UserTableRow, UserTableToolbar } from 'src/sections/@dashboard/user/list'
+import ProjectTableRow from 'src/sections/@ces/project/ProjectTableRow'
+import ProjectTableToolbar from 'src/sections/@ces/project/ProjectTableToolbar'
 import { confirmDialog } from 'src/utils/confirmDialog'
+import useSettings from 'src/hooks/useSettings'
 
 // ----------------------------------------------------------------------
 
-const STATUS_OPTIONS = ['all', 'active', 'banned']
-
-const ROLE_OPTIONS = [
-  'all',
-  'ux designer',
-  'full stack designer',
-  'backend developer',
-  'project manager',
-  'leader',
-  'ui designer',
-  'ui/ux designer',
-  'front end developer',
-  'full stack developer',
+const STATUS_OPTIONS = [
+  {
+    code: 'all',
+    label: 'all',
+  },
+  {
+    code: 1,
+    label: 'active',
+  },
+  {
+    code: 2,
+    label: 'deactive',
+  },
 ]
 
+const ROLE_OPTIONS = [
+  {
+    code: 'all',
+    label: 'all',
+  },
+  {
+    code: 1,
+    label: 'Supplier Admin',
+  },
+  {
+    code: 2,
+    label: 'Enterprise Admin',
+  },
+  {
+    code: 3,
+    label: 'Employee',
+  },
+]
+
+// const TABLE_HEAD = Object.keys(jsonData).map((key) => ({
+//   id: key.toLowerCase(),
+//   label: key.charAt(0).toUpperCase() + key.slice(1),
+//   align: 'left'
+// }));
+
 const TABLE_HEAD = [
-  { id: 'name', label: 'Name', align: 'left' },
-  { id: 'company', label: 'Company', align: 'left' },
-  { id: 'role', label: 'Role', align: 'left' },
-  { id: 'isVerified', label: 'Verified', align: 'center' },
-  { id: 'status', label: 'Status', align: 'left' },
+  { id: 'Name', label: 'Name', align: 'left' },
+  { id: 'Status', label: 'Status', align: 'left' },
+  { id: 'Company Id', label: 'Company Id', align: 'left' },
   { id: '' },
 ]
 
@@ -69,13 +95,13 @@ const TABLE_HEAD = [
 
 // ----------------------------------------------------------------------
 
-AccountPage.getLayout = function getLayout(page: React.ReactElement) {
+ProjectPage.getLayout = function getLayout(page: React.ReactElement) {
   return <Layout>{page}</Layout>
 }
 
 // ----------------------------------------------------------------------
 
-export default function AccountPage() {
+export default function ProjectPage() {
   const {
     dense,
     page,
@@ -97,7 +123,13 @@ export default function AccountPage() {
 
   const { push } = useRouter()
 
-  const [tableData, setTableData] = useState(_userList)
+  const { themeStretch } = useSettings()
+
+  const { enqueueSnackbar } = useSnackbar()
+
+  const { data, mutate, remove } = useProject()
+
+  const projectList: ProjectData[] = data?.data || []
 
   const [filterName, setFilterName] = useState('')
 
@@ -115,25 +147,27 @@ export default function AccountPage() {
   }
 
   const handleDeleteRow = (id: string) => {
-    confirmDialog('Do you really want to delete this account ?', () => {
-      const deleteRow = tableData.filter((row) => row.id !== id)
-      setSelected([])
-      setTableData(deleteRow)
+    confirmDialog('Do you really want to delete this project ?', async () => {
+      await remove(id)
+      mutate()
+      enqueueSnackbar('Delete successfull')
     })
   }
 
   const handleDeleteRows = (selected: string[]) => {
-    const deleteRows = tableData.filter((row) => !selected.includes(row.id))
-    setSelected([])
-    setTableData(deleteRows)
+    console.log('delete all project action')
   }
 
   const handleEditRow = (id: string) => {
-    push(PATH_CES.account.edit(paramCase(id)))
+    push(PATH_CES.project.edit(paramCase(id)))
+  }
+
+  const handleClickRow = (id: string) => {
+    push(PATH_CES.project.detail(paramCase(id)))
   }
 
   const dataFiltered = applySortFilter({
-    tableData,
+    tableData: projectList,
     comparator: getComparator(order, orderBy),
     filterName,
     filterRole,
@@ -148,15 +182,15 @@ export default function AccountPage() {
     (!dataFiltered.length && !!filterStatus)
 
   return (
-    <Page title="User: List">
-      <Container>
+    <Page title="Project: List">
+      <Container maxWidth={themeStretch ? false : 'lg'}>
         <HeaderBreadcrumbs
-          heading="User List"
-          links={[{ name: 'Dashboard', href: '' }, { name: 'User', href: '' }, { name: 'List' }]}
+          heading="Project List"
+          links={[{ name: 'Dashboard', href: '' }, { name: 'Project', href: '' }, { name: 'List' }]}
           action={
-            <NextLink href={PATH_CES.account.new} passHref>
+            <NextLink href={PATH_CES.project.new} passHref>
               <Button variant="contained" startIcon={<Iconify icon={'eva:plus-fill'} />}>
-                New User
+                New Project
               </Button>
             </NextLink>
           }
@@ -172,13 +206,13 @@ export default function AccountPage() {
             sx={{ px: 2, bgcolor: 'background.neutral' }}
           >
             {STATUS_OPTIONS.map((tab) => (
-              <Tab disableRipple key={tab} label={tab} value={tab} />
+              <Tab disableRipple key={tab.code} label={tab.label} value={tab.code} />
             ))}
           </Tabs>
 
           <Divider />
 
-          <UserTableToolbar
+          <ProjectTableToolbar
             filterName={filterName}
             filterRole={filterRole}
             onFilterName={handleFilterName}
@@ -192,11 +226,11 @@ export default function AccountPage() {
                 <TableSelectedActions
                   dense={dense}
                   numSelected={selected.length}
-                  rowCount={tableData.length}
+                  rowCount={projectList.length}
                   onSelectAllRows={(checked) =>
                     onSelectAllRows(
                       checked,
-                      tableData.map((row) => row.id)
+                      projectList.map((row) => `${row.id}`)
                     )
                   }
                   actions={
@@ -214,13 +248,13 @@ export default function AccountPage() {
                   order={order}
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
-                  rowCount={tableData.length}
+                  rowCount={projectList.length}
                   numSelected={selected.length}
                   onSort={onSort}
                   onSelectAllRows={(checked) =>
                     onSelectAllRows(
                       checked,
-                      tableData.map((row) => row.id)
+                      projectList.map((row: any) => `${row.id}`)
                     )
                   }
                 />
@@ -229,19 +263,20 @@ export default function AccountPage() {
                   {dataFiltered
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row) => (
-                      <UserTableRow
-                        key={row.id}
+                      <ProjectTableRow
+                        key={`${row.id}`}
                         row={row}
-                        selected={selected.includes(row.id)}
-                        onSelectRow={() => onSelectRow(row.id)}
-                        onDeleteRow={() => handleDeleteRow(row.id)}
-                        onEditRow={() => handleEditRow(row.name)}
+                        selected={selected.includes(`${row.id}`)}
+                        onSelectRow={() => onSelectRow(`${row.id}`)}
+                        onDeleteRow={() => handleDeleteRow(`${row.id}`)}
+                        onEditRow={() => handleEditRow(row.id)}
+                        onClickRow={() => handleClickRow(`${row.id}`)}
                       />
                     ))}
 
                   <TableEmptyRows
                     height={denseHeight}
-                    emptyRows={emptyRows(page, rowsPerPage, tableData.length)}
+                    emptyRows={emptyRows(page, rowsPerPage, projectList.length)}
                   />
 
                   <TableNoData isNotFound={isNotFound} />
@@ -257,6 +292,9 @@ export default function AccountPage() {
               count={dataFiltered.length}
               rowsPerPage={rowsPerPage}
               page={page}
+              // onPageChange={(e) => {
+              //   onChangePage(e, page)
+              // }}
               onPageChange={onChangePage}
               onRowsPerPageChange={onChangeRowsPerPage}
             />
@@ -282,7 +320,7 @@ function applySortFilter({
   filterStatus,
   filterRole,
 }: {
-  tableData: UserManager[]
+  tableData: ProjectData[]
   comparator: (a: any, b: any) => number
   filterName: string
   filterStatus: string
@@ -306,11 +344,11 @@ function applySortFilter({
   }
 
   if (filterStatus !== 'all') {
-    tableData = tableData.filter((item: Record<string, any>) => item.status === filterStatus)
+    tableData = tableData.filter((item: Record<string, any>) => item.status == filterStatus)
   }
 
   if (filterRole !== 'all') {
-    tableData = tableData.filter((item: Record<string, any>) => item.role === filterRole)
+    tableData = tableData.filter((item: Record<string, any>) => item.roleId == filterRole)
   }
 
   return tableData
