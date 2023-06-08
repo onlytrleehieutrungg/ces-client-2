@@ -7,13 +7,14 @@ import { ProjectPayload } from 'src/@types/@ces'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
 import Iconify from 'src/components/Iconify'
 import Page from 'src/components/Page'
-import { useProject } from 'src/hooks/@ces'
 import useSettings from 'src/hooks/useSettings'
 import useTabs from 'src/hooks/useTabs'
 import Layout from 'src/layouts'
 import { PATH_CES } from 'src/routes/paths'
-import ProjectNewEditForm from 'src/sections/@ces/project/ProjectNewEditForm'
 import ProjectMember from 'src/sections/@ces/project/members/ProjectMember'
+import ProjectNewEditForm from 'src/sections/@ces/project/ProjectNewEditForm'
+import { useProjectDetails } from 'src/hooks/@ces'
+import { projectApi } from 'src/api-client'
 
 // ----------------------------------------------------------------------
 
@@ -33,11 +34,14 @@ export default function ProjectDetails() {
   const { query } = useRouter()
   const { projectId } = query
 
-  const { data, update } = useProject(`${projectId}`)
+  // const { update } = useProject({ id: '1' })
 
-  const handleEditAccountSubmit = async (payload: ProjectPayload) => {
+  const { data } = useProjectDetails({ id: `${projectId}` })
+
+  const handleEditProjectSubmit = async (payload: ProjectPayload) => {
     try {
-      await update(data?.data.id, payload)
+      await projectApi.update(data?.data.id, payload)
+      // await update(data?.data?.id, payload)
 
       enqueueSnackbar('Update success!')
     } catch (error) {
@@ -51,13 +55,13 @@ export default function ProjectDetails() {
       value: 'general',
       icon: <Iconify icon={'ic:round-account-box'} width={20} height={20} />,
       component: data && (
-        <ProjectNewEditForm isEdit currentUser={data?.data} onSubmit={handleEditAccountSubmit} />
+        <ProjectNewEditForm isEdit currentUser={data?.data} onSubmit={handleEditProjectSubmit} />
       ),
     },
     {
       value: 'members',
       icon: <Iconify icon={'fa6-solid:people-line'} width={20} height={20} />,
-      component: data && <ProjectMember />,
+      component: <ProjectMember />,
     },
   ]
 

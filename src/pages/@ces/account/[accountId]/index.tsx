@@ -8,13 +8,14 @@ import { _userInvoices } from 'src/_mock'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
 import Iconify from 'src/components/Iconify'
 import Page from 'src/components/Page'
-import { useAccount } from 'src/hooks/@ces'
+import { useAccountDetails } from 'src/hooks/@ces'
 import useSettings from 'src/hooks/useSettings'
 import useTabs from 'src/hooks/useTabs'
 import Layout from 'src/layouts'
 import { PATH_CES } from 'src/routes/paths'
 import AccountNewEditForm from 'src/sections/@ces/account/AccountNewEditForm'
 import AccountWallet from 'src/sections/@ces/account/wallet/AccountWallet'
+import { accountApi } from 'src/api-client'
 
 // ----------------------------------------------------------------------
 
@@ -34,11 +35,12 @@ export default function UserAccount() {
   const { query } = useRouter()
   const { accountId } = query
 
-  const { data, update } = useAccount(`${accountId}`)
+  const { data } = useAccountDetails({ id: `${accountId}` })
 
   const handleEditAccountSubmit = async (payload: AccountPayload) => {
     try {
-      await update(data?.data.id, payload)
+      await accountApi.update(`${accountId}`, payload)
+      // await update(data?.data.id, payload)
 
       enqueueSnackbar('Update success!')
     } catch (error) {
@@ -58,7 +60,9 @@ export default function UserAccount() {
     {
       value: 'wallet',
       icon: <Iconify icon={'ic:round-receipt'} width={20} height={20} />,
-      component: data && <AccountWallet wallets={data?.data.wallets} invoices={_userInvoices} />,
+      component: data && data?.data?.wallets && (
+        <AccountWallet wallets={data?.data.wallets} invoices={_userInvoices} />
+      ),
     },
   ]
 

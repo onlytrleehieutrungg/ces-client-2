@@ -2,9 +2,9 @@ import { Container } from '@mui/material'
 import { useRouter } from 'next/router'
 import { useSnackbar } from 'notistack'
 import { ProjectPayload } from 'src/@types/@ces'
+import { projectApi } from 'src/api-client'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
 import Page from 'src/components/Page'
-import { useProject } from 'src/hooks/@ces'
 import useSettings from 'src/hooks/useSettings'
 import Layout from 'src/layouts'
 import { PATH_CES } from 'src/routes/paths'
@@ -24,11 +24,11 @@ export default function ProjectCreatePage() {
 
   const { push } = useRouter()
 
-  const { create } = useProject()
+  // const { create } = useProject()
 
   const handleCreateProjectSubmit = async (payload: ProjectPayload) => {
     try {
-      await create(payload)
+      await projectApi.create(payload)
 
       enqueueSnackbar('Create success!')
       push(PATH_CES.project.root)

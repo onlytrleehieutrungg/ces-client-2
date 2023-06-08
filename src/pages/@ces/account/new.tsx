@@ -2,9 +2,9 @@ import { Container } from '@mui/material'
 import { useRouter } from 'next/router'
 import { useSnackbar } from 'notistack'
 import { AccountPayload } from 'src/@types/@ces'
+import { accountApi } from 'src/api-client'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
 import Page from 'src/components/Page'
-import { useAccount } from 'src/hooks/@ces'
 import useSettings from 'src/hooks/useSettings'
 import Layout from 'src/layouts'
 import { PATH_CES } from 'src/routes/paths'
@@ -25,11 +25,10 @@ export default function AccountCreatePage() {
 
   const { push } = useRouter()
 
-  const { create } = useAccount()
-
   const handleCreateAccountSubmit = async (payload: AccountPayload) => {
     try {
-      await create(payload)
+      await accountApi.create(payload)
+      // await create(payload)
 
       enqueueSnackbar('Create success!')
       push(PATH_CES.account.root)

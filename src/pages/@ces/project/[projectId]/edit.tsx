@@ -5,9 +5,10 @@ import { capitalCase } from 'change-case'
 import { useRouter } from 'next/router'
 import { useSnackbar } from 'notistack'
 import { ProjectPayload } from 'src/@types/@ces'
+import { projectApi } from 'src/api-client'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
 import Page from 'src/components/Page'
-import { useProject } from 'src/hooks/@ces'
+import { useProjectDetails } from 'src/hooks/@ces'
 import useSettings from 'src/hooks/useSettings'
 import Layout from 'src/layouts'
 import { PATH_CES } from 'src/routes/paths'
@@ -27,11 +28,11 @@ export default function ProjectEditPage() {
   const { query, push } = useRouter()
   const { projectId } = query
 
-  const { data, update } = useProject(`${projectId}`)
+  const { data } = useProjectDetails({ id: `${projectId}` })
 
   const handleEditProjectSubmit = async (payload: ProjectPayload) => {
     try {
-      await update(data?.data.id, payload)
+      await projectApi.update(data?.data.id, payload)
 
       enqueueSnackbar('Update success!')
       push(PATH_CES.project.root)

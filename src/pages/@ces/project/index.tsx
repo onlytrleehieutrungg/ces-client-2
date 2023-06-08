@@ -33,7 +33,7 @@ import {
   TableNoData,
   TableSelectedActions,
 } from 'src/components/table'
-import { useProject } from 'src/hooks/@ces'
+import { useProjectList } from 'src/hooks/@ces'
 import useTable, { emptyRows, getComparator } from 'src/hooks/useTable'
 import useTabs from 'src/hooks/useTabs'
 import { PATH_CES } from 'src/routes/paths'
@@ -41,6 +41,7 @@ import ProjectTableRow from 'src/sections/@ces/project/ProjectTableRow'
 import ProjectTableToolbar from 'src/sections/@ces/project/ProjectTableToolbar'
 import { confirmDialog } from 'src/utils/confirmDialog'
 import useSettings from 'src/hooks/useSettings'
+import { projectApi } from 'src/api-client'
 
 // ----------------------------------------------------------------------
 
@@ -127,7 +128,7 @@ export default function ProjectPage() {
 
   const { enqueueSnackbar } = useSnackbar()
 
-  const { data, mutate, remove } = useProject()
+  const { data, mutate } = useProjectList({})
 
   const projectList: ProjectData[] = data?.data || []
 
@@ -148,8 +149,9 @@ export default function ProjectPage() {
 
   const handleDeleteRow = (id: string) => {
     confirmDialog('Do you really want to delete this project ?', async () => {
-      await remove(id)
-      mutate()
+      await projectApi.delete(id)
+      // await remove(id)
+      // mutate({ ...data, data: [] }, true)
       enqueueSnackbar('Delete successfull')
     })
   }
