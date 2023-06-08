@@ -18,6 +18,6 @@ export type ProjectPayload = {
 }
 
 export type AddProjectMemberPayload = {
-  accountId: string
   projectId: string
-}[]
+  accountId: string[]
+}

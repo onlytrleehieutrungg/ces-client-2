@@ -1,10 +1,18 @@
-import { AddProjectMemberPayload, ProjectPayload } from 'src/@types/@ces'
+import {
+  AddProjectMemberPayload,
+  BaseResponse,
+  Params,
+  ProjectData,
+  ProjectPayload,
+} from 'src/@types/@ces'
 import axiosClient from './axiosClient'
 
 export const projectApi = {
-  getAll() {},
+  getAll(params: Partial<Params>): Promise<BaseResponse<ProjectData[]>> {
+    return axiosClient.get(`/project`, { params })
+  },
 
-  getById(id: string) {
+  getById(id: string): Promise<BaseResponse<ProjectData>> {
     return axiosClient.get(`/project/${id}`)
   },
 
