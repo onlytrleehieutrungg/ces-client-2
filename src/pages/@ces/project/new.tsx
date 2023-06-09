@@ -1,37 +1,37 @@
 import { Container } from '@mui/material'
 import { useRouter } from 'next/router'
 import { useSnackbar } from 'notistack'
-import { AccountPayload } from 'src/@types/@ces'
-import { accountApi } from 'src/api-client'
+import { ProjectPayload } from 'src/@types/@ces'
+import { projectApi } from 'src/api-client'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
 import Page from 'src/components/Page'
 import useSettings from 'src/hooks/useSettings'
 import Layout from 'src/layouts'
 import { PATH_CES } from 'src/routes/paths'
-import AccountNewEditForm from 'src/sections/@ces/account/AccountNewEditForm'
-
+import ProjectNewEditForm from 'src/sections/@ces/project/ProjectNewEditForm'
 // ----------------------------------------------------------------------
 
-AccountCreatePage.getLayout = function getLayout(page: React.ReactElement) {
+ProjectCreatePage.getLayout = function getLayout(page: React.ReactElement) {
   return <Layout>{page}</Layout>
 }
 
 // ----------------------------------------------------------------------
 
-export default function AccountCreatePage() {
+export default function ProjectCreatePage() {
   const { themeStretch } = useSettings()
 
   const { enqueueSnackbar } = useSnackbar()
 
   const { push } = useRouter()
 
-  const handleCreateAccountSubmit = async (payload: AccountPayload) => {
+  // const { create } = useProject()
+
+  const handleCreateProjectSubmit = async (payload: ProjectPayload) => {
     try {
-      await accountApi.create(payload)
-      // await create(payload)
+      await projectApi.create(payload)
 
       enqueueSnackbar('Create success!')
-      push(PATH_CES.account.root)
+      push(PATH_CES.project.root)
     } catch (error) {
       enqueueSnackbar('Create failed!')
       console.error(error)
@@ -39,17 +39,17 @@ export default function AccountCreatePage() {
   }
 
   return (
-    <Page title="Account: Create a new Account">
+    <Page title="Project: Create a new project">
       <Container maxWidth={themeStretch ? false : 'lg'}>
         <HeaderBreadcrumbs
-          heading="Create a new Account"
+          heading="Create a new project"
           links={[
-            { name: 'Dashboard', href: PATH_CES.root },
-            { name: 'Account', href: PATH_CES.account.root },
-            { name: 'New Account' },
+            { name: 'Dashboard', href: '' },
+            { name: 'Project', href: '' },
+            { name: 'New Project' },
           ]}
         />
-        <AccountNewEditForm onSubmit={handleCreateAccountSubmit} />
+        <ProjectNewEditForm onSubmit={handleCreateProjectSubmit} />
       </Container>
     </Page>
   )

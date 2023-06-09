@@ -3,29 +3,28 @@ import { capitalCase } from 'change-case'
 import { Box, Container, Tab, Tabs } from '@mui/material'
 import { useRouter } from 'next/router'
 import { useSnackbar } from 'notistack'
-import { AccountPayload } from 'src/@types/@ces'
-import { _userInvoices } from 'src/_mock'
+import { ProjectPayload } from 'src/@types/@ces'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
 import Iconify from 'src/components/Iconify'
 import Page from 'src/components/Page'
-import { useAccountDetails } from 'src/hooks/@ces'
 import useSettings from 'src/hooks/useSettings'
 import useTabs from 'src/hooks/useTabs'
 import Layout from 'src/layouts'
 import { PATH_CES } from 'src/routes/paths'
-import AccountNewEditForm from 'src/sections/@ces/account/AccountNewEditForm'
-import AccountWallet from 'src/sections/@ces/account/wallet/AccountWallet'
-import { accountApi } from 'src/api-client'
+import ProjectMember from 'src/sections/@ces/project/members/ProjectMember'
+import ProjectNewEditForm from 'src/sections/@ces/project/ProjectNewEditForm'
+import { useProjectDetails } from 'src/hooks/@ces'
+import { projectApi } from 'src/api-client'
 
 // ----------------------------------------------------------------------
 
-UserAccount.getLayout = function getLayout(page: React.ReactElement) {
+ProjectDetails.getLayout = function getLayout(page: React.ReactElement) {
   return <Layout>{page}</Layout>
 }
 
 // ----------------------------------------------------------------------
 
-export default function UserAccount() {
+export default function ProjectDetails() {
   const { themeStretch } = useSettings()
 
   const { currentTab, onChangeTab } = useTabs('general')
@@ -33,14 +32,16 @@ export default function UserAccount() {
   const { enqueueSnackbar } = useSnackbar()
 
   const { query } = useRouter()
-  const { accountId } = query
+  const { projectId } = query
 
-  const { data } = useAccountDetails({ id: `${accountId}` })
+  // const { update } = useProject({ id: '1' })
 
-  const handleEditAccountSubmit = async (payload: AccountPayload) => {
+  const { data } = useProjectDetails({ id: `${projectId}` })
+
+  const handleEditProjectSubmit = async (payload: ProjectPayload) => {
     try {
-      await accountApi.update(`${accountId}`, payload)
-      // await update(data?.data.id, payload)
+      await projectApi.update(data?.data.id, payload)
+      // await update(data?.data?.id, payload)
 
       enqueueSnackbar('Update success!')
     } catch (error) {
@@ -54,27 +55,25 @@ export default function UserAccount() {
       value: 'general',
       icon: <Iconify icon={'ic:round-account-box'} width={20} height={20} />,
       component: data && (
-        <AccountNewEditForm isEdit currentUser={data?.data} onSubmit={handleEditAccountSubmit} />
+        <ProjectNewEditForm isEdit currentUser={data?.data} onSubmit={handleEditProjectSubmit} />
       ),
     },
     {
-      value: 'wallet',
-      icon: <Iconify icon={'ic:round-receipt'} width={20} height={20} />,
-      component: data && data?.data?.wallets && (
-        <AccountWallet wallets={data?.data.wallets} invoices={_userInvoices} />
-      ),
+      value: 'members',
+      icon: <Iconify icon={'fa6-solid:people-line'} width={20} height={20} />,
+      component: <ProjectMember />,
     },
   ]
 
   return (
-    <Page title="User: Account Settings">
+    <Page title="Project: Project Settings">
       <Container maxWidth={themeStretch ? false : 'lg'}>
         <HeaderBreadcrumbs
-          heading="Account"
+          heading="Project"
           links={[
             { name: 'Dashboard', href: PATH_CES.root },
-            { name: 'Account', href: PATH_CES.account.root },
-            { name: 'Account Details' },
+            { name: 'Project', href: PATH_CES.project.root },
+            { name: 'Project Details' },
           ]}
         />
 

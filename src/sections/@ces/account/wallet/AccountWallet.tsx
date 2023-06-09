@@ -1,5 +1,8 @@
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import * as Yup from 'yup'
 // @mui
+import { yupResolver } from '@hookform/resolvers/yup'
+import { LoadingButton } from '@mui/lab'
 import {
   Box,
   Button,
@@ -11,19 +14,15 @@ import {
   DialogTitle,
   Grid,
   Stack,
-  TextField,
   Typography,
 } from '@mui/material'
-import { UserInvoice } from 'src/@types/user'
-import { AccountBillingInvoiceHistory } from 'src/sections/@dashboard/user/account'
-import AccountBillingWallet from './AccountBillingWallet'
-import { AccountWalletData } from 'src/@types/@ces/account'
-import Image from 'src/components/Image'
-import { fCurrency } from 'src/utils/formatNumber'
 import { useForm } from 'react-hook-form'
+import { AccountWalletData } from 'src/@types/@ces/account'
+import { UserInvoice } from 'src/@types/user'
+import Image from 'src/components/Image'
 import { FormProvider, RHFTextField } from 'src/components/hook-form'
-// @types
-//
+import { AccountBillingInvoiceHistory } from 'src/sections/@dashboard/user/account'
+import { fCurrency } from 'src/utils/formatNumber'
 
 // ----------------------------------------------------------------------
 
@@ -33,11 +32,13 @@ type Props = {
 }
 
 export default function AccountWallet({ invoices, wallets }: Props) {
-  const [open, setOpen] = useState(false)
+  // const { enqueueSnackbar } = useSnackbar()
 
   const [openWallet, setOpenWallet] = useState(false)
+  const [currentWallet, setCurrentWallet] = useState<AccountWalletData>()
 
-  const handleClickOpen = () => {
+  const handleClickOpen = (wallet: AccountWalletData) => {
+    setCurrentWallet(wallet)
     setOpenWallet(true)
   }
 
@@ -45,118 +46,119 @@ export default function AccountWallet({ invoices, wallets }: Props) {
     setOpenWallet(false)
   }
 
+  const NewUserSchema = Yup.object().shape({
+    balance: Yup.number().required('balance is required'),
+  })
+
+  const defaultValues = useMemo(
+    () => ({
+      balance: currentWallet?.balance || 0,
+    }),
+    [currentWallet]
+  )
+
   const methods = useForm<any>({
-    // resolver: yupResolver(NewUserSchema),
-    // defaultValues: {
-    // },
+    resolver: yupResolver(NewUserSchema),
+    defaultValues,
   })
 
   const {
     reset,
-    watch,
-    control,
-    setValue,
     handleSubmit,
     formState: { isSubmitting },
   } = methods
 
-  const values = watch()
+  useEffect(() => {
+    if (currentWallet) {
+      reset(defaultValues)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentWallet])
 
   const onSubmit = async (payload: any) => {
     try {
       console.log(payload)
-      // if (!isEdit) {
-      //   await accountApi.create(payload)
-      // } else {
-      //   currentUser && (await accountApi.update(currentUser.id, payload))
-      // }
-      // enqueueSnackbar(!isEdit ? 'Create success!' : 'Update success!')
-      // push(PATH_CES.account.root)
+      // await walletApi.updateBalance(currentWallet?.id, payload)
+      // enqueueSnackbar( `Update wallet ${currentWallet?.name} success!`)
     } catch (error) {
-      // enqueueSnackbar(!isEdit ? 'Create failed!' : 'Update failed!')
+      // enqueueSnackbar('Update failed!')
       console.error(error)
     }
   }
 
   return (
-    <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
-      <Grid container spacing={5}>
-        <Grid item xs={12} md={8}>
-          <Stack spacing={3}>
-            {wallets.map((wallet) => (
-              <Card key={wallet.id} sx={{ p: 3 }}>
-                <Stack direction={'row'} alignItems={'center'} spacing={1} mb={3}>
-                  <Image
-                    alt="icon"
-                    src={
-                      wallet.type === 1
-                        ? '/assets/icons/ic_food_wallet.png'
-                        : wallet.type === 2
-                        ? '/assets/icons/ic_stationery_wallet.png'
-                        : '/assets/icons/ic_wallet.png'
-                    }
-                    sx={{ maxWidth: 36 }}
-                  />
-                  <Typography
-                    variant="overline"
-                    sx={{ mb: 3, display: 'block', color: 'text.secondary' }}
-                  >
-                    {wallet.name}
-                  </Typography>
-                </Stack>
-                <Typography variant="h5">{fCurrency(wallet.balance)}</Typography>
-                <Box
-                  sx={{
-                    mt: { xs: 2, sm: 0 },
-                    position: { sm: 'absolute' },
-                    top: { sm: 24 },
-                    right: { sm: 24 },
-                  }}
+    <Grid container spacing={5}>
+      <Grid item xs={12} md={8}>
+        <Stack spacing={3}>
+          {wallets.map((wallet) => (
+            <Card key={wallet.id} sx={{ p: 3 }}>
+              <Stack direction={'row'} alignItems={'center'} spacing={1} mb={3}>
+                <Image
+                  alt="icon"
+                  src={
+                    wallet.type === 1
+                      ? '/assets/icons/ic_food_wallet.png'
+                      : wallet.type === 2
+                      ? '/assets/icons/ic_stationery_wallet.png'
+                      : '/assets/icons/ic_wallet.png'
+                  }
+                  sx={{ maxWidth: 36 }}
+                />
+                <Typography
+                  variant="overline"
+                  sx={{ mb: 3, display: 'block', color: 'text.secondary' }}
                 >
-                  <Button size="small" variant="outlined" onClick={handleClickOpen}>
-                    Add fund
-                  </Button>
-                </Box>
-              </Card>
-            ))}
+                  {wallet.name}
+                </Typography>
+              </Stack>
+              <Typography variant="h5">{fCurrency(wallet.balance)}</Typography>
+              <Box
+                sx={{
+                  mt: { xs: 2, sm: 0 },
+                  position: { sm: 'absolute' },
+                  top: { sm: 24 },
+                  right: { sm: 24 },
+                }}
+              >
+                <Button size="small" variant="outlined" onClick={() => handleClickOpen(wallet)}>
+                  Add fund
+                </Button>
+              </Box>
+            </Card>
+          ))}
 
-            <AccountBillingWallet
-              wallets={wallets}
-              isOpen={open}
-              onOpen={() => setOpen(!open)}
-              onCancel={() => setOpen(false)}
-            />
-          </Stack>
-        </Grid>
+          {/* <AccountBillingWallet
+            wallets={wallets}
+            isOpen={open}
+            onOpen={() => setOpen(!open)}
+            onCancel={() => setOpen(false)}
+          /> */}
+        </Stack>
+      </Grid>
 
-        <Dialog open={openWallet} onClose={handleClose}>
+      <Dialog open={openWallet} onClose={handleClose}>
+        <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
           <DialogTitle>Add funds</DialogTitle>
           <DialogContent>
-            <DialogContentText>Add funds to this wallet</DialogContentText>
-            {/* <TextField
-              autoFocus
-              fullWidth
-              type="email"
-              margin="dense"
-              variant="outlined"
-              label="Email Address"
-            /> */}
-            <RHFTextField name="balance" label="Balance" />
+            <DialogContentText mt={1} mb={2}>
+              Add funds to this wallet
+            </DialogContentText>
+            <RHFTextField name="balance" label="Balance" type="number" />
           </DialogContent>
           <DialogActions>
             <Button onClick={handleClose} color="inherit">
               Cancel
             </Button>
-            <Button type="submit" variant="contained">
+            <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
               Add
-            </Button>
+            </LoadingButton>
           </DialogActions>
-        </Dialog>
+        </FormProvider>
+      </Dialog>
 
-        <Grid item xs={12} md={4}>
-          <AccountBillingInvoiceHistory invoices={invoices} />
-        </Grid>
+      <Grid item xs={12} md={4}>
+        <AccountBillingInvoiceHistory invoices={invoices} />
       </Grid>
-    </FormProvider>
+    </Grid>
   )
 }

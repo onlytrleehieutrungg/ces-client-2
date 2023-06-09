@@ -3,9 +3,10 @@ import { capitalCase } from 'change-case'
 import { useRouter } from 'next/router'
 import { useSnackbar } from 'notistack'
 import { AccountPayload } from 'src/@types/@ces'
+import { accountApi } from 'src/api-client'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
 import Page from 'src/components/Page'
-import { useAccount } from 'src/hooks/@ces'
+import { useAccountDetails } from 'src/hooks/@ces'
 import useSettings from 'src/hooks/useSettings'
 import Layout from 'src/layouts'
 import { PATH_CES } from 'src/routes/paths'
@@ -27,11 +28,12 @@ export default function AccountEditPage() {
   const { query, push } = useRouter()
   const { accountId } = query
 
-  const { data, update } = useAccount(`${accountId}`)
+  const { data } = useAccountDetails({ id: `${accountId}` })
 
   const handleEditAccountSubmit = async (payload: AccountPayload) => {
     try {
-      await update(data?.data.id, payload)
+      await accountApi.update(`${accountId}`, payload)
+      // await update(data?.data.id, payload)
 
       enqueueSnackbar('Update success!')
       push(PATH_CES.account.root)

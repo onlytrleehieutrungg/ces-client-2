@@ -1,9 +1,11 @@
-import { AccountPayload } from 'src/@types/@ces'
+import { AccountData, AccountPayload, BaseResponse, Params } from 'src/@types/@ces'
 import axiosClient from './axiosClient'
 
 export const accountApi = {
-  getAll() {},
-  getById(id: string) {
+  getAll(params: Partial<Params>): Promise<BaseResponse<AccountData[]>> {
+    return axiosClient.get(`/account`, { params })
+  },
+  getById(id: string): Promise<BaseResponse<AccountData>> {
     return axiosClient.get(`/account/${id}`)
   },
   create(payload: AccountPayload) {
