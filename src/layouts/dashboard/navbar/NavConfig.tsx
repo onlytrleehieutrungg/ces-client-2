@@ -36,6 +36,8 @@ const navConfig = [
     items: [
       { title: 'account', path: PATH_CES.account.root, icon: ICONS.user },
       { title: 'group', path: PATH_CES.group.root, icon: ICONS.group },
+      { title: 'order', path: PATH_CES.order.root, icon: ICONS.invoice },
+
     ],
   },
   {
