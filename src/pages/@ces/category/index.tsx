@@ -21,10 +21,9 @@ import {
 } from '@mui/material'
 import { paramCase } from 'change-case'
 import { useRouter } from 'next/router'
-import { useSnackbar } from 'notistack'
 import { useState } from 'react'
-import { AccountData } from 'src/@types/@ces/account'
-import { accountApi } from 'src/api-client'
+// import { UserManager } from 'src/@types/user'
+// import { _userList } from 'src/_mock'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
 import Iconify from 'src/components/Iconify'
 import Scrollbar from 'src/components/Scrollbar'
@@ -34,68 +33,80 @@ import {
   TableNoData,
   TableSelectedActions,
 } from 'src/components/table'
-import { useAccount } from 'src/hooks/@ces'
-import useSettings from 'src/hooks/useSettings'
 import useTable, { emptyRows, getComparator } from 'src/hooks/useTable'
 import useTabs from 'src/hooks/useTabs'
 import { PATH_CES } from 'src/routes/paths'
 import AccountTableRow from 'src/sections/@ces/account/AccountTableRow'
-import AccountTableToolbar from 'src/sections/@ces/account/AccountTableToolbar'
+import { UserTableToolbar } from 'src/sections/@dashboard/user/list'
 import { confirmDialog } from 'src/utils/confirmDialog'
+import { RouterGuard, UserRole } from 'src/guards/RouterGuard'
+import { type } from 'os'
+import CategoryTableRow from 'src/sections/@ces/category/CategoryTableRow'
+
 
 // ----------------------------------------------------------------------
 
-const STATUS_OPTIONS = [
-  {
-    code: 'all',
-    label: 'all',
-  },
-  {
-    code: 1,
-    label: 'active',
-  },
-  {
-    code: 2,
-    label: 'deactive',
-  },
-]
+const STATUS_OPTIONS = ['all', '1', '2', '3']
 
-const ROLE_OPTIONS = [
+const ROLE_OPTIONS = ['all', '1', '2', '3']
+
+
+
+export type Category = {
+  Id: string
+  Name: string
+  Description: string
+  UpdatedAt: string
+  CreatedAt: string
+  Status: string
+}
+
+const categoryData: Category[] = [
   {
-    code: 'all',
-    label: 'all',
+    Id: '1',
+    Name: 'Category A',
+    Description: 'This is Category A',
+    UpdatedAt: '2023-05-30',
+    CreatedAt: '2023-05-29',
+    Status: 'Active'
   },
   {
-    code: 1,
-    label: 'Supplier Admin',
+    Id: '2',
+    Name: 'Category B',
+    Description: 'This is Category B',
+    UpdatedAt: '2023-05-28',
+    CreatedAt: '2023-05-27',
+    Status: 'Inactive'
   },
-  {
-    code: 2,
-    label: 'Enterprise Admin',
-  },
-  {
-    code: 3,
-    label: 'Employee',
-  },
-]
+  // Add more category mock data as needed...
+];
+// const TABLE_HEAD = Object.keys(jsonData).map((key) => ({
+//   id: key.toLowerCase(),
+//   label: key.charAt(0).toUpperCase() + key.slice(1),
+//   align: 'left'
+// }));
 
 const TABLE_HEAD = [
   { id: 'Name', label: 'Name', align: 'left' },
-  { id: 'Email', label: 'Email', align: 'left' },
-  { id: 'Phone', label: 'Phone', align: 'left' },
+  { id: 'Description', label: 'Description', align: 'left' },
   { id: 'Status', label: 'Status', align: 'left' },
+  // { id: 'Quantity', label: 'Quantity', align: 'left' },
+  // { id: 'CategoryId', label: 'CategoryId', align: 'left' },
+
   { id: '' },
 ]
 
 // ----------------------------------------------------------------------
 
-AccountPage.getLayout = function getLayout(page: React.ReactElement) {
+// ----------------------------------------------------------------------
+
+CategoryPage.getLayout = function getLayout(page: React.ReactElement) {
   return <Layout>{page}</Layout>
 }
 
 // ----------------------------------------------------------------------
 
-export default function AccountPage() {
+export default function CategoryPage() {
   const {
     dense,
     page,
@@ -117,12 +128,7 @@ export default function AccountPage() {
 
   const { push } = useRouter()
 
-  const { themeStretch } = useSettings()
-
-  const { enqueueSnackbar } = useSnackbar()
-
-  const { data, mutate } = useAccount()
-  const accountList: AccountData[] = data?.data ?? []
+  const [tableData, setTableData] = useState(categoryData)
 
   const [filterName, setFilterName] = useState('')
 
@@ -140,27 +146,27 @@ export default function AccountPage() {
   }
 
   const handleDeleteRow = (id: string) => {
-    confirmDialog('Do you really want to delete this account ?', async () => {
-      await accountApi.delete(id)
-      mutate()
-      enqueueSnackbar('Delete successfull')
+    confirmDialog('Do you really want to delete this account ?', () => {
+      const deleteRow = tableData.filter((row) => row.Id !== id)
+      setSelected([])
+      setTableData(deleteRow)
+      console.log('delete account action')
     })
   }
 
   const handleDeleteRows = (selected: string[]) => {
+    const deleteRows = tableData.filter((row) => !selected.includes(row.Id))
+    setSelected([])
+    setTableData(deleteRows)
     console.log('delete all account action')
   }
 
   const handleEditRow = (id: string) => {
-    push(PATH_CES.account.edit(paramCase(id)))
-  }
-
-  const handleClickRow = (id: string) => {
-    push(PATH_CES.account.detail(paramCase(id)))
+    push(PATH_CES.category.edit(paramCase(id)))
   }
 
   const dataFiltered = applySortFilter({
-    tableData: accountList,
+    tableData,
     comparator: getComparator(order, orderBy),
     filterName,
     filterRole,
@@ -175,15 +181,20 @@ export default function AccountPage() {
     (!dataFiltered.length && !!filterStatus)
 
   return (
-    <Page title="Account: List">
-      <Container maxWidth={themeStretch ? false : 'lg'}>
+    // <RouterGuard acceptRoles={[UserRole.EMPLOYEEA]}>
+    <Page title="Category: List">
+      <Container>
         <HeaderBreadcrumbs
-          heading="Account List"
-          links={[{ name: 'Dashboard', href: '' }, { name: 'Account', href: '' }, { name: 'List' }]}
+          heading="Category List"
+          links={[
+            { name: 'Dashboard', href: '' },
+            { name: 'Category', href: '' },
+            { name: 'List' },
+          ]}
           action={
-            <NextLink href={PATH_CES.account.new} passHref>
+            <NextLink href={PATH_CES.product.new} passHref>
               <Button variant="contained" startIcon={<Iconify icon={'eva:plus-fill'} />}>
-                New Account
+                New Category
               </Button>
             </NextLink>
           }
@@ -199,13 +210,13 @@ export default function AccountPage() {
             sx={{ px: 2, bgcolor: 'background.neutral' }}
           >
             {STATUS_OPTIONS.map((tab) => (
-              <Tab disableRipple key={tab.code} label={tab.label} value={tab.code} />
+              <Tab disableRipple key={tab} label={tab} value={tab} />
             ))}
           </Tabs>
 
           <Divider />
 
-          <AccountTableToolbar
+          <UserTableToolbar
             filterName={filterName}
             filterRole={filterRole}
             onFilterName={handleFilterName}
@@ -219,11 +230,11 @@ export default function AccountPage() {
                 <TableSelectedActions
                   dense={dense}
                   numSelected={selected.length}
-                  rowCount={accountList.length}
+                  rowCount={tableData.length}
                   onSelectAllRows={(checked) =>
                     onSelectAllRows(
                       checked,
-                      accountList.map((row) => `${row.id}`)
+                      tableData.map((row) => `${row.Id}`)
                     )
                   }
                   actions={
@@ -241,13 +252,13 @@ export default function AccountPage() {
                   order={order}
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
-                  rowCount={accountList.length}
+                  rowCount={tableData.length}
                   numSelected={selected.length}
                   onSort={onSort}
                   onSelectAllRows={(checked) =>
                     onSelectAllRows(
                       checked,
-                      accountList.map((row: any) => `${row.id}`)
+                      tableData.map((row) => `${row.Id}`)
                     )
                   }
                 />
@@ -256,20 +267,19 @@ export default function AccountPage() {
                   {dataFiltered
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row) => (
-                      <AccountTableRow
-                        key={`${row.id}`}
+                      <CategoryTableRow
+                        key={`${row.Id}`}
                         row={row}
-                        selected={selected.includes(`${row.id}`)}
-                        onSelectRow={() => onSelectRow(`${row.id}`)}
-                        onDeleteRow={() => handleDeleteRow(`${row.id}`)}
-                        onEditRow={() => handleEditRow(row.id)}
-                        onClickRow={() => handleClickRow(`${row.id}`)}
+                        selected={selected.includes(`${row.Id}`)}
+                        onSelectRow={() => onSelectRow(`${row.Id}`)}
+                        onDeleteRow={() => handleDeleteRow(`${row.Id}`)}
+                        onEditRow={() => handleEditRow(row.Name)}
                       />
                     ))}
 
                   <TableEmptyRows
                     height={denseHeight}
-                    emptyRows={emptyRows(page, rowsPerPage, accountList.length)}
+                    emptyRows={emptyRows(page, rowsPerPage, tableData.length)}
                   />
 
                   <TableNoData isNotFound={isNotFound} />
@@ -286,9 +296,6 @@ export default function AccountPage() {
               rowsPerPage={rowsPerPage}
               page={page}
               onPageChange={onChangePage}
-              // onPageChange={(e, newPage) => {
-              //   onChangePage(e, newPage)
-              // }}
               onRowsPerPageChange={onChangeRowsPerPage}
             />
 
@@ -300,7 +307,8 @@ export default function AccountPage() {
           </Box>
         </Card>
       </Container>
-    </Page >
+    </Page>
+    // </RouterGuard>
   )
 }
 
@@ -313,7 +321,7 @@ function applySortFilter({
   filterStatus,
   filterRole,
 }: {
-  tableData: AccountData[]
+  tableData: Category[]
   comparator: (a: any, b: any) => number
   filterName: string
   filterStatus: string
@@ -332,16 +340,16 @@ function applySortFilter({
   if (filterName) {
     tableData = tableData.filter(
       (item: Record<string, any>) =>
-        item.name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
+        item.Name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
     )
   }
 
   if (filterStatus !== 'all') {
-    tableData = tableData.filter((item: Record<string, any>) => item.status == filterStatus)
+    tableData = tableData.filter((item: Record<string, any>) => item.Status == filterStatus)
   }
 
   if (filterRole !== 'all') {
-    tableData = tableData.filter((item: Record<string, any>) => item.roleId == filterRole)
+    tableData = tableData.filter((item: Record<string, any>) => item.Role == filterRole)
   }
 
   return tableData

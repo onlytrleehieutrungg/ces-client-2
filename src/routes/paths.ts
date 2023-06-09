@@ -42,6 +42,7 @@ export const PATH_CES = {
     root: path(ROOTS_CES, '/account'),
     new: path(ROOTS_CES, '/account/new'),
     edit: (id: string) => path(ROOTS_CES, `/account/${id}/edit`),
+    detail: (id: string) => path(ROOTS_CES, `/account/${id}`),
   },
   group: {
     root: path(ROOTS_CES, '/group'),
@@ -52,6 +53,15 @@ export const PATH_CES = {
     root: path(ROOTS_CES, '/order'),
     new: path(ROOTS_CES, '/order/new'),
     edit: (id: string) => path(ROOTS_CES, `/order/${id}/edit`),
+  product: {
+    root: path(ROOTS_CES, '/product'),
+    new: path(ROOTS_CES, '/product/new'),
+    edit: (id: string) => path(ROOTS_CES, `/product/${id}/edit`),
+  },
+  category: {
+    root: path(ROOTS_CES, '/category'),
+    new: path(ROOTS_CES, '/category/new'),
+    edit: (id: string) => path(ROOTS_CES, `/category/${id}/edit`),
   },
 }
 

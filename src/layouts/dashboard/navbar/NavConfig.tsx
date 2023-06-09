@@ -38,6 +38,8 @@ const navConfig = [
       { title: 'group', path: PATH_CES.group.root, icon: ICONS.group },
       { title: 'order', path: PATH_CES.order.root, icon: ICONS.invoice },
 
+      { title: 'product', path: PATH_CES.product.root, icon: ICONS.ecommerce },
+      { title: 'category', path: PATH_CES.category.root, icon: ICONS.menuItem },
     ],
   },
   {
@@ -45,7 +47,6 @@ const navConfig = [
 
     items: [{ title: 'TEST AHTHOR', path: PATH_SYS.root, icon: ICONS.user }],
   },
-
   // GENERAL
   // ----------------------------------------------------------------------
   {
