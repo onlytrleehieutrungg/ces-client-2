@@ -12,8 +12,12 @@ import { Box, Card, Grid, Stack, Switch, Typography, FormControlLabel } from '@m
 // utils
 import { fData } from '../../../utils/formatNumber';
 // routes
-import { PATH_CES } from '../../../routes/paths';
-
+import { PATH_DASHBOARD } from '../../../routes/paths';
+// @types
+import { UserManager } from '../../../@types/user';
+// _mock
+import { countries } from '../../../_mock';
+// components
 import Label from '../../../components/Label';
 import {
     FormProvider,
@@ -22,47 +26,42 @@ import {
     RHFTextField,
     RHFUploadAvatar,
 } from '../../../components/hook-form';
-import { Category, Product } from 'src/@types/@ces';
-import { useCategoryList } from 'src/hooks/@ces/useCategory';
+import { Product } from 'src/@types/@ces/product';
 
 // ----------------------------------------------------------------------
-
+``
 type FormValuesProps = Product;
 
 type Props = {
     isEdit?: boolean;
     currentUser?: Product;
-    onSubmit?: (payload: Product) => void
-
 };
 
-export default function ProductNewEditForm({ isEdit = false, currentUser, onSubmit }: Props) {
+export default function OrderNewEditForm({ isEdit = false, currentUser }: Props) {
     const { push } = useRouter();
-    const { data, mutate } = useCategoryList({})
 
-    const categories: Category[] = data?.data ?? []
     const { enqueueSnackbar } = useSnackbar();
 
     const NewUserSchema = Yup.object().shape({
-        name: Yup.string().required('Name is required'),
-        price: Yup.number().required('Price is required'),
-        quantity: Yup.number().required('Quantity is required'),
-        categoryId: Yup.string().required('CategoryId is required'),
-        description: Yup.string().required('Description is required'),
-        serviceDuration: Yup.string().required('ServiceDuration is required'),
-        type: Yup.string().required('Type is required'),
+        Name: Yup.string().required('Name is required'),
+        Price: Yup.number().required('Price is required'),
+        Quantity: Yup.number().required('Quantity is required'),
+        CategoryId: Yup.string().required('CategoryId is required'),
+        Description: Yup.string().required('Description is required'),
+        ServiceDuration: Yup.string().required('ServiceDuration is required'),
+        Type: Yup.string().required('Type is required'),
         avatarUrl: Yup.mixed().test('required', 'Avatar is required', (value) => value !== ''),
     });
 
     const defaultValues = useMemo(
         () => ({
-            name: currentUser?.name || '',
-            price: currentUser?.price || 0,
-            quantity: currentUser?.quantity || 0,
-            categoryId: currentUser?.categoryId || '',
-            description: currentUser?.description || '',
-            serviceDuration: currentUser?.serviceDuration || '',
-            type: currentUser?.type || '',
+            Name: currentUser?.Name || '',
+            Price: currentUser?.Price || 0,
+            Quantity: currentUser?.Quantity || 0,
+            CategoryId: currentUser?.CategoryId || '',
+            Description: currentUser?.Description || '',
+            ServiceDuration: currentUser?.ServiceDuration || '',
+            Type: currentUser?.Type || '',
             avatarUrl: currentUser?.avatarUrl || '',
 
         }),
@@ -70,7 +69,7 @@ export default function ProductNewEditForm({ isEdit = false, currentUser, onSubm
         [currentUser]
     );
 
-    const methods = useForm<Product>({
+    const methods = useForm<FormValuesProps>({
         resolver: yupResolver(NewUserSchema),
         defaultValues,
     });
@@ -96,13 +95,12 @@ export default function ProductNewEditForm({ isEdit = false, currentUser, onSubm
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isEdit, currentUser]);
 
-    const handleFormSubmit = async (data: Product) => {
+    const onSubmit = async (data: FormValuesProps) => {
         try {
-            // await new Promise((resolve) => setTimeout(resolve, 500));
-            // reset();
-            await onSubmit?.(data)
+            await new Promise((resolve) => setTimeout(resolve, 500));
+            reset();
             enqueueSnackbar(!isEdit ? 'Create success!' : 'Update success!');
-            push(PATH_CES.product.root);
+            push(PATH_DASHBOARD.user.list);
         } catch (error) {
             console.error(error);
         }
@@ -125,16 +123,16 @@ export default function ProductNewEditForm({ isEdit = false, currentUser, onSubm
     );
 
     return (
-        <FormProvider methods={methods} onSubmit={handleSubmit(handleFormSubmit)}>
+        <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
             <Grid container spacing={3}>
                 <Grid item xs={12} md={4}>
                     <Card sx={{ py: 10, px: 3 }}>
                         {isEdit && (
                             <Label
-                                color={values.status !== 'active' ? 'error' : 'success'}
+                                color={values.Status !== 'active' ? 'error' : 'success'}
                                 sx={{ textTransform: 'uppercase', position: 'absolute', top: 24, right: 24 }}
                             >
-                                {values.status}
+                                {values.Status}
                             </Label>
                         )}
                         <Box sx={{ mb: 5 }}>
@@ -166,7 +164,7 @@ export default function ProductNewEditForm({ isEdit = false, currentUser, onSubm
                                 labelPlacement="start"
                                 control={
                                     <Controller
-                                        name="status"
+                                        name="Status"
                                         control={control}
                                         render={({ field }) => (
                                             <Switch
@@ -221,22 +219,24 @@ export default function ProductNewEditForm({ isEdit = false, currentUser, onSubm
                                 gridTemplateColumns: { xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)' },
                             }}
                         >
-                            <RHFTextField name="name" label="Tên sản phẩm" />
-                            <RHFTextField name="price" label="Giá sản phẩm" />
-                            <RHFTextField name="quantity" label="Số lượng" />
-                            <RHFSelect name="categoryId" label="category" placeholder="category">
+                            <RHFTextField name="Name" label="Tên sản phẩm" />
+                            <RHFTextField name="Price" label="Giá sản phẩm" />
+                            <RHFTextField name="Quantity" label="Số lượng" />
+                            <RHFSelect name="CategoryId" label="Country" placeholder="Country">
                                 <option value="" />
-                                {categories.map((option) => (
-                                    <option key={option.id} value={option.id}>
-                                        {option.name}
+                                {countries.map((option) => (
+                                    <option key={option.code} value={option.label}>
+                                        {option.label}
                                     </option>
                                 ))}
                             </RHFSelect>
-                            <RHFTextField name="description" label="Description" />
-                            <RHFTextField name="type" label="Type" />
-                            {/* <RHFTextField name="zipCode" label="Zip/Code" /> */}
-                            <RHFTextField name="serviceDuration" label="ServiceDuration" />
-                            {/* <RHFTextField name="role" label="Role" />  */}
+
+                            <RHFTextField name="Description" label="State/Region" />
+                            <RHFTextField name="ServiceDuration" label="City" />
+                            <RHFTextField name="Type" label="Address" />
+                            {/* <RHFTextField name="zipCode" label="Zip/Code" />
+                            <RHFTextField name="company" label="Company" />
+                            <RHFTextField name="role" label="Role" /> */}
                         </Box>
 
                         <Stack alignItems="flex-end" sx={{ mt: 3 }}>

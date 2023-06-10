@@ -12,7 +12,7 @@ import { Box, Card, Grid, Stack, Switch, Typography, FormControlLabel } from '@m
 // utils
 import { fData } from '../../../utils/formatNumber';
 // routes
-import { PATH_DASHBOARD } from '../../../routes/paths';
+import { PATH_CES, PATH_DASHBOARD } from '../../../routes/paths';
 // @types
 import { UserManager } from '../../../@types/user';
 // _mock
@@ -26,8 +26,8 @@ import {
     RHFTextField,
     RHFUploadAvatar,
 } from '../../../components/hook-form';
-import { Product } from 'src/pages/@ces/product';
-import { Category } from 'src/pages/@ces/category';
+import { Category } from 'src/@types/@ces';
+;
 
 // ----------------------------------------------------------------------
 
@@ -36,35 +36,29 @@ type FormValuesProps = Category;
 type Props = {
     isEdit?: boolean;
     currentUser?: Category;
+    onSubmit?: (payload: Category) => void
 };
 
-export default function UserNewEditForm({ isEdit = false, currentUser }: Props) {
+export default function UserNewEditForm({ isEdit = false, currentUser, onSubmit }: Props) {
     const { push } = useRouter();
 
     const { enqueueSnackbar } = useSnackbar();
 
     const NewUserSchema = Yup.object().shape({
-        Name: Yup.string().required('Name is required'),
-        // Price: Yup.number().required('Price is required'),
-        // Quantity: Yup.number().required('Quantity is required'),
-        Status: Yup.string().required('Status is required'),
-        Description: Yup.string().required('Description is required'),
-        // ServiceDuration: Yup.string().required('ServiceDuration is required'),
-        // Type: Yup.string().required('Type is required'),
-        // avatarUrl: Yup.mixed().test('required', 'Avatar is required', (value) => value !== ''),
+        name: Yup.string().required('Name is required'),
+        description: Yup.string().required('Description is required'),
     });
 
     const defaultValues = useMemo(
         () => ({
-            Name: currentUser?.Name || '',
-            Description: currentUser?.Description || '',
-            Type: currentUser?.Status || '',
+            name: currentUser?.name || '',
+            description: currentUser?.description || '',
         }),
         // eslint-disable-next-line react-hooks/exhaustive-deps
         [currentUser]
     );
 
-    const methods = useForm<FormValuesProps>({
+    const methods = useForm<Category>({
         resolver: yupResolver(NewUserSchema),
         defaultValues,
     });
@@ -90,12 +84,13 @@ export default function UserNewEditForm({ isEdit = false, currentUser }: Props) 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isEdit, currentUser]);
 
-    const onSubmit = async (data: FormValuesProps) => {
+    const handleOnSubmit = async (data: Category) => {
         try {
-            await new Promise((resolve) => setTimeout(resolve, 500));
-            reset();
+            // await new Promise((resolve) => setTimeout(resolve, 500));
+            // reset();
+            await onSubmit?.(data)
             enqueueSnackbar(!isEdit ? 'Create success!' : 'Update success!');
-            push(PATH_DASHBOARD.user.list);
+            push(PATH_CES.category.root);
         } catch (error) {
             console.error(error);
         }
@@ -118,48 +113,24 @@ export default function UserNewEditForm({ isEdit = false, currentUser }: Props) 
     // );
 
     return (
-        <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
+        <FormProvider methods={methods} onSubmit={handleSubmit(handleOnSubmit)}>
             <Grid container spacing={3}>
-                <Grid item xs={12} md={4}>
+                {/* <Grid item xs={12} md={4}>
                     <Card sx={{ py: 10, px: 3 }}>
                         {isEdit && (
                             <Label
-                                color={values.Status !== 'active' ? 'error' : 'success'}
+                                color={values.status !== 'active' ? 'error' : 'success'}
                                 sx={{ textTransform: 'uppercase', position: 'absolute', top: 24, right: 24 }}
                             >
-                                {values.Status}
+                                {values.status}
                             </Label>
                         )}
-                        {/* <Box sx={{ mb: 5 }}>
-                            <RHFUploadAvatar
-                                name="avatarUrl"
-                                accept="image/*"
-                                maxSize={3145728}
-                                onDrop={handleDrop}
-                                helperText={
-                                    <Typography
-                                        variant="caption"
-                                        sx={{
-                                            mt: 2,
-                                            mx: 'auto',
-                                            display: 'block',
-                                            textAlign: 'center',
-                                            color: 'text.secondary',
-                                        }}
-                                    >
-                                        Allowed *.jpeg, *.jpg, *.png, *.gif
-                                        <br /> max size of {fData(3145728)}
-                                    </Typography>
-                                }
-                            />
-                        </Box> */}
-
                         {isEdit && (
                             <FormControlLabel
                                 labelPlacement="start"
                                 control={
                                     <Controller
-                                        name="Status"
+                                        name="status"
                                         control={control}
                                         render={({ field }) => (
                                             <Switch
@@ -202,7 +173,7 @@ export default function UserNewEditForm({ isEdit = false, currentUser }: Props) 
                             sx={{ mx: 0, width: 1, justifyContent: 'space-between' }}
                         />
                     </Card>
-                </Grid>
+                </Grid> */}
 
                 <Grid item xs={12} md={8}>
                     <Card sx={{ p: 3 }}>
@@ -214,19 +185,19 @@ export default function UserNewEditForm({ isEdit = false, currentUser }: Props) 
                                 gridTemplateColumns: { xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)' },
                             }}
                         >
-                            <RHFTextField name="Name" label="Tên sản phẩm" />
+                            <RHFTextField name="name" label="Tên danh mục" />
                             {/* <RHFTextField name="Price" label="Giá sản phẩm" />
                             <RHFTextField name="Quantity" label="Số lượng" /> */}
-                            <RHFSelect name="Status" label="Status" placeholder="Status">
+                            {/* <RHFSelect name="status" label="status" placeholder="status">
                                 <option value="" />
                                 {countries.map((option) => (
                                     <option key={option.code} value={option.label}>
                                         {option.label}
                                     </option>
                                 ))}
-                            </RHFSelect>
+                            </RHFSelect> */}
 
-                            <RHFTextField name="Description" label="State/Region" />
+                            <RHFTextField name="description" label="Desciption" />
                             {/* <RHFTextField name="ServiceDuration" label="City" />
                             <RHFTextField name="Type" label="Address" /> */}
                             {/* <RHFTextField name="zipCode" label="Zip/Code" />

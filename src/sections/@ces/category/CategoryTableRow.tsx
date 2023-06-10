@@ -5,8 +5,7 @@ import { Avatar, Checkbox, TableRow, TableCell, Typography, MenuItem } from '@mu
 import { TableMoreMenu } from 'src/components/table';
 import Iconify from 'src/components/Iconify';
 import Label from 'src/components/Label';
-import { Product } from 'src/pages/@ces/product';
-import { Category } from 'src/pages/@ces/category';
+import { Category } from 'src/@types/@ces';
 // @types
 
 // components
@@ -31,7 +30,7 @@ export default function CategoryTableRow({
 }: Props) {
     const theme = useTheme();
 
-    const { Name, Description, Status } = row;
+    const { name, description, status } = row;
 
     const [openMenu, setOpenMenuActions] = useState<HTMLElement | null>(null);
 
@@ -55,9 +54,9 @@ export default function CategoryTableRow({
                     {Name}
                 </Typography>
             </TableCell> */}
-            {/* <TableCell align="left">{Name}</TableCell> */}
-            <TableCell align="left">{Description}</TableCell>
-            <TableCell align="left">{Status}</TableCell>
+            <TableCell align="left">{name}</TableCell>
+            <TableCell align="left">{description}</TableCell>
+            {/* <TableCell align="left">{status}</TableCell> */}
 
 
             {/* <TableCell align="left" sx={{ textTransform: 'capitalize' }}>

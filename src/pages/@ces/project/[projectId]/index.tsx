@@ -40,9 +40,9 @@ export default function ProjectDetails() {
 
   const handleEditProjectSubmit = async (payload: ProjectPayload) => {
     try {
-      await projectApi.update(data?.data.id, payload)
+      // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
+      await projectApi.update(data?.data?.id!, payload)
       // await update(data?.data?.id, payload)
-
       enqueueSnackbar('Update success!')
     } catch (error) {
       enqueueSnackbar('Update failed!')

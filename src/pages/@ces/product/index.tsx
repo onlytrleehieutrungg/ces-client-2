@@ -46,6 +46,7 @@ import { productApi } from 'src/api-client/product'
 import { Product } from 'src/@types/@ces/product'
 import { useProduct } from 'src/hooks/@ces/useProduct'
 import useSWR from 'swr'
+import { useSnackbar } from 'notistack'
 
 // ----------------------------------------------------------------------
 
@@ -56,45 +57,8 @@ const ROLE_OPTIONS = ['all', '1', '2', '3']
 
 
 
-export type Category = {
-  Id: string
-  Name: string
-  Description: string
-  UpdatedAt: string
-  CreatedAt: string
-  Status: string
-}
-const productData: Product[] = [
-  {
-    Id: '1',
-    Price: 10.99,
-    Quantity: 5,
-    avatarUrl: "sadsad",
-    Name: 'Product A',
-    Status: 'Active',
-    UpdatedAt: '2023-05-30',
-    CreatedAt: '2023-05-29',
-    Description: 'This is Product A',
-    ServiceDuration: '1 year',
-    Type: 'Type A',
-    CategoryId: '1'
-  },
-  {
-    Id: '2',
-    Price: 19.99,
-    Quantity: 10,
-    avatarUrl: "avatarUrl",
-    Name: 'Product B',
-    Status: 'Inactive',
-    UpdatedAt: '2023-05-28',
-    CreatedAt: '2023-05-27',
-    Description: 'This is Product B',
-    ServiceDuration: '6 months',
-    Type: 'Type B',
-    CategoryId: '2'
-  },
-  // Add more product mock data as needed...
-];
+
+
 // const TABLE_HEAD = Object.keys(jsonData).map((key) => ({
 //   id: key.toLowerCase(),
 //   label: key.charAt(0).toUpperCase() + key.slice(1),
@@ -106,8 +70,7 @@ const TABLE_HEAD = [
   { id: 'Description', label: 'Description', align: 'left' },
   { id: 'Price', label: 'Price', align: 'left' },
   { id: 'Quantity', label: 'Quantity', align: 'left' },
-  { id: 'CategoryId', label: 'CategoryId', align: 'left' },
-  { id: '' },
+  { id: 'category.name', label: 'Carogory', align: 'left' },
 ]
 
 // ----------------------------------------------------------------------
@@ -141,19 +104,24 @@ export default function ProductPage() {
   } = useTable()
 
   const { push } = useRouter()
-  const { products, mutate } = useProduct()
+  const { data, mutate } = useProduct({})
 
-  const accountList: Product[] = products?.data ?? []
+  const tableData: Product[] = data?.data ?? []
+  // console.log("data", Data);
 
-  const [tableData, setTableData] = useState<Product[]>(accountList)
-  console.log(tableData);
+  // const tableData = Data.filter(product => product?.status == 1)
+  // console.log(tableData);
+
+
+  // const [tableData, setTableData] = useState<Product[]>(accountList)
+  // console.log(tableData);
   // const { data } = useSWR()
 
   const [filterName, setFilterName] = useState('')
   const [filterRole, setFilterRole] = useState('all')
 
   const { currentTab: filterStatus, onChangeTab: onChangeFilterStatus } = useTabs('all')
-
+  const { enqueueSnackbar } = useSnackbar()
   const handleFilterName = (filterName: string) => {
     setFilterName(filterName)
     setPage(0)
@@ -164,18 +132,21 @@ export default function ProductPage() {
   }
 
   const handleDeleteRow = (id: string) => {
-    confirmDialog('Do you really want to delete this account ?', () => {
-      const deleteRow = tableData.filter((row) => row.Id !== id)
-      setSelected([])
-      setTableData(deleteRow)
-      console.log('delete account action')
+    confirmDialog('Do you really want to delete this product ?', async () => {
+      try {
+        await productApi.delete(id)
+        mutate()
+        enqueueSnackbar('Delete successfull')
+      } catch (error) {
+        enqueueSnackbar('Delete failed')
+        console.error(error)
+      }
     })
   }
 
   const handleDeleteRows = (selected: string[]) => {
-    const deleteRows = tableData.filter((row) => !selected.includes(row.Id))
+    const deleteRows = tableData.filter((row) => !selected.includes(row.id))
     setSelected([])
-    setTableData(deleteRows)
     console.log('delete all account action')
   }
 
@@ -207,7 +178,7 @@ export default function ProductPage() {
           heading="Product List"
           links={[
             { name: 'Dashboard', href: '' },
-            { name: 'Account', href: '' },
+            { name: 'Product', href: '' },
             { name: 'List' },
           ]}
           action={
@@ -252,7 +223,7 @@ export default function ProductPage() {
                   onSelectAllRows={(checked) =>
                     onSelectAllRows(
                       checked,
-                      tableData.map((row) => `${row.Id}`)
+                      tableData.map((row) => `${row.id}`)
                     )
                   }
                   actions={
@@ -276,22 +247,21 @@ export default function ProductPage() {
                   onSelectAllRows={(checked) =>
                     onSelectAllRows(
                       checked,
-                      tableData.map((row) => `${row.Id}`)
+                      tableData.map((row) => `${row.id}`)
                     )
                   }
                 />
-
                 <TableBody>
                   {dataFiltered
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row) => (
                       <ProductTableRow
-                        key={`${row.Id}`}
+                        key={`${row.id}`}
                         row={row}
-                        selected={selected.includes(`${row.Id}`)}
-                        onSelectRow={() => onSelectRow(`${row.Id}`)}
-                        onDeleteRow={() => handleDeleteRow(`${row.Id}`)}
-                        onEditRow={() => handleEditRow(row.Name)}
+                        selected={selected.includes(`${row.id}`)}
+                        onSelectRow={() => onSelectRow(`${row.id}`)}
+                        onDeleteRow={() => handleDeleteRow(`${row.id}`)}
+                        onEditRow={() => handleEditRow(row.id)}
                       />
                     ))}
 

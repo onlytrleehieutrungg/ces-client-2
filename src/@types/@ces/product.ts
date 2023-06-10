@@ -1,15 +1,17 @@
+import { Category } from './category'
 
 export type Product = {
-    Id: string
-    Name: string
-    Price: number
-    avatarUrl: string;
-    Quantity: number
-    Status: string
-    UpdatedAt: string
-    CreatedAt: string
-    Description: string
-    ServiceDuration: string
-    Type: string
-    CategoryId: string
-  }
+  id: string
+  name: string
+  price: number
+  avatarUrl: string
+  quantity: number
+  status: string
+  updatedAt: string
+  createdAt: string
+  description: string
+  serviceDuration: string
+  type: string
+  categoryId: string
+  category: Category
+}

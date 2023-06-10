@@ -1,8 +1,8 @@
 export type Category = {
-    Id: string
-    Name: string
-    Description: string
-    UpdatedAt: string
-    CreatedAt: string
-    Status: string
-  }
+  id: number
+  name: string
+  description: string
+  updatedAt: string
+  createdAt: string
+  status: string
+}

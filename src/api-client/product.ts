@@ -1,21 +1,15 @@
-import { Product } from 'src/@types/product'
+import { BaseResponse, Params } from 'src/@types/@ces'
+import { Product } from 'src/@types/@ces/product'
 import axiosClient from './axiosClient'
 
 export const productApi = {
-  getAll: async () => {
-    const res = await axiosClient.get<Product[]>('/product')
-    return res.data
+  getAll(params: Partial<Params>): Promise<BaseResponse<Product[]>> {
+    return axiosClient.get('/product', { params })
   },
   getById(id: string) {
     return axiosClient.get(`/product/${id}`)
   },
-  create(payload: Product) {
-    return axiosClient.post('/product', payload)
-  },
-  delete(id: string) {
-    return axiosClient.delete(`/product/${id}`)
-  },
-  update(id: string, payload: Product) {
-    return axiosClient.put(`/account/${id}`, payload)
-  },
+  create: async (payload: Product) => await axiosClient.post('/product', payload),
+  delete: async (id: string) => await axiosClient.delete(`/product/${id}`),
+  update: async (id: string, payload: Product) => await axiosClient.put(`/product/${id}`, payload),
 }

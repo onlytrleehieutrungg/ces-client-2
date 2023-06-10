@@ -39,6 +39,7 @@ import { PATH_CES } from 'src/routes/paths'
 import { UserTableRow, UserTableToolbar } from 'src/sections/@dashboard/user/list'
 import { confirmDialog } from 'src/utils/confirmDialog'
 import { Order } from 'src/@types/@ces/order'
+import OrderTableRow from 'src/sections/@ces/order/OrderTableRow'
 
 // ----------------------------------------------------------------------
 
@@ -274,7 +275,7 @@ export default function AccountPage() {
                   {dataFiltered
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row) => (
-                      <UserTableRow
+                      <OrderTableRow
                         key={row.id}
                         row={row}
                         selected={selected.includes(row.id)}

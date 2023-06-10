@@ -7,9 +7,12 @@ import { _userList } from 'src/_mock'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
 import Page from 'src/components/Page'
 import Layout from 'src/layouts'
-import AccountNewEditForm from 'src/sections/@ces/account/AccountNewEditForm'
-import { Product } from '..'
 import ProductNewEditForm from 'src/sections/@ces/product/ProductNewEditForm'
+import { useProductDetail } from 'src/hooks/@ces/useProduct'
+import { PATH_CES } from 'src/routes/paths'
+import { productApi } from 'src/api-client/product'
+import { Product } from 'src/@types/@ces/product'
+import { useSnackbar } from 'notistack'
 
 ProductEditPage.getLayout = function getLayout(page: React.ReactElement) {
   return <Layout>{page}</Layout>
@@ -18,42 +21,21 @@ ProductEditPage.getLayout = function getLayout(page: React.ReactElement) {
 // ----------------------------------------------------------------------
 
 export default function ProductEditPage() {
-  const { query } = useRouter()
-
+  const { query, push } = useRouter()
+  const { enqueueSnackbar } = useSnackbar()
   const { productId } = query
-  const productData: Product[] = [
-    {
-      Id: '1',
-      Price: 10.99,
-      Quantity: 5,
-      avatarUrl: "sadsad",
-      Name: 'Product A',
-      Status: 'Active',
-      UpdatedAt: '2023-05-30',
-      CreatedAt: '2023-05-29',
-      Description: 'This is Product A',
-      ServiceDuration: '1 year',
-      Type: 'Type A',
-      CategoryId: '1'
-    },
-    {
-      Id: '2',
-      Price: 19.99,
-      Quantity: 10,
-      avatarUrl: "avatarUrl",
-      Name: 'Product B',
-      Status: 'Inactive',
-      UpdatedAt: '2023-05-28',
-      CreatedAt: '2023-05-27',
-      Description: 'This is Product B',
-      ServiceDuration: '6 months',
-      Type: 'Type B',
-      CategoryId: '2'
-    },
-    // Add more product mock data as needed...
-  ];
-  const currentUser = productData.find((product) => paramCase(product.Name) === productId)
-  console.log(currentUser);
+  const { data } = useProductDetail({ id: `${productId}` })
+  const handleEditProductSubmit = async (payload: Product) => {
+    try {
+      await productApi.update(`${productId}`, payload)
+      // await update(data?.data.id, payload)
+      enqueueSnackbar('Update success!')
+      push(PATH_CES.product.root)
+    } catch (error) {
+      enqueueSnackbar('Update failed!')
+      console.error(error)
+    }
+  }
 
   return (
     <Page title="Product: Edit Product">
@@ -63,10 +45,12 @@ export default function ProductEditPage() {
           links={[
             { name: 'Dashboard', href: '' },
             { name: 'Product', href: '' },
-            { name: capitalCase(productId as string) },
+            { name: capitalCase(data?.data?.name as string) },
           ]}
         />
-        <ProductNewEditForm isEdit currentUser={currentUser} />
+        {data && (
+          <ProductNewEditForm isEdit currentUser={data?.data} onSubmit={handleEditProductSubmit} />
+        )}
       </Container>
     </Page>
   )

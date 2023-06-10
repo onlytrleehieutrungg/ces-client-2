@@ -7,10 +7,6 @@ import Iconify from 'src/components/Iconify';
 import Label from 'src/components/Label';
 import { Product } from 'src/@types/@ces/product';
 // @types
-
-// components
-
-
 // ------------------------------------------------------d----------------
 
 type Props = {
@@ -21,7 +17,7 @@ type Props = {
     onDeleteRow: VoidFunction;
 };
 
-export default function ProductTableRow({
+export default function OrderTableRow({
     row,
     selected,
     onEditRow,
@@ -30,7 +26,7 @@ export default function ProductTableRow({
 }: Props) {
     const theme = useTheme();
 
-    const { name, price, quantity, description, category, avatarUrl } = row;
+    const { Name, Price, Quantity, Description, CategoryId, avatarUrl } = row;
 
     const [openMenu, setOpenMenuActions] = useState<HTMLElement | null>(null);
 
@@ -49,19 +45,19 @@ export default function ProductTableRow({
             </TableCell>
 
             <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
-                <Avatar alt={name} src={avatarUrl} sx={{ mr: 2 }} />
+                <Avatar alt={Name} src={avatarUrl} sx={{ mr: 2 }} />
                 <Typography variant="subtitle2" noWrap>
-                    {name}
+                    {Name}
                 </Typography>
             </TableCell>
             {/* <TableCell align="left">{Name}</TableCell> */}
-            <TableCell align="left">{description}</TableCell>
-            <TableCell align="left">{price}</TableCell>
+            <TableCell align="left">{Description}</TableCell>
+            <TableCell align="left">{Price}</TableCell>
 
             <TableCell align="left" sx={{ textTransform: 'capitalize' }}>
-                {quantity}
+                {Quantity}
             </TableCell>
-            <TableCell align="left">{category?.name}</TableCell>
+            <TableCell align="left">{CategoryId}</TableCell>
             {/* <TableCell align="center">
                 <Iconify
                     icon={isVerified ? 'eva:checkmark-circle-fill' : 'eva:clock-outline'}

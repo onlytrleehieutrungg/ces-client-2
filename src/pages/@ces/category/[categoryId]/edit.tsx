@@ -8,8 +8,12 @@ import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
 import Page from 'src/components/Page'
 import Layout from 'src/layouts'
 import AccountNewEditForm from 'src/sections/@ces/account/AccountNewEditForm'
-import { Category } from '..'
 import CategoryNewEditForm from 'src/sections/@ces/category/CategoryNewEditForm'
+import { useSnackbar } from 'notistack'
+import { useCategoryDetails } from 'src/hooks/@ces/useCategory'
+import { Category } from 'src/@types/@ces'
+import { categoryApi } from 'src/api-client/category'
+import { PATH_CES } from 'src/routes/paths'
 
 CategoryEditPage.getLayout = function getLayout(page: React.ReactElement) {
   return <Layout>{page}</Layout>
@@ -18,30 +22,23 @@ CategoryEditPage.getLayout = function getLayout(page: React.ReactElement) {
 // ----------------------------------------------------------------------
 
 export default function CategoryEditPage() {
-  const { query } = useRouter()
-
-  const categoryData: Category[] = [
-    {
-      Id: '1',
-      Name: 'Category A',
-      Description: 'This is Category A',
-      UpdatedAt: '2023-05-30',
-      CreatedAt: '2023-05-29',
-      Status: 'Active'
-    },
-    {
-      Id: '2',
-      Name: 'Category B',
-      Description: 'This is Category B',
-      UpdatedAt: '2023-05-28',
-      CreatedAt: '2023-05-27',
-      Status: 'Inactive'
-    },
-    // Add more category mock data as needed...
-  ];
+  const { query, push } = useRouter()
+  const { enqueueSnackbar } = useSnackbar()
   const { categoryId } = query
+  const { data } = useCategoryDetails({ id: `${categoryId}` })
+  // const name = data?.data?.name.toString().toUpperCase()
 
-  const currentUser = categoryData.find((category) => paramCase(category.Id) === categoryId)
+  const handleEditCategorySubmit = async (payload: Category) => {
+    try {
+      await categoryApi.update(`${categoryId}`, payload)
+      // await update(data?.data.id, payload)
+      enqueueSnackbar('Update success!')
+      push(PATH_CES.category.root)
+    } catch (error) {
+      enqueueSnackbar('Update failed!')
+      console.error(error)
+    }
+  }
 
   return (
     <Page title="Category: Edit category">
@@ -51,11 +48,11 @@ export default function CategoryEditPage() {
           links={[
             { name: 'Dashboard', href: '' },
             { name: 'Category', href: '' },
-            { name: capitalCase(categoryId as string) },
+            { name: data?.data?.name },
           ]}
         />
 
-        <CategoryNewEditForm isEdit currentUser={currentUser} />
+        <CategoryNewEditForm isEdit currentUser={data?.data} onSubmit={handleEditCategorySubmit} />
       </Container>
     </Page>
   )

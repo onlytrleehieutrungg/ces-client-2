@@ -42,6 +42,10 @@ import { confirmDialog } from 'src/utils/confirmDialog'
 import { RouterGuard, UserRole } from 'src/guards/RouterGuard'
 import { type } from 'os'
 import CategoryTableRow from 'src/sections/@ces/category/CategoryTableRow'
+import { useCategoryList } from 'src/hooks/@ces/useCategory'
+import { Category } from 'src/@types/@ces'
+import { categoryApi } from 'src/api-client/category'
+import { useSnackbar } from 'notistack'
 
 
 // ----------------------------------------------------------------------
@@ -52,34 +56,6 @@ const ROLE_OPTIONS = ['all', '1', '2', '3']
 
 
 
-export type Category = {
-  Id: string
-  Name: string
-  Description: string
-  UpdatedAt: string
-  CreatedAt: string
-  Status: string
-}
-
-const categoryData: Category[] = [
-  {
-    Id: '1',
-    Name: 'Category A',
-    Description: 'This is Category A',
-    UpdatedAt: '2023-05-30',
-    CreatedAt: '2023-05-29',
-    Status: 'Active'
-  },
-  {
-    Id: '2',
-    Name: 'Category B',
-    Description: 'This is Category B',
-    UpdatedAt: '2023-05-28',
-    CreatedAt: '2023-05-27',
-    Status: 'Inactive'
-  },
-  // Add more category mock data as needed...
-];
 // const TABLE_HEAD = Object.keys(jsonData).map((key) => ({
 //   id: key.toLowerCase(),
 //   label: key.charAt(0).toUpperCase() + key.slice(1),
@@ -89,11 +65,7 @@ const categoryData: Category[] = [
 const TABLE_HEAD = [
   { id: 'Name', label: 'Name', align: 'left' },
   { id: 'Description', label: 'Description', align: 'left' },
-  { id: 'Status', label: 'Status', align: 'left' },
-  // { id: 'Quantity', label: 'Quantity', align: 'left' },
-  // { id: 'CategoryId', label: 'CategoryId', align: 'left' },
 
-  { id: '' },
 ]
 
 // ----------------------------------------------------------------------
@@ -128,7 +100,10 @@ export default function CategoryPage() {
 
   const { push } = useRouter()
 
-  const [tableData, setTableData] = useState(categoryData)
+  const { data, mutate } = useCategoryList({})
+
+  const tableData: Category[] = data?.data ?? []
+  const { enqueueSnackbar } = useSnackbar()
 
   const [filterName, setFilterName] = useState('')
 
@@ -146,23 +121,27 @@ export default function CategoryPage() {
   }
 
   const handleDeleteRow = (id: string) => {
-    confirmDialog('Do you really want to delete this account ?', () => {
-      const deleteRow = tableData.filter((row) => row.Id !== id)
-      setSelected([])
-      setTableData(deleteRow)
-      console.log('delete account action')
+    const cateId = parseInt(id)
+    confirmDialog('Do you really want to delete this category ?', async () => {
+      try {
+        await categoryApi.delete(cateId)
+        mutate()
+        enqueueSnackbar('Delete successfull')
+      } catch (error) {
+        enqueueSnackbar('Delete failed')
+        console.error(error)
+      }
     })
   }
 
   const handleDeleteRows = (selected: string[]) => {
-    const deleteRows = tableData.filter((row) => !selected.includes(row.Id))
+    // const deleteRows = tableData.filter((row) => !selected.includes(row.id))
     setSelected([])
-    setTableData(deleteRows)
     console.log('delete all account action')
   }
 
-  const handleEditRow = (id: string) => {
-    push(PATH_CES.category.edit(paramCase(id)))
+  const handleEditRow = (id: number) => {
+    push(PATH_CES.category.edit(paramCase(id.toString())))
   }
 
   const dataFiltered = applySortFilter({
@@ -192,7 +171,7 @@ export default function CategoryPage() {
             { name: 'List' },
           ]}
           action={
-            <NextLink href={PATH_CES.product.new} passHref>
+            <NextLink href={PATH_CES.category.new} passHref>
               <Button variant="contained" startIcon={<Iconify icon={'eva:plus-fill'} />}>
                 New Category
               </Button>
@@ -234,7 +213,7 @@ export default function CategoryPage() {
                   onSelectAllRows={(checked) =>
                     onSelectAllRows(
                       checked,
-                      tableData.map((row) => `${row.Id}`)
+                      tableData.map((row) => `${row.id}`)
                     )
                   }
                   actions={
@@ -258,7 +237,7 @@ export default function CategoryPage() {
                   onSelectAllRows={(checked) =>
                     onSelectAllRows(
                       checked,
-                      tableData.map((row) => `${row.Id}`)
+                      tableData.map((row) => `${row.id}`)
                     )
                   }
                 />
@@ -268,20 +247,18 @@ export default function CategoryPage() {
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row) => (
                       <CategoryTableRow
-                        key={`${row.Id}`}
+                        key={`${row.id}`}
                         row={row}
-                        selected={selected.includes(`${row.Id}`)}
-                        onSelectRow={() => onSelectRow(`${row.Id}`)}
-                        onDeleteRow={() => handleDeleteRow(`${row.Id}`)}
-                        onEditRow={() => handleEditRow(row.Name)}
+                        selected={selected.includes(`${row.id}`)}
+                        onSelectRow={() => onSelectRow(`${row.id}`)}
+                        onDeleteRow={() => handleDeleteRow(`${row.id}`)}
+                        onEditRow={() => handleEditRow(row.id)}
                       />
                     ))}
-
                   <TableEmptyRows
                     height={denseHeight}
                     emptyRows={emptyRows(page, rowsPerPage, tableData.length)}
                   />
-
                   <TableNoData isNotFound={isNotFound} />
                 </TableBody>
               </Table>
@@ -354,3 +331,7 @@ function applySortFilter({
 
   return tableData
 }
+// function enqueueSnackbar(arg0: string) {
+//   throw new Error('Function not implemented.')
+// }
+
