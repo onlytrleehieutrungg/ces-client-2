@@ -32,7 +32,7 @@ export default function ProjectEditPage() {
 
   const handleEditProjectSubmit = async (payload: ProjectPayload) => {
     try {
-      await projectApi.update(data?.data.id, payload)
+      await projectApi.update(`${projectId}`, payload)
 
       enqueueSnackbar('Update success!')
       push(PATH_CES.project.root)

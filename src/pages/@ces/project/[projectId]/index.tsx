@@ -40,7 +40,7 @@ export default function ProjectDetails() {
 
   const handleEditProjectSubmit = async (payload: ProjectPayload) => {
     try {
-      await projectApi.update(data?.data.id, payload)
+      await projectApi.update(`${projectId}`, payload)
       // await update(data?.data?.id, payload)
 
       enqueueSnackbar('Update success!')
