@@ -44,17 +44,17 @@ export const PATH_CES = {
     edit: (id: string) => path(ROOTS_CES, `/account/${id}/edit`),
     detail: (id: string) => path(ROOTS_CES, `/account/${id}`),
   },
-  group: {
-    root: path(ROOTS_CES, '/group'),
-    new: path(ROOTS_CES, '/group/new'),
-    edit: (id: string) => path(ROOTS_CES, `/group/${id}/edit`),
+  project: {
+    root: path(ROOTS_CES, '/project'),
+    new: path(ROOTS_CES, '/project/new'),
+    edit: (id: string) => path(ROOTS_CES, `/project/${id}/edit`),
+    detail: (id: string) => path(ROOTS_CES, `/project/${id}`),
   },
   order: {
     root: path(ROOTS_CES, '/order'),
     new: path(ROOTS_CES, '/order/new'),
     edit: (id: string) => path(ROOTS_CES, `/order/${id}/edit`),
     detail: (id: string) => path(ROOTS_CES, `/order/${id}`),
-    
   },
   product: {
     root: path(ROOTS_CES, '/product'),
@@ -62,11 +62,6 @@ export const PATH_CES = {
     edit: (id: string) => path(ROOTS_CES, `/product/${id}/edit`),
   },
   category: {
-    root: path(ROOTS_CES, '/category'),
-    new: path(ROOTS_CES, '/category/new'),
-    edit: (id: string) => path(ROOTS_CES, `/category/${id}/edit`),
-  },
-  project: {
     root: path(ROOTS_CES, '/category'),
     new: path(ROOTS_CES, '/category/new'),
     edit: (id: string) => path(ROOTS_CES, `/category/${id}/edit`),
