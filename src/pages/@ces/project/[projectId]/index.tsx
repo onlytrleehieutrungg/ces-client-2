@@ -42,7 +42,6 @@ export default function ProjectDetails() {
     try {
       await projectApi.update(`${projectId}`, payload)
       // await update(data?.data?.id, payload)
-
       enqueueSnackbar('Update success!')
     } catch (error) {
       enqueueSnackbar('Update failed!')

@@ -6,8 +6,13 @@ export enum UserRole {
     SYSTEMADMIN = 0,
     EMTERPRISEADMIN = 1,
     SUPPLIERADMIN = 2,
-    EMPLOYEEA = 3
+    EMPLOYEE = 3
 }
+
+export const routes = {
+    deniedPage: "/dashboard/permission-denied"
+}
+
 interface RouterGuardProps {
     acceptRoles: Array<UserRole>
 }
@@ -16,15 +21,10 @@ export const RouterGuard: React.FC<RouterGuardProps> = ({ children, acceptRoles 
     const { user, isAuthenticated } = useAuth();
     const router = useRouter()
     const role = user?.roleId
-    const condition = acceptRoles.find((item) => item === role);
-    console.log("acceptrole", acceptRoles)
-    console.log("crt", role)
-    console.log(isAuthenticated);
-
+    const condition = acceptRoles.find((item) => item === role)
     React.useEffect(() => {
         if (isAuthenticated && condition === undefined) {
-
-            router.push("/dashboard/permission-denied")
+            router.push(routes.deniedPage)
         }
     }, [isAuthenticated, condition, router])
 

@@ -52,9 +52,7 @@ export default function UserTableRow({
           {name}
         </Typography>
       </TableCell>
-
       <TableCell align="left">{company}</TableCell>
-
       <TableCell align="left" sx={{ textTransform: 'capitalize' }}>
         {role}
       </TableCell>
