@@ -7,7 +7,26 @@ export type ProjectData = {
   status: number
   imageUrl: string
   companyId: number
-  projectAccount: any
+  projectAccounts: {
+    id: string
+    projectId: string
+    accountId: string
+    account: {
+      id: string
+      name: string
+      email: string
+      address: string
+      phone: string
+      updatedAt: string
+      createdAt: string
+      imageUrl: string
+      status: number
+      roleId: number
+      companyId: number
+      wallets: any
+    }
+    project: null
+  }[]
 }
 
 export type ProjectPayload = {
