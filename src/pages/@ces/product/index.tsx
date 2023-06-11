@@ -107,15 +107,6 @@ export default function ProductPage() {
   const { data, mutate } = useProduct({})
 
   const tableData: Product[] = data?.data ?? []
-  // console.log("data", Data);
-
-  // const tableData = Data.filter(product => product?.status == 1)
-  // console.log(tableData);
-
-
-  // const [tableData, setTableData] = useState<Product[]>(accountList)
-  // console.log(tableData);
-  // const { data } = useSWR()
 
   const [filterName, setFilterName] = useState('')
   const [filterRole, setFilterRole] = useState('all')

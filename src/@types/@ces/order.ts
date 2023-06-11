@@ -1,3 +1,5 @@
+import { Product } from "./product"
+
 export type Order = {
   id: string
   total: number
@@ -13,24 +15,12 @@ export type Order = {
 }
 
 export type OrderDetail = {
-  id: string
   price: number
   quantity: number
   createAt: string
   notes: string
-  productId: string
-  orderId: string
-  product: Product[]
+  productId: string 
+  product: Product
 }
 
-export type Product = {
-  id: string
-  quantity: number
-  name: string
-  status: number
-  description: string
-  serviceDuration: string
-  type: number
-  imageUrl: string
-  categoryId: string
-}
+

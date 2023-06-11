@@ -53,6 +53,8 @@ export const PATH_CES = {
     root: path(ROOTS_CES, '/order'),
     new: path(ROOTS_CES, '/order/new'),
     edit: (id: string) => path(ROOTS_CES, `/order/${id}/edit`),
+    detail: (id: string) => path(ROOTS_CES, `/order/${id}`),
+    
   },
   product: {
     root: path(ROOTS_CES, '/product'),

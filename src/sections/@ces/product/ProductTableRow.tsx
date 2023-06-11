@@ -54,7 +54,6 @@ export default function ProductTableRow({
                     {name}
                 </Typography>
             </TableCell>
-            {/* <TableCell align="left">{Name}</TableCell> */}
             <TableCell align="left">{description}</TableCell>
             <TableCell align="left">{price}</TableCell>
 
@@ -62,27 +61,6 @@ export default function ProductTableRow({
                 {quantity}
             </TableCell>
             <TableCell align="left">{category?.name}</TableCell>
-            {/* <TableCell align="center">
-                <Iconify
-                    icon={isVerified ? 'eva:checkmark-circle-fill' : 'eva:clock-outline'}
-                    sx={{
-                        width: 20,
-                        height: 20,
-                        color: 'success.main',
-                        ...(!isVerified && { color: 'warning.main' }),
-                    }}
-                />
-            </TableCell> */}
-
-            {/* <TableCell align="left">
-                <Label
-                    variant={theme.palette.mode === 'light' ? 'ghost' : 'filled'}
-                    color={(status === 'banned' && 'error') || 'success'}
-                    sx={{ textTransform: 'capitalize' }}
-                >
-                    {status}
-                </Label>
-            </TableCell> */}
 
             <TableCell align="right">
                 <TableMoreMenu

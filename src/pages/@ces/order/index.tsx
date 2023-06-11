@@ -22,8 +22,6 @@ import {
 import { paramCase } from 'change-case'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
-import { UserManager } from 'src/@types/user'
-import { _userList } from 'src/_mock'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
 import Iconify from 'src/components/Iconify'
 import Scrollbar from 'src/components/Scrollbar'
@@ -36,10 +34,11 @@ import {
 import useTable, { emptyRows, getComparator } from 'src/hooks/useTable'
 import useTabs from 'src/hooks/useTabs'
 import { PATH_CES } from 'src/routes/paths'
-import { UserTableRow, UserTableToolbar } from 'src/sections/@dashboard/user/list'
+import { UserTableToolbar } from 'src/sections/@dashboard/user/list'
 import { confirmDialog } from 'src/utils/confirmDialog'
 import { Order } from 'src/@types/@ces/order'
 import OrderTableRow from 'src/sections/@ces/order/OrderTableRow'
+import { useOrder } from 'src/hooks/@ces/useOrder'
 
 // ----------------------------------------------------------------------
 
@@ -59,65 +58,24 @@ const ROLE_OPTIONS = [
 ]
 
 const TABLE_HEAD = [
-  { id: 'name', label: 'Name', align: 'left' },
-  { id: 'company', label: 'Company', align: 'left' },
-  { id: 'role', label: 'Role', align: 'left' },
-  { id: 'isVerified', label: 'Verified', align: 'center' },
+  { id: 'id', label: 'Id', align: 'left' },
+  { id: 'total', label: 'Total', align: 'left' },
+  { id: 'address', label: 'Address', align: 'left' },
+  { id: 'note', label: 'Note', align: 'left' },
   { id: 'status', label: 'Status', align: 'left' },
-  { id: '' },
 ]
 
 // ----------------------------------------------------------------------
 
 // ----------------------------------------------------------------------
 
-AccountPage.getLayout = function getLayout(page: React.ReactElement) {
+OrderPage.getLayout = function getLayout(page: React.ReactElement) {
   return <Layout>{page}</Layout>
 }
 
 // ----------------------------------------------------------------------
-const ORDER_DATA = [
-  {
-    Id: "C521BC7B-7785-4EB9-A818-0A837B59649F",
-    Total: 100000,
-    Address: "123 Main Street",
-    UpdatedAt: "2023-05-26T10:30:00",
-    CreatedAt: "2023-05-25T15:45:00",
-    Status: 1,
-    Note: "note something",
-    Code: "Order code",
-    DebtStatus: 1,
-    AccountId: "C401BC7B-7785-4EB9-A818-0A837B59649F",
-    OrderDetail:
-      [
-        {
-          Id: "D521BC7B-1111-4444-A818-0A837B59649F",
-          Price: 50000,
-          Quantity: 2,
-          CreateAt: "2023-05-25T15:45:00",
-          Notes: "note something",
-          ProductId: "AAAAAAAA-1111-4444-A818-0A837B59649F",
-          OrderId: "C521BC7B-7785-4EB9-A818-0A837B59649F",
-          Product:
-            [
-              {
-                Id: "AAAAAAAA-1111-4444-A818-0A837B59649F",
-                Price: 50000,
-                Quantity: 500,
-                Name: "Coffee",
-                Status: 1,
-                Description: "something",
-                ServiceDuration: "2023-05-25T15:45:00|2023-06-25T15:45:00",
-                Type: 1,
-                ImageUrl: "Url...",
-                CategoryId: 1
-              },
-            ],
-        },
-      ],
-  },
-]
-export default function AccountPage() {
+
+export default function OrderPage() {
   const {
     dense,
     page,
@@ -138,9 +96,8 @@ export default function AccountPage() {
   } = useTable()
 
   const { push } = useRouter()
-
-  const [tableData, setTableData] = useState(ORDER_DATA)
-
+  const { data, mutate } = useOrder({});
+  const tableData: Order[] = data?.data ?? []
   const [filterName, setFilterName] = useState('')
 
   const [filterRole, setFilterRole] = useState('all')
@@ -160,16 +117,12 @@ export default function AccountPage() {
 
   const handleDeleteRow = (id: string) => {
     confirmDialog('Do you really want to delete this account ?', () => {
-      const deleteRow = tableData.filter((row) => row.Id !== id)
       setSelected([])
-      setTableData(deleteRow)
     })
   }
 
   const handleDeleteRows = (selected: string[]) => {
-    const deleteRows = tableData.filter((row) => !selected.includes(row.Id))
     setSelected([])
-    setTableData(deleteRows)
   }
 
 
@@ -192,13 +145,15 @@ export default function AccountPage() {
     (!dataFiltered.length && !!filterName) ||
     (!dataFiltered.length && !!filterRole) ||
     (!dataFiltered.length && !!filterStatus)
-
+  const handleViewRow = (id: string) => {
+    push(PATH_CES.order.detail(id));
+  };
   return (
-    <Page title="User: List">
+    <Page title="Order: List">
       <Container>
         <HeaderBreadcrumbs
-          heading="User List"
-          links={[{ name: 'Dashboard', href: '' }, { name: 'User', href: '' }, { name: 'List' }]}
+          heading="Order List"
+          links={[{ name: 'Dashboard', href: '' }, { name: 'Order', href: '' }, { name: 'List' }]}
           action={
             <NextLink href={PATH_CES.order.new} passHref>
               <Button variant="contained" startIcon={<Iconify icon={'eva:plus-fill'} />}>
@@ -242,7 +197,7 @@ export default function AccountPage() {
                   onSelectAllRows={(checked) =>
                     onSelectAllRows(
                       checked,
-                      tableData.map((row) => row.Id)
+                      tableData.map((row) => row.id)
                     )
                   }
                   actions={
@@ -266,7 +221,7 @@ export default function AccountPage() {
                   onSelectAllRows={(checked) =>
                     onSelectAllRows(
                       checked,
-                      tableData.map((row) => row.Id)
+                      tableData.map((row) => row.id)
                     )
                   }
                 />
@@ -280,8 +235,7 @@ export default function AccountPage() {
                         row={row}
                         selected={selected.includes(row.id)}
                         onSelectRow={() => onSelectRow(row.id)}
-                        onDeleteRow={() => handleDeleteRow(row.id)}
-                        onEditRow={() => handleEditRow(row.name)}
+                        onViewRow={() => handleViewRow(row.id)}
                       />
                     ))}
 

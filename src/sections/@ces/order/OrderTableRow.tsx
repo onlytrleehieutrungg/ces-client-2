@@ -6,27 +6,27 @@ import { TableMoreMenu } from 'src/components/table';
 import Iconify from 'src/components/Iconify';
 import Label from 'src/components/Label';
 import { Product } from 'src/@types/@ces/product';
+import { Order } from 'src/@types/@ces/order';
 // @types
 // ------------------------------------------------------d----------------
 
 type Props = {
-    row: Product;
+    row: Order;
     selected: boolean;
-    onEditRow: VoidFunction;
     onSelectRow: VoidFunction;
-    onDeleteRow: VoidFunction;
+    onViewRow: VoidFunction;
+
 };
 
 export default function OrderTableRow({
     row,
     selected,
-    onEditRow,
     onSelectRow,
-    onDeleteRow,
+    onViewRow
 }: Props) {
     const theme = useTheme();
 
-    const { Name, Price, Quantity, Description, CategoryId, avatarUrl } = row;
+    const { id, total, address, note, status } = row;
 
     const [openMenu, setOpenMenuActions] = useState<HTMLElement | null>(null);
 
@@ -44,41 +44,12 @@ export default function OrderTableRow({
                 <Checkbox checked={selected} onClick={onSelectRow} />
             </TableCell>
 
-            <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
-                <Avatar alt={Name} src={avatarUrl} sx={{ mr: 2 }} />
-                <Typography variant="subtitle2" noWrap>
-                    {Name}
-                </Typography>
-            </TableCell>
-            {/* <TableCell align="left">{Name}</TableCell> */}
-            <TableCell align="left">{Description}</TableCell>
-            <TableCell align="left">{Price}</TableCell>
+            <TableCell align="left">{id}</TableCell>
+            <TableCell align="left" sx={{ textTransform: 'capitalize' }}>{total}</TableCell>
+            <TableCell align="left">{address}</TableCell>
+            <TableCell align="left">{note}</TableCell>
+            <TableCell align="left">{status}</TableCell>
 
-            <TableCell align="left" sx={{ textTransform: 'capitalize' }}>
-                {Quantity}
-            </TableCell>
-            <TableCell align="left">{CategoryId}</TableCell>
-            {/* <TableCell align="center">
-                <Iconify
-                    icon={isVerified ? 'eva:checkmark-circle-fill' : 'eva:clock-outline'}
-                    sx={{
-                        width: 20,
-                        height: 20,
-                        color: 'success.main',
-                        ...(!isVerified && { color: 'warning.main' }),
-                    }}
-                />
-            </TableCell> */}
-
-            {/* <TableCell align="left">
-                <Label
-                    variant={theme.palette.mode === 'light' ? 'ghost' : 'filled'}
-                    color={(status === 'banned' && 'error') || 'success'}
-                    sx={{ textTransform: 'capitalize' }}
-                >
-                    {status}
-                </Label>
-            </TableCell> */}
 
             <TableCell align="right">
                 <TableMoreMenu
@@ -89,22 +60,12 @@ export default function OrderTableRow({
                         <>
                             <MenuItem
                                 onClick={() => {
-                                    onDeleteRow();
-                                    handleCloseMenu();
-                                }}
-                                sx={{ color: 'error.main' }}
-                            >
-                                <Iconify icon={'eva:trash-2-outline'} />
-                                Delete
-                            </MenuItem>
-                            <MenuItem
-                                onClick={() => {
-                                    onEditRow();
+                                    onViewRow();
                                     handleCloseMenu();
                                 }}
                             >
-                                <Iconify icon={'eva:edit-fill'} />
-                                Edit
+                                <Iconify icon={'eva:eye-fill'} />
+                                View
                             </MenuItem>
                         </>
                     }
