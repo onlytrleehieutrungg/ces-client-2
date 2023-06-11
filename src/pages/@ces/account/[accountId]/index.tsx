@@ -35,7 +35,7 @@ export default function UserAccount() {
   const { query } = useRouter()
   const { accountId } = query
 
-  const { data } = useAccountDetails({ id: `${accountId}` })
+  const { data, mutate } = useAccountDetails({ id: `${accountId}` })
 
   const handleEditAccountSubmit = async (payload: AccountPayload) => {
     try {
@@ -53,15 +53,15 @@ export default function UserAccount() {
     {
       value: 'general',
       icon: <Iconify icon={'ic:round-account-box'} width={20} height={20} />,
-      component: data && (
+      component: (
         <AccountNewEditForm isEdit currentUser={data?.data} onSubmit={handleEditAccountSubmit} />
       ),
     },
     {
       value: 'wallet',
       icon: <Iconify icon={'ic:round-receipt'} width={20} height={20} />,
-      component: data && data?.data?.wallets && (
-        <AccountWallet wallets={data?.data.wallets} invoices={_userInvoices} />
+      component: (
+        <AccountWallet wallets={data?.data?.wallets} invoices={_userInvoices} mutate={mutate} />
       ),
     },
   ]
@@ -98,10 +98,11 @@ export default function UserAccount() {
 
         <Box sx={{ mb: 5 }} />
 
-        {ACCOUNT_TABS.map((tab) => {
-          const isMatched = tab.value === currentTab
-          return isMatched && <Box key={tab.value}>{tab.component}</Box>
-        })}
+        {data &&
+          ACCOUNT_TABS.map((tab) => {
+            const isMatched = tab.value === currentTab
+            return isMatched && <Box key={tab.value}>{tab.component}</Box>
+          })}
       </Container>
     </Page>
   )

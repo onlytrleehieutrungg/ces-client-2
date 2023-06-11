@@ -18,7 +18,7 @@ export const walletApi = {
   updateInfo(id: string, payload: any) {
     return axiosClient.put(`/wallet/${id}`, payload)
   },
-  // updateBalance(id: string, payload: any) {
-  //   return axiosClient.put(`/wallet/${id}`, payload)
-  // },
+  updateBalance(id: string, balance: any, params: any) {
+    return axiosClient.put(`/wallet/${id}/${balance}`, null, { params })
+  },
 }

@@ -77,10 +77,10 @@ export default function AccountTableRow({
       <TableCell align="left">
         <Label
           variant={theme.palette.mode === 'light' ? 'ghost' : 'filled'}
-          color={(status === 2 && 'error') || 'success'}
+          color={status === 1 ? 'success' : status === 2 ? 'warning' : 'error'}
           sx={{ textTransform: 'capitalize' }}
         >
-          {status === 1 ? 'Active' : 'Deactive'}
+          {status === 1 ? 'Active' : status === 2 ? 'Deactive' : 'Deleted'}
         </Label>
       </TableCell>
 

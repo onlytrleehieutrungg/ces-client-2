@@ -23,15 +23,17 @@ import Image from 'src/components/Image'
 import { FormProvider, RHFTextField } from 'src/components/hook-form'
 import { AccountBillingInvoiceHistory } from 'src/sections/@dashboard/user/account'
 import { fCurrency } from 'src/utils/formatNumber'
+import { walletApi } from 'src/api-client'
 
 // ----------------------------------------------------------------------
 
 type Props = {
+  mutate?: any
   invoices: UserInvoice[]
-  wallets: AccountWalletData[]
+  wallets?: AccountWalletData[]
 }
 
-export default function AccountWallet({ invoices, wallets }: Props) {
+export default function AccountWallet({ invoices, wallets, mutate }: Props) {
   // const { enqueueSnackbar } = useSnackbar()
 
   const [openWallet, setOpenWallet] = useState(false)
@@ -77,9 +79,11 @@ export default function AccountWallet({ invoices, wallets }: Props) {
 
   const onSubmit = async (payload: any) => {
     try {
-      console.log(payload)
-      // await walletApi.updateBalance(currentWallet?.id, payload)
-      // enqueueSnackbar( `Update wallet ${currentWallet?.name} success!`)
+      await walletApi.updateBalance(currentWallet?.id || '', Math.abs(payload?.balance), {
+        type: Math.sign(payload?.balance) === 1 ? 1 : 2,
+      })
+      mutate()
+      // enqueueSnackbar(`Update wallet ${currentWallet?.name} success!`)
     } catch (error) {
       // enqueueSnackbar('Update failed!')
       console.error(error)
@@ -90,7 +94,7 @@ export default function AccountWallet({ invoices, wallets }: Props) {
     <Grid container spacing={5}>
       <Grid item xs={12} md={8}>
         <Stack spacing={3}>
-          {wallets.map((wallet) => (
+          {wallets?.map((wallet) => (
             <Card key={wallet.id} sx={{ p: 3 }}>
               <Stack direction={'row'} alignItems={'center'} spacing={1} mb={3}>
                 <Image

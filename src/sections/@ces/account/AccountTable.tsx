@@ -48,7 +48,11 @@ const STATUS_OPTIONS = [
   },
   {
     code: 2,
-    label: 'deactive',
+    label: 'inActive',
+  },
+  {
+    code: 3,
+    label: 'Deleted',
   },
 ]
 
