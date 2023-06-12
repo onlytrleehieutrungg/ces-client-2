@@ -7,24 +7,27 @@ import {
   Table,
   Divider,
   TableRow,
-  TableBody,
   TableHead,
   TableCell,
   Typography,
   TableContainer,
+  TableBody,
+  Button,
+  MenuItem,
+  TextField,
 } from '@mui/material';
 // utils
-import { fDate } from '../../../../utils/formatTime';
-import { fCurrency } from '../../../../utils/formatNumber';
-// _mock_
-import { Invoice } from '../../../../@types/invoice';
 // components
 import Label from '../../../../components/Label';
 import Image from '../../../../components/Image';
 import Scrollbar from '../../../../components/Scrollbar';
 //
-import InvoiceToolbar from './InvoiceToolbar';
-import { Order } from 'src/@types/@ces/order';
+import { Order, Status } from 'src/@types/@ces/order';
+import { fDate } from 'src/utils/formatTime';
+import { fCurrency } from 'src/utils/formatNumber';
+import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs';
+import Iconify from 'src/components/Iconify';
+import { useState } from 'react';
 
 // ----------------------------------------------------------------------
 
@@ -43,9 +46,16 @@ type Props = {
 
 export default function OrderDetails({ order }: Props) {
   const theme = useTheme();
-
+  const [changeStatus, setChangeStatus] = useState(false)
   if (!order) {
     return null;
+  }
+  function handleUpdate() {
+    setChangeStatus(true);
+  }
+  const mapStatus = (status: number) => {
+    const rs = Object.values(Status)
+    return rs[status - 1]
   }
 
   const {
@@ -58,10 +68,17 @@ export default function OrderDetails({ order }: Props) {
     note,
     code,
     debtStatus,
-    accountId,
-    orderDetail
+    account,
+    orderDetails
   } = order;
 
+  const STATUS_OPTIONS = [
+    'New',
+    'waiting for payment',
+    'waiting for ship',
+    'complete',
+    'cancel'
+  ]
   return (
     <>
       {/* <InvoiceToolbar invoice={invoice} /> */}
@@ -69,18 +86,8 @@ export default function OrderDetails({ order }: Props) {
       <Card sx={{ pt: 5, px: 5 }}>
         <Grid container>
           <Grid item xs={12} sm={6} sx={{ mb: 5 }}>
-            <Image
-              disabledEffect
-              visibleByDefault
-              alt="logo"
-              src="/logo/logo_full.svg"
-              sx={{ maxWidth: 120 }}
-            />
-          </Grid>
-
-          <Grid item xs={12} sm={6} sx={{ mb: 5 }}>
-            <Box sx={{ textAlign: { sm: 'right' } }}>
-              <Label
+            <Box sx={{ textAlign: { sm: 'left' } }}>
+              {!changeStatus ? <Label
                 variant={theme.palette.mode === 'light' ? 'ghost' : 'filled'}
                 color={
                   (status === 1 && 'success') ||
@@ -90,44 +97,76 @@ export default function OrderDetails({ order }: Props) {
                 }
                 sx={{ textTransform: 'uppercase', mb: 1 }}
               >
-                {status}
-              </Label>
+                {mapStatus(status)}
+              </Label> : <TextField
+                fullWidth
+                select
+                label="Status"
+                // value={filterStatus}
+                // onChange={onFilterStatus}
+                SelectProps={{
+                  MenuProps: {
+                    sx: { '& .MuiPaper-root': { maxHeight: 260 } },
+                  },
+                }}
+                sx={{
+                  maxWidth: { sm: 240 },
+                  textTransform: 'capitalize',
+                }}
+              >
+                {STATUS_OPTIONS.map((option) => (
+                  <MenuItem
+                    key={option}
+                    value={option}
+                    sx={{
+                      mx: 1,
+                      my: 0.5,
+                      borderRadius: 0.75,
+                      typography: 'body2',
+                      textTransform: 'capitalize',
+                    }}
+                  >
+                    {option}
+                  </MenuItem>
+                ))}
+              </TextField>
+              }
+
 
               <Typography variant="h6">{`INV-${id}`}</Typography>
             </Box>
           </Grid>
+          <Grid item xs={12} sm={6} sx={{ mb: 5 }}>
+            <Box sx={{ textAlign: { sm: 'right' } }}>
+              <Button variant="contained" onClick={handleUpdate} startIcon={<Iconify icon={'eva:plus-fill'} />}>
+                {changeStatus ? "Save" : 'Update'}
+              </Button>
+            </Box>
+
+          </Grid>
+
 
           <Grid item xs={12} sm={6} sx={{ mb: 5 }}>
             <Typography paragraph variant="overline" sx={{ color: 'text.disabled' }}>
-              Invoice from
+              Customer Information
             </Typography>
-            <Typography variant="body2">{"qqqqqq"}</Typography>
-            <Typography variant="body2">{"qqqqqq"}</Typography>
-            <Typography variant="body2">Phone: {"01234114"}</Typography>
+            <Typography variant="body2">Name: {account?.name}</Typography>
+            <Typography variant="body2">Address: {account?.address}</Typography>
+            <Typography variant="body2">Email: {account?.email}</Typography>
+            <Typography variant="body2">Phone: {account?.phone}</Typography>
           </Grid>
 
           <Grid item xs={12} sm={6} sx={{ mb: 5 }}>
             <Typography paragraph variant="overline" sx={{ color: 'text.disabled' }}>
-              Invoice to
+              Date create
             </Typography>
-            <Typography variant="body2">{"aaaaaaaa"}</Typography>
-            <Typography variant="body2">{"aaaaaaaaa"}</Typography>
-            <Typography variant="body2">Phone: {"0248514"}</Typography>
+            <Typography variant="body2">{fDate(createdAt!)}</Typography>
+            <Typography paragraph variant="overline" sx={{ color: 'text.disabled' }}>
+              Date update
+            </Typography>
+            <Typography variant="body2">{fDate(updatedAt!)}</Typography>
           </Grid>
 
-          <Grid item xs={12} sm={6} sx={{ mb: 5 }}>
-            <Typography paragraph variant="overline" sx={{ color: 'text.disabled' }}>
-              date create
-            </Typography>
-            <Typography variant="body2">{"fDate(createDate)"}</Typography>
-          </Grid>
-
-          <Grid item xs={12} sm={6} sx={{ mb: 5 }}>
-            <Typography paragraph variant="overline" sx={{ color: 'text.disabled' }}>
-              Due date
-            </Typography>
-            <Typography variant="body2">{"fDate(dueDate)"}</Typography>
-          </Grid>
         </Grid>
 
         <Scrollbar>
@@ -141,15 +180,15 @@ export default function OrderDetails({ order }: Props) {
               >
                 <TableRow>
                   <TableCell width={40}>#</TableCell>
-                  <TableCell align="left">Description</TableCell>
+                  <TableCell align="left">Product</TableCell>
                   <TableCell align="left">Qty</TableCell>
                   <TableCell align="right">Unit price</TableCell>
                   <TableCell align="right">Total</TableCell>
                 </TableRow>
               </TableHead>
 
-              {/* <TableBody>
-                {items.map((row, index) => (
+              <TableBody>
+                {orderDetails?.map((row, index) => (
                   <TableRow
                     key={index}
                     sx={{
@@ -159,15 +198,15 @@ export default function OrderDetails({ order }: Props) {
                     <TableCell>{index + 1}</TableCell>
                     <TableCell align="left">
                       <Box sx={{ maxWidth: 560 }}>
-                        <Typography variant="subtitle2">{row.title}</Typography>
+                        <Typography variant="subtitle2">{row?.product?.name}</Typography>
                         <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-                          {row.description}
+                          {row?.product?.notes}
                         </Typography>
                       </Box>
                     </TableCell>
-                    <TableCell align="left">{row.quantity}</TableCell>
+                    <TableCell align="left">{row?.quantity}</TableCell>
+                    <TableCell align="right">{fCurrency(row?.product?.price)}</TableCell>
                     <TableCell align="right">{fCurrency(row.price)}</TableCell>
-                    <TableCell align="right">{fCurrency(row.price * row.quantity)}</TableCell>
                   </TableRow>
                 ))}
 
@@ -179,7 +218,7 @@ export default function OrderDetails({ order }: Props) {
                   </TableCell>
                   <TableCell align="right" width={120}>
                     <Box sx={{ mt: 2 }} />
-                    <Typography>{fCurrency(subTotalPrice)}</Typography>
+                    <Typography>{fCurrency(total)}</Typography>
                   </TableCell>
                 </RowResultStyle>
 
@@ -190,7 +229,7 @@ export default function OrderDetails({ order }: Props) {
                   </TableCell>
                   <TableCell align="right" width={120}>
                     <Typography sx={{ color: 'error.main' }}>
-                      {discount && fCurrency(-discount)}
+                      {/* {discount && fCurrency(-discount)} */}Nah
                     </Typography>
                   </TableCell>
                 </RowResultStyle>
@@ -201,7 +240,10 @@ export default function OrderDetails({ order }: Props) {
                     <Typography>Taxes</Typography>
                   </TableCell>
                   <TableCell align="right" width={120}>
-                    <Typography>{taxes && fCurrency(taxes)}</Typography>
+                    <Typography>
+                      {/* {taxes && fCurrency(taxes)} */}
+                      0
+                    </Typography>
                   </TableCell>
                 </RowResultStyle>
 
@@ -211,17 +253,17 @@ export default function OrderDetails({ order }: Props) {
                     <Typography variant="h6">Total</Typography>
                   </TableCell>
                   <TableCell align="right" width={140}>
-                    <Typography variant="h6">{fCurrency(totalPrice)}</Typography>
+                    <Typography variant="h6">{fCurrency(total)}</Typography>
                   </TableCell>
                 </RowResultStyle>
-              </TableBody> */}
+              </TableBody>
             </Table>
           </TableContainer>
         </Scrollbar>
 
         <Divider sx={{ mt: 5 }} />
 
-        <Grid container>
+        {/* <Grid container>
           <Grid item xs={12} md={9} sx={{ py: 3 }}>
             <Typography variant="subtitle2">NOTES</Typography>
             <Typography variant="body2">
@@ -232,7 +274,7 @@ export default function OrderDetails({ order }: Props) {
             <Typography variant="subtitle2">Have a Question?</Typography>
             <Typography variant="body2">support@minimals.cc</Typography>
           </Grid>
-        </Grid>
+        </Grid> */}
       </Card>
     </>
   );

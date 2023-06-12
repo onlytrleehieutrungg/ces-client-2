@@ -1,7 +1,6 @@
 // ----------------------------------------------------------------------
 
 import { Container } from '@mui/material'
-import { capitalCase, paramCase } from 'change-case'
 import { useRouter } from 'next/router'
 import { _userList } from 'src/_mock'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
@@ -37,6 +36,7 @@ export default function ProductEditPage() {
     }
   }
 
+
   return (
     <Page title="Product: Edit Product">
       <Container>
@@ -45,7 +45,7 @@ export default function ProductEditPage() {
           links={[
             { name: 'Dashboard', href: '' },
             { name: 'Product', href: '' },
-            { name: capitalCase(data?.data?.name as string) },
+            { name: data?.data?.name },
           ]}
         />
         {data && (

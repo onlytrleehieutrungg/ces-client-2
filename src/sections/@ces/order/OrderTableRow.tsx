@@ -1,21 +1,16 @@
 import { useState } from 'react';
 // @mui
 import { useTheme } from '@mui/material/styles';
-import { Avatar, Checkbox, TableRow, TableCell, Typography, MenuItem } from '@mui/material';
+import { Checkbox, TableRow, TableCell, MenuItem } from '@mui/material';
 import { TableMoreMenu } from 'src/components/table';
 import Iconify from 'src/components/Iconify';
+import { Order, Status } from 'src/@types/@ces/order';
 import Label from 'src/components/Label';
-import { Product } from 'src/@types/@ces/product';
-import { Order } from 'src/@types/@ces/order';
-// @types
-// ------------------------------------------------------d----------------
-
 type Props = {
     row: Order;
     selected: boolean;
     onSelectRow: VoidFunction;
     onViewRow: VoidFunction;
-
 };
 
 export default function OrderTableRow({
@@ -38,6 +33,12 @@ export default function OrderTableRow({
         setOpenMenuActions(null);
     };
 
+
+    const mapStatus = (status: number) => {
+        const rs = Object.values(Status)
+        return rs[status - 1]
+    }
+
     return (
         <TableRow hover selected={selected}>
             <TableCell padding="checkbox">
@@ -48,9 +49,21 @@ export default function OrderTableRow({
             <TableCell align="left" sx={{ textTransform: 'capitalize' }}>{total}</TableCell>
             <TableCell align="left">{address}</TableCell>
             <TableCell align="left">{note}</TableCell>
-            <TableCell align="left">{status}</TableCell>
-
-
+            <TableCell align="left">
+                <Label
+                    variant={theme.palette.mode === 'light' ? 'ghost' : 'filled'}
+                    color={
+                        (mapStatus(status) === 'Complete' && 'success') ||
+                        (mapStatus(status) === 'Waiting for payment' && 'warning') ||
+                        (mapStatus(status) === 'Cancel' && 'error') ||
+                        'default'
+                    }
+                    sx={{ textTransform: 'capitalize' }}
+                >
+                    {mapStatus(status)}
+                </Label>
+            </TableCell>
+            {/* <TableCell align="left">{mapStatus(status)}</TableCell> */}
             <TableCell align="right">
                 <TableMoreMenu
                     open={openMenu}

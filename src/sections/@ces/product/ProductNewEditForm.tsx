@@ -4,17 +4,16 @@ import { useSnackbar } from 'notistack';
 // next
 import { useRouter } from 'next/router';
 // form
-import { useForm, Controller } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 // @mui
 import { LoadingButton } from '@mui/lab';
-import { Box, Card, Grid, Stack, Switch, Typography, FormControlLabel } from '@mui/material';
+import { Box, Card, Grid, Stack, Typography } from '@mui/material';
 // utils
 import { fData } from '../../../utils/formatNumber';
 // routes
 import { PATH_CES } from '../../../routes/paths';
 
-import Label from '../../../components/Label';
 import {
     FormProvider,
     RHFSelect,
@@ -27,7 +26,6 @@ import { useCategoryList } from 'src/hooks/@ces/useCategory';
 
 // ----------------------------------------------------------------------
 
-type FormValuesProps = Product;
 
 type Props = {
     isEdit?: boolean;
@@ -74,6 +72,8 @@ export default function ProductNewEditForm({ isEdit = false, currentUser, onSubm
         resolver: yupResolver(NewUserSchema),
         defaultValues,
     });
+
+
 
     const {
         reset,
@@ -129,14 +129,6 @@ export default function ProductNewEditForm({ isEdit = false, currentUser, onSubm
             <Grid container spacing={3}>
                 <Grid item xs={12} md={4}>
                     <Card sx={{ py: 10, px: 3 }}>
-                        {isEdit && (
-                            <Label
-                                color={values.status !== 'active' ? 'error' : 'success'}
-                                sx={{ textTransform: 'uppercase', position: 'absolute', top: 24, right: 24 }}
-                            >
-                                {values.status}
-                            </Label>
-                        )}
                         <Box sx={{ mb: 5 }}>
                             <RHFUploadAvatar
                                 name="avatarUrl"
@@ -160,54 +152,6 @@ export default function ProductNewEditForm({ isEdit = false, currentUser, onSubm
                                 }
                             />
                         </Box>
-
-                        {isEdit && (
-                            <FormControlLabel
-                                labelPlacement="start"
-                                control={
-                                    <Controller
-                                        name="status"
-                                        control={control}
-                                        render={({ field }) => (
-                                            <Switch
-                                                {...field}
-                                                checked={field.value !== 'active'}
-                                                onChange={(event) =>
-                                                    field.onChange(event.target.checked ? 'banned' : 'active')
-                                                }
-                                            />
-                                        )}
-                                    />
-                                }
-                                label={
-                                    <>
-                                        <Typography variant="subtitle2" sx={{ mb: 0.5 }}>
-                                            Banned
-                                        </Typography>
-                                        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                                            Apply disable account
-                                        </Typography>
-                                    </>
-                                }
-                                sx={{ mx: 0, mb: 3, width: 1, justifyContent: 'space-between' }}
-                            />
-                        )}
-
-                        <RHFSwitch
-                            name="isVerified"
-                            labelPlacement="start"
-                            label={
-                                <>
-                                    <Typography variant="subtitle2" sx={{ mb: 0.5 }}>
-                                        Email Verified
-                                    </Typography>
-                                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                                        Disabling this will automatically send the user a verification email
-                                    </Typography>
-                                </>
-                            }
-                            sx={{ mx: 0, width: 1, justifyContent: 'space-between' }}
-                        />
                     </Card>
                 </Grid>
 

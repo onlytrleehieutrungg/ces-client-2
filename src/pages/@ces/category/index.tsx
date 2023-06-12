@@ -46,13 +46,14 @@ import { useCategoryList } from 'src/hooks/@ces/useCategory'
 import { Category } from 'src/@types/@ces'
 import { categoryApi } from 'src/api-client/category'
 import { useSnackbar } from 'notistack'
+import CategoryTableToolbar from 'src/sections/@ces/category/CategoryTableToolbar'
 
 
 // ----------------------------------------------------------------------
 
-const STATUS_OPTIONS = ['all', '1', '2', '3']
+const STATUS_OPTIONS = ['all']
 
-const ROLE_OPTIONS = ['all', '1', '2', '3']
+const ROLE_OPTIONS = ['all']
 
 
 
@@ -65,6 +66,8 @@ const ROLE_OPTIONS = ['all', '1', '2', '3']
 const TABLE_HEAD = [
   { id: 'Name', label: 'Name', align: 'left' },
   { id: 'Description', label: 'Description', align: 'left' },
+  { id: '' },
+
 
 ]
 
@@ -180,28 +183,7 @@ export default function CategoryPage() {
         />
 
         <Card>
-          <Tabs
-            allowScrollButtonsMobile
-            variant="scrollable"
-            scrollButtons="auto"
-            value={filterStatus}
-            onChange={onChangeFilterStatus}
-            sx={{ px: 2, bgcolor: 'background.neutral' }}
-          >
-            {STATUS_OPTIONS.map((tab) => (
-              <Tab disableRipple key={tab} label={tab} value={tab} />
-            ))}
-          </Tabs>
-
-          <Divider />
-
-          <UserTableToolbar
-            filterName={filterName}
-            filterRole={filterRole}
-            onFilterName={handleFilterName}
-            onFilterRole={handleFilterRole}
-            optionsRole={ROLE_OPTIONS}
-          />
+          <CategoryTableToolbar filterName={filterName} onFilterName={handleFilterName} />
 
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800, position: 'relative' }}>
@@ -317,7 +299,7 @@ function applySortFilter({
   if (filterName) {
     tableData = tableData.filter(
       (item: Record<string, any>) =>
-        item.Name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
+        item.name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
     )
   }
 

@@ -7,21 +7,18 @@ import {
   Button,
   Card,
   Container,
-  Divider,
   FormControlLabel,
   IconButton,
   Switch,
-  Tab,
   Table,
   TableBody,
   TableContainer,
   TablePagination,
-  Tabs,
   Tooltip,
 } from '@mui/material'
 import { paramCase } from 'change-case'
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 // import { UserManager } from 'src/@types/user'
 // import { _userList } from 'src/_mock'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
@@ -36,34 +33,16 @@ import {
 import useTable, { emptyRows, getComparator } from 'src/hooks/useTable'
 import useTabs from 'src/hooks/useTabs'
 import { PATH_CES } from 'src/routes/paths'
-import AccountTableRow from 'src/sections/@ces/account/AccountTableRow'
-import { UserTableToolbar } from 'src/sections/@dashboard/user/list'
 import { confirmDialog } from 'src/utils/confirmDialog'
-import { RouterGuard, UserRole } from 'src/guards/RouterGuard'
-import { type } from 'os'
 import ProductTableRow from 'src/sections/@ces/product/ProductTableRow'
 import { productApi } from 'src/api-client/product'
 import { Product } from 'src/@types/@ces/product'
 import { useProduct } from 'src/hooks/@ces/useProduct'
-import useSWR from 'swr'
 import { useSnackbar } from 'notistack'
+import ProductTableToolbar from 'src/sections/@ces/product/ProductTableToolbar'
 
 // ----------------------------------------------------------------------
 
-const STATUS_OPTIONS = ['all', '1', '2', '3']
-
-const ROLE_OPTIONS = ['all', '1', '2', '3']
-
-
-
-
-
-
-// const TABLE_HEAD = Object.keys(jsonData).map((key) => ({
-//   id: key.toLowerCase(),
-//   label: key.charAt(0).toUpperCase() + key.slice(1),
-//   align: 'left'
-// }));
 
 const TABLE_HEAD = [
   { id: 'Name', label: 'Name', align: 'left' },
@@ -71,12 +50,9 @@ const TABLE_HEAD = [
   { id: 'Price', label: 'Price', align: 'left' },
   { id: 'Quantity', label: 'Quantity', align: 'left' },
   { id: 'category.name', label: 'Carogory', align: 'left' },
+  { id: '' },
+
 ]
-
-// ----------------------------------------------------------------------
-
-// ----------------------------------------------------------------------
-
 ProductPage.getLayout = function getLayout(page: React.ReactElement) {
   return <Layout>{page}</Layout>
 }
@@ -181,28 +157,7 @@ export default function ProductPage() {
           }
         />
         <Card>
-          <Tabs
-            allowScrollButtonsMobile
-            variant="scrollable"
-            scrollButtons="auto"
-            value={filterStatus}
-            onChange={onChangeFilterStatus}
-            sx={{ px: 2, bgcolor: 'background.neutral' }}
-          >
-            {STATUS_OPTIONS.map((tab) => (
-              <Tab disableRipple key={tab} label={tab} value={tab} />
-            ))}
-          </Tabs>
-
-          <Divider />
-
-          <UserTableToolbar
-            filterName={filterName}
-            filterRole={filterRole}
-            onFilterName={handleFilterName}
-            onFilterRole={handleFilterRole}
-            optionsRole={ROLE_OPTIONS}
-          />
+          <ProductTableToolbar filterName={filterName} onFilterName={handleFilterName} />
 
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800, position: 'relative' }}>
@@ -319,7 +274,7 @@ function applySortFilter({
   if (filterName) {
     tableData = tableData.filter(
       (item: Record<string, any>) =>
-        item.Name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
+        item?.name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
     )
   }
 

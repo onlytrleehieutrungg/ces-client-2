@@ -9,6 +9,7 @@ export type Product = {
   status: string
   updatedAt: string
   createdAt: string
+  notes: string
   description: string
   serviceDuration: string
   type: string

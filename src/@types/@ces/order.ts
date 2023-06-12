@@ -1,4 +1,5 @@
-import { Product } from "./product"
+import { AccountData } from './account'
+import { Product } from './product'
 
 export type Order = {
   id: string
@@ -10,8 +11,8 @@ export type Order = {
   note: string
   code: string
   debtStatus: number
-  accountId: string
-  orderDetail: OrderDetail[]
+  account: AccountData
+  orderDetails: OrderDetail[]
 }
 
 export type OrderDetail = {
@@ -19,8 +20,22 @@ export type OrderDetail = {
   quantity: number
   createAt: string
   notes: string
-  productId: string 
+  productId: string
   product: Product
 }
-
-
+export enum Status {
+  NEW = 'New',
+  WFP = 'Waiting for payment',
+  WFS = 'Waiting for ship',
+  COMPLETE = 'Complete',
+  CANCEL = 'Cancel',
+}
+export enum DebtStatus {
+  NOTPAYMENT = 'Not Payment',
+  COMPLETE = 'Complete',
+  CANCEL = 'Cancel',
+}
+export enum ProductStatus {
+  ACTIVE = 'Active',
+  INACTIVE = 'InActive',
+}
