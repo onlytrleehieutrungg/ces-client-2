@@ -3,8 +3,9 @@ import { createContext, ReactNode, useEffect, useReducer } from 'react'
 // import axios from '../utils/axios'
 import { isValidToken, setSession } from '../utils/jwt'
 // @types
-import { ActionMap, AuthState, AuthUser, JWTContextType } from '../@types/auth'
+import { authApi } from 'src/api-client'
 import axiosClient from 'src/api-client/axiosClient'
+import { ActionMap, AuthState, AuthUser, JWTContextType } from '../@types/auth'
 
 // ----------------------------------------------------------------------
 
@@ -89,17 +90,13 @@ function AuthProvider({ children }: AuthProviderProps) {
 
         if (accessToken && isValidToken(accessToken)) {
           setSession(accessToken)
-
-          // const response = await axios.get('/api/account/my-account');
-          // const response = await axiosClient.get('/api/account')
-
-          // const { user } = response.data
+          const response = await authApi.getMe()
 
           dispatch({
             type: Types.Initial,
             payload: {
               isAuthenticated: true,
-              user: {},
+              user: response,
             },
           })
         } else {
@@ -142,19 +139,15 @@ function AuthProvider({ children }: AuthProviderProps) {
         email,
         password,
       })
-      // const { accessToken, refreshToken, user } = response.data.data
-      // console.log(accessToken, refreshToken, user);
+
       const { account, token } = response.data
-      // console.log(account, token?.accessToken)
 
       setSession(token?.accessToken)
       // setSession(refreshToken);
 
       dispatch({
         type: Types.Login,
-        payload: {
-          account,
-        },
+        payload: { account },
       })
     }
   }

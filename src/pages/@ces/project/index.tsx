@@ -42,6 +42,7 @@ import ProjectTableToolbar from 'src/sections/@ces/project/ProjectTableToolbar'
 import { confirmDialog } from 'src/utils/confirmDialog'
 import useSettings from 'src/hooks/useSettings'
 import { projectApi } from 'src/api-client'
+import RoleBasedGuard from 'src/guards/RoleBasedGuard'
 
 // ----------------------------------------------------------------------
 
@@ -184,132 +185,138 @@ export default function ProjectPage() {
     (!dataFiltered.length && !!filterStatus)
 
   return (
-    <Page title="Project: List">
-      <Container maxWidth={themeStretch ? false : 'lg'}>
-        <HeaderBreadcrumbs
-          heading="Project List"
-          links={[{ name: 'Dashboard', href: '' }, { name: 'Project', href: '' }, { name: 'List' }]}
-          action={
-            <NextLink href={PATH_CES.project.new} passHref>
-              <Button variant="contained" startIcon={<Iconify icon={'eva:plus-fill'} />}>
-                New Project
-              </Button>
-            </NextLink>
-          }
-        />
-
-        <Card>
-          <Tabs
-            allowScrollButtonsMobile
-            variant="scrollable"
-            scrollButtons="auto"
-            value={filterStatus}
-            onChange={onChangeFilterStatus}
-            sx={{ px: 2, bgcolor: 'background.neutral' }}
-          >
-            {STATUS_OPTIONS.map((tab) => (
-              <Tab disableRipple key={tab.code} label={tab.label} value={tab.code} />
-            ))}
-          </Tabs>
-
-          <Divider />
-
-          <ProjectTableToolbar
-            filterName={filterName}
-            filterRole={filterRole}
-            onFilterName={handleFilterName}
-            onFilterRole={handleFilterRole}
-            optionsRole={ROLE_OPTIONS}
+    <RoleBasedGuard hasContent roles={['ea']}>
+      <Page title="Project: List">
+        <Container maxWidth={themeStretch ? false : 'lg'}>
+          <HeaderBreadcrumbs
+            heading="Project List"
+            links={[
+              { name: 'Dashboard', href: '' },
+              { name: 'Project', href: '' },
+              { name: 'List' },
+            ]}
+            action={
+              <NextLink href={PATH_CES.project.new} passHref>
+                <Button variant="contained" startIcon={<Iconify icon={'eva:plus-fill'} />}>
+                  New Project
+                </Button>
+              </NextLink>
+            }
           />
 
-          <Scrollbar>
-            <TableContainer sx={{ minWidth: 800, position: 'relative' }}>
-              {selected.length > 0 && (
-                <TableSelectedActions
-                  dense={dense}
-                  numSelected={selected.length}
-                  rowCount={projectList.length}
-                  onSelectAllRows={(checked) =>
-                    onSelectAllRows(
-                      checked,
-                      projectList.map((row) => `${row.id}`)
-                    )
-                  }
-                  actions={
-                    <Tooltip title="Delete">
-                      <IconButton color="primary" onClick={() => handleDeleteRows(selected)}>
-                        <Iconify icon={'eva:trash-2-outline'} />
-                      </IconButton>
-                    </Tooltip>
-                  }
-                />
-              )}
+          <Card>
+            <Tabs
+              allowScrollButtonsMobile
+              variant="scrollable"
+              scrollButtons="auto"
+              value={filterStatus}
+              onChange={onChangeFilterStatus}
+              sx={{ px: 2, bgcolor: 'background.neutral' }}
+            >
+              {STATUS_OPTIONS.map((tab) => (
+                <Tab disableRipple key={tab.code} label={tab.label} value={tab.code} />
+              ))}
+            </Tabs>
 
-              <Table size={dense ? 'small' : 'medium'}>
-                <TableHeadCustom
-                  order={order}
-                  orderBy={orderBy}
-                  headLabel={TABLE_HEAD}
-                  rowCount={projectList.length}
-                  numSelected={selected.length}
-                  onSort={onSort}
-                  onSelectAllRows={(checked) =>
-                    onSelectAllRows(
-                      checked,
-                      projectList.map((row: any) => `${row.id}`)
-                    )
-                  }
-                />
+            <Divider />
 
-                <TableBody>
-                  {dataFiltered
-                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                    .map((row) => (
-                      <ProjectTableRow
-                        key={`${row.id}`}
-                        row={row}
-                        selected={selected.includes(`${row.id}`)}
-                        onSelectRow={() => onSelectRow(`${row.id}`)}
-                        onDeleteRow={() => handleDeleteRow(`${row.id}`)}
-                        onEditRow={() => handleEditRow(row.id)}
-                        onClickRow={() => handleClickRow(`${row.id}`)}
-                      />
-                    ))}
+            <ProjectTableToolbar
+              filterName={filterName}
+              filterRole={filterRole}
+              onFilterName={handleFilterName}
+              onFilterRole={handleFilterRole}
+              optionsRole={ROLE_OPTIONS}
+            />
 
-                  <TableEmptyRows
-                    height={denseHeight}
-                    emptyRows={emptyRows(page, rowsPerPage, projectList.length)}
+            <Scrollbar>
+              <TableContainer sx={{ minWidth: 800, position: 'relative' }}>
+                {selected.length > 0 && (
+                  <TableSelectedActions
+                    dense={dense}
+                    numSelected={selected.length}
+                    rowCount={projectList.length}
+                    onSelectAllRows={(checked) =>
+                      onSelectAllRows(
+                        checked,
+                        projectList.map((row) => `${row.id}`)
+                      )
+                    }
+                    actions={
+                      <Tooltip title="Delete">
+                        <IconButton color="primary" onClick={() => handleDeleteRows(selected)}>
+                          <Iconify icon={'eva:trash-2-outline'} />
+                        </IconButton>
+                      </Tooltip>
+                    }
+                  />
+                )}
+
+                <Table size={dense ? 'small' : 'medium'}>
+                  <TableHeadCustom
+                    order={order}
+                    orderBy={orderBy}
+                    headLabel={TABLE_HEAD}
+                    rowCount={projectList.length}
+                    numSelected={selected.length}
+                    onSort={onSort}
+                    onSelectAllRows={(checked) =>
+                      onSelectAllRows(
+                        checked,
+                        projectList.map((row: any) => `${row.id}`)
+                      )
+                    }
                   />
 
-                  <TableNoData isNotFound={isNotFound} />
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Scrollbar>
+                  <TableBody>
+                    {dataFiltered
+                      .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                      .map((row) => (
+                        <ProjectTableRow
+                          key={`${row.id}`}
+                          row={row}
+                          selected={selected.includes(`${row.id}`)}
+                          onSelectRow={() => onSelectRow(`${row.id}`)}
+                          onDeleteRow={() => handleDeleteRow(`${row.id}`)}
+                          onEditRow={() => handleEditRow(row.id)}
+                          onClickRow={() => handleClickRow(`${row.id}`)}
+                        />
+                      ))}
 
-          <Box sx={{ position: 'relative' }}>
-            <TablePagination
-              rowsPerPageOptions={[5, 10, 25]}
-              component="div"
-              count={dataFiltered.length}
-              rowsPerPage={rowsPerPage}
-              page={page}
-              // onPageChange={(e) => {
-              //   onChangePage(e, page)
-              // }}
-              onPageChange={onChangePage}
-              onRowsPerPageChange={onChangeRowsPerPage}
-            />
+                    <TableEmptyRows
+                      height={denseHeight}
+                      emptyRows={emptyRows(page, rowsPerPage, projectList.length)}
+                    />
 
-            <FormControlLabel
-              control={<Switch checked={dense} onChange={onChangeDense} />}
-              label="Dense"
-              sx={{ px: 3, py: 1.5, top: 0, position: { md: 'absolute' } }}
-            />
-          </Box>
-        </Card>
-      </Container>
-    </Page>
+                    <TableNoData isNotFound={isNotFound} />
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Scrollbar>
+
+            <Box sx={{ position: 'relative' }}>
+              <TablePagination
+                rowsPerPageOptions={[5, 10, 25]}
+                component="div"
+                count={dataFiltered.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                // onPageChange={(e) => {
+                //   onChangePage(e, page)
+                // }}
+                onPageChange={onChangePage}
+                onRowsPerPageChange={onChangeRowsPerPage}
+              />
+
+              <FormControlLabel
+                control={<Switch checked={dense} onChange={onChangeDense} />}
+                label="Dense"
+                sx={{ px: 3, py: 1.5, top: 0, position: { md: 'absolute' } }}
+              />
+            </Box>
+          </Card>
+        </Container>
+      </Page>
+    </RoleBasedGuard>
   )
 }
 

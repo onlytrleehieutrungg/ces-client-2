@@ -34,8 +34,18 @@ const navConfig = [
   {
     subheader: 'CES-CLIENT',
     items: [
-      { title: 'account', path: PATH_CES.account.root, icon: ICONS.user },
-      { title: 'project', path: PATH_CES.project.root, icon: ICONS.project },
+      {
+        title: 'account',
+        path: PATH_CES.account.root,
+        icon: ICONS.user,
+        // roles: ['sa'],
+      },
+      {
+        title: 'project',
+        path: PATH_CES.project.root,
+        icon: ICONS.project,
+        roles: ['ea'],
+      },
 
       { title: 'order', path: PATH_CES.order.root, icon: ICONS.invoice },
       { title: 'product', path: PATH_CES.product.root, icon: ICONS.ecommerce },

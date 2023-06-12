@@ -4,17 +4,18 @@ import { Box, Container, Tab, Tabs } from '@mui/material'
 import { useRouter } from 'next/router'
 import { useSnackbar } from 'notistack'
 import { ProjectPayload } from 'src/@types/@ces'
+import { projectApi } from 'src/api-client'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
 import Iconify from 'src/components/Iconify'
 import Page from 'src/components/Page'
+import RoleBasedGuard from 'src/guards/RoleBasedGuard'
+import { useProjectDetails } from 'src/hooks/@ces'
 import useSettings from 'src/hooks/useSettings'
 import useTabs from 'src/hooks/useTabs'
 import Layout from 'src/layouts'
 import { PATH_CES } from 'src/routes/paths'
-import ProjectMember from 'src/sections/@ces/project/members/ProjectMember'
 import ProjectNewEditForm from 'src/sections/@ces/project/ProjectNewEditForm'
-import { useProjectDetails } from 'src/hooks/@ces'
-import { projectApi } from 'src/api-client'
+import ProjectMember from 'src/sections/@ces/project/members/ProjectMember'
 
 // ----------------------------------------------------------------------
 
@@ -65,42 +66,44 @@ export default function ProjectDetails() {
   ]
 
   return (
-    <Page title="Project: Project Settings">
-      <Container maxWidth={themeStretch ? false : 'lg'}>
-        <HeaderBreadcrumbs
-          heading="Project"
-          links={[
-            { name: 'Dashboard', href: PATH_CES.root },
-            { name: 'Project', href: PATH_CES.project.root },
-            { name: 'Project Details' },
-          ]}
-        />
+    <RoleBasedGuard hasContent roles={['ea']}>
+      <Page title="Project: Project Settings">
+        <Container maxWidth={themeStretch ? false : 'lg'}>
+          <HeaderBreadcrumbs
+            heading="Project"
+            links={[
+              { name: 'Dashboard', href: PATH_CES.root },
+              { name: 'Project', href: PATH_CES.project.root },
+              { name: 'Project Details' },
+            ]}
+          />
 
-        <Tabs
-          allowScrollButtonsMobile
-          variant="scrollable"
-          scrollButtons="auto"
-          value={currentTab}
-          onChange={onChangeTab}
-        >
-          {ACCOUNT_TABS.map((tab) => (
-            <Tab
-              disableRipple
-              key={tab.value}
-              label={capitalCase(tab.value)}
-              icon={tab.icon}
-              value={tab.value}
-            />
-          ))}
-        </Tabs>
+          <Tabs
+            allowScrollButtonsMobile
+            variant="scrollable"
+            scrollButtons="auto"
+            value={currentTab}
+            onChange={onChangeTab}
+          >
+            {ACCOUNT_TABS.map((tab) => (
+              <Tab
+                disableRipple
+                key={tab.value}
+                label={capitalCase(tab.value)}
+                icon={tab.icon}
+                value={tab.value}
+              />
+            ))}
+          </Tabs>
 
-        <Box sx={{ mb: 5 }} />
+          <Box sx={{ mb: 5 }} />
 
-        {ACCOUNT_TABS.map((tab) => {
-          const isMatched = tab.value === currentTab
-          return isMatched && <Box key={tab.value}>{tab.component}</Box>
-        })}
-      </Container>
-    </Page>
+          {ACCOUNT_TABS.map((tab) => {
+            const isMatched = tab.value === currentTab
+            return isMatched && <Box key={tab.value}>{tab.component}</Box>
+          })}
+        </Container>
+      </Page>
+    </RoleBasedGuard>
   )
 }

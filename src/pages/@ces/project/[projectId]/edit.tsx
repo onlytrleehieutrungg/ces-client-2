@@ -8,6 +8,7 @@ import { ProjectPayload } from 'src/@types/@ces'
 import { projectApi } from 'src/api-client'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
 import Page from 'src/components/Page'
+import RoleBasedGuard from 'src/guards/RoleBasedGuard'
 import { useProjectDetails } from 'src/hooks/@ces'
 import useSettings from 'src/hooks/useSettings'
 import Layout from 'src/layouts'
@@ -43,19 +44,21 @@ export default function ProjectEditPage() {
   }
 
   return (
-    <Page title="Project: Edit project">
-      <Container maxWidth={themeStretch ? false : 'lg'}>
-        <HeaderBreadcrumbs
-          heading="Edit project"
-          links={[
-            { name: 'Dashboard', href: '' },
-            { name: 'Project', href: '' },
-            { name: capitalCase(projectId as string) },
-          ]}
-        />
+    <RoleBasedGuard hasContent roles={['ea']}>
+      <Page title="Project: Edit project">
+        <Container maxWidth={themeStretch ? false : 'lg'}>
+          <HeaderBreadcrumbs
+            heading="Edit project"
+            links={[
+              { name: 'Dashboard', href: '' },
+              { name: 'Project', href: '' },
+              { name: capitalCase(projectId as string) },
+            ]}
+          />
 
-        <ProjectNewEditForm isEdit currentUser={data?.data} onSubmit={handleEditProjectSubmit} />
-      </Container>
-    </Page>
+          <ProjectNewEditForm isEdit currentUser={data?.data} onSubmit={handleEditProjectSubmit} />
+        </Container>
+      </Page>
+    </RoleBasedGuard>
   )
 }
