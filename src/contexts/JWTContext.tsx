@@ -5,7 +5,8 @@ import { isValidToken, setSession } from '../utils/jwt'
 // @types
 import { authApi } from 'src/api-client'
 import axiosClient from 'src/api-client/axiosClient'
-import { ActionMap, AuthState, AuthUser, JWTContextType } from '../@types/auth'
+import { ActionMap, AuthState, JWTContextType } from '../@types/auth'
+import { AccountData } from 'src/@types/@ces'
 
 // ----------------------------------------------------------------------
 
@@ -19,15 +20,14 @@ enum Types {
 type JWTAuthPayload = {
   [Types.Initial]: {
     isAuthenticated: boolean
-    user: AuthUser
+    user: AccountData | null
   }
   [Types.Login]: {
-    // user: AuthUser
-    account: AuthUser
+    account: AccountData | null
   }
   [Types.Logout]: undefined
   [Types.Register]: {
-    user: AuthUser
+    user: AccountData
   }
 }
 
@@ -131,7 +131,7 @@ function AuthProvider({ children }: AuthProviderProps) {
       dispatch({
         type: Types.Login,
         payload: {
-          account: {},
+          account: null,
         },
       })
     } else {
