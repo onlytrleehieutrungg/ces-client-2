@@ -17,7 +17,7 @@ import { paramCase } from 'change-case'
 import { useRouter } from 'next/router'
 import { useSnackbar } from 'notistack'
 import { useState } from 'react'
-import { AccountData } from 'src/@types/@ces'
+import { AccountData, ROLE_OPTIONS_SA, Role } from 'src/@types/@ces'
 import { accountApi } from 'src/api-client'
 import Iconify from 'src/components/Iconify'
 import Scrollbar from 'src/components/Scrollbar'
@@ -34,6 +34,7 @@ import { PATH_CES } from 'src/routes/paths'
 import { confirmDialog } from 'src/utils/confirmDialog'
 import AccountTableRow from './AccountTableRow'
 import AccountTableToolbar from './AccountTableToolbar'
+import useAuth from 'src/hooks/useAuth'
 
 // ----------------------------------------------------------------------
 
@@ -48,30 +49,11 @@ const STATUS_OPTIONS = [
   },
   {
     code: 2,
-    label: 'inActive',
+    label: 'in active',
   },
   {
     code: 3,
-    label: 'Deleted',
-  },
-]
-
-const ROLE_OPTIONS = [
-  {
-    code: 'all',
-    label: 'all',
-  },
-  {
-    code: 1,
-    label: 'Supplier Admin',
-  },
-  {
-    code: 2,
-    label: 'Enterprise Admin',
-  },
-  {
-    code: 3,
-    label: 'Employee',
+    label: 'deleted',
   },
 ]
 
@@ -98,7 +80,7 @@ export default function AccountTable({}: Props) {
     setPage,
     //
     selected,
-    setSelected,
+    // setSelected,
     onSelectRow,
     onSelectAllRows,
     //
@@ -109,7 +91,8 @@ export default function AccountTable({}: Props) {
   } = useTable()
 
   const { push } = useRouter()
-
+  const { user } = useAuth()
+  const roleOptions = user?.roleId === Role['System Admin'] ? ROLE_OPTIONS_SA : undefined
   const { enqueueSnackbar } = useSnackbar()
 
   const { data, mutate } = useAccountList({ params: { Page: '1' } })
@@ -135,7 +118,7 @@ export default function AccountTable({}: Props) {
       try {
         await accountApi.delete(id)
         mutate()
-        enqueueSnackbar('Delete successfull')
+        enqueueSnackbar('Delete successful')
       } catch (error) {
         enqueueSnackbar('Delete failed')
         console.error(error)
@@ -191,7 +174,7 @@ export default function AccountTable({}: Props) {
         filterRole={filterRole}
         onFilterName={handleFilterName}
         onFilterRole={handleFilterRole}
-        optionsRole={ROLE_OPTIONS}
+        optionsRole={roleOptions}
       />
 
       <Scrollbar>

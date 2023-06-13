@@ -1,14 +1,15 @@
 // next
-import NextLink from 'next/link';
+import NextLink from 'next/link'
 // @mui
-import { styled } from '@mui/material/styles';
-import { Box, Link, Typography } from '@mui/material';
+import { styled } from '@mui/material/styles'
+import { Box, Link, Typography } from '@mui/material'
 // hooks
-import useAuth from '../../../hooks/useAuth';
+import useAuth from '../../../hooks/useAuth'
 // routes
-import { PATH_DASHBOARD } from '../../../routes/paths';
+import { PATH_DASHBOARD } from '../../../routes/paths'
 // components
-import MyAvatar from '../../../components/MyAvatar';
+import MyAvatar from '../../../components/MyAvatar'
+import { Role } from 'src/@types/@ces'
 
 // ----------------------------------------------------------------------
 
@@ -21,16 +22,16 @@ const RootStyle = styled('div')(({ theme }) => ({
   transition: theme.transitions.create('opacity', {
     duration: theme.transitions.duration.shorter,
   }),
-}));
+}))
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  isCollapse: boolean | undefined;
-};
+  isCollapse: boolean | undefined
+}
 
 export default function NavbarAccount({ isCollapse }: Props) {
-  const { user } = useAuth();
+  const { user } = useAuth()
 
   return (
     <NextLink href={PATH_DASHBOARD.user.account} passHref>
@@ -58,14 +59,14 @@ export default function NavbarAccount({ isCollapse }: Props) {
             }}
           >
             <Typography variant="subtitle2" noWrap>
-              {user?.displayName}
+              {user?.name}
             </Typography>
             <Typography variant="body2" noWrap sx={{ color: 'text.secondary' }}>
-              {user?.role}
+              {user?.roleId && Role[user.roleId]}
             </Typography>
           </Box>
         </RootStyle>
       </Link>
     </NextLink>
-  );
+  )
 }

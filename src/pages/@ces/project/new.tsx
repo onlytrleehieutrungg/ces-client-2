@@ -1,7 +1,7 @@
 import { Container } from '@mui/material'
 import { useRouter } from 'next/router'
 import { useSnackbar } from 'notistack'
-import { ProjectPayload } from 'src/@types/@ces'
+import { ProjectPayload, Role } from 'src/@types/@ces'
 import { projectApi } from 'src/api-client'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
 import Page from 'src/components/Page'
@@ -38,7 +38,7 @@ export default function ProjectCreatePage() {
   }
 
   return (
-    <RoleBasedGuard hasContent roles={['ea']}>
+    <RoleBasedGuard hasContent roles={[Role['Enterprise Admin']]}>
       <Page title="Project: Create a new project">
         <Container maxWidth={themeStretch ? false : 'lg'}>
           <HeaderBreadcrumbs

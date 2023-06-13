@@ -32,3 +32,20 @@ export type AccountWalletData = {
   balance: number
   accountId: string
 }
+
+export enum Role {
+  'System Admin',
+  'Supplier Admin',
+  'Enterprise Admin',
+  'Employee',
+}
+
+export const ROLE_OPTIONS_SA = [
+  { code: 'all', label: 'All' },
+  ...Object.entries(Role)
+    .filter(([_, value]) => typeof value === 'number')
+    .map(([key, value]) => ({
+      code: value as number,
+      label: key,
+    })),
+]

@@ -12,31 +12,16 @@ import { ForbiddenIllustration } from '../assets'
 
 type RoleBasedGuardProp = {
   hasContent?: boolean
-  roles?: string[]
+  roles?: number[]
   children: React.ReactNode
 }
 
 export default function RoleBasedGuard({ hasContent, roles, children }: RoleBasedGuardProp) {
-  // Logic here to get current user role
   const { user } = useAuth()
 
-  let currentRole
-  switch (user?.roleId) {
-    case 1:
-      currentRole = 'sa'
-      break
-    case 2:
-      currentRole = 'ea'
-      break
-    case 3:
-      currentRole = 'spa'
-      break
-    default:
-      currentRole = ''
-      break
-  }
+  const currentRole = user?.roleId
 
-  if (typeof roles !== 'undefined' && !roles.includes(currentRole)) {
+  if (typeof roles !== 'undefined' && currentRole && !roles.includes(currentRole)) {
     return hasContent ? (
       <Container component={MotionContainer} sx={{ textAlign: 'center' }}>
         <m.div variants={varBounce().in}>

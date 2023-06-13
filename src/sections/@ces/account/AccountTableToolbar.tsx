@@ -5,7 +5,7 @@ import Iconify from 'src/components/Iconify'
 // ----------------------------------------------------------------------
 
 type Props = {
-  optionsRole: {
+  optionsRole?: {
     code: number | string
     label: string
   }[]
@@ -24,38 +24,40 @@ export default function AccountTableToolbar({
 }: Props) {
   return (
     <Stack spacing={2} direction={{ xs: 'column', sm: 'row' }} sx={{ py: 2.5, px: 3 }}>
-      <TextField
-        fullWidth
-        select
-        label="Role"
-        value={filterRole}
-        onChange={onFilterRole}
-        SelectProps={{
-          MenuProps: {
-            sx: { '& .MuiPaper-root': { maxHeight: 260 } },
-          },
-        }}
-        sx={{
-          maxWidth: { sm: 240 },
-          textTransform: 'capitalize',
-        }}
-      >
-        {optionsRole.map((option) => (
-          <MenuItem
-            key={option.code}
-            value={option.code}
-            sx={{
-              mx: 1,
-              my: 0.5,
-              borderRadius: 0.75,
-              typography: 'body2',
-              textTransform: 'capitalize',
-            }}
-          >
-            {option.label}
-          </MenuItem>
-        ))}
-      </TextField>
+      {optionsRole && (
+        <TextField
+          fullWidth
+          select
+          label="Role"
+          value={filterRole}
+          onChange={onFilterRole}
+          SelectProps={{
+            MenuProps: {
+              sx: { '& .MuiPaper-root': { maxHeight: 260 } },
+            },
+          }}
+          sx={{
+            maxWidth: { sm: 240 },
+            textTransform: 'capitalize',
+          }}
+        >
+          {optionsRole.map((option) => (
+            <MenuItem
+              key={option.code}
+              value={option.code}
+              sx={{
+                mx: 1,
+                my: 0.5,
+                borderRadius: 0.75,
+                typography: 'body2',
+                textTransform: 'capitalize',
+              }}
+            >
+              {option.label}
+            </MenuItem>
+          ))}
+        </TextField>
+      )}
 
       <TextField
         fullWidth
