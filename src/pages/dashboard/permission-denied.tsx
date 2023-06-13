@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from 'react'
 // @mui
 import {
   Box,
@@ -8,37 +8,37 @@ import {
   CardHeader,
   ToggleButton,
   ToggleButtonGroup,
-} from '@mui/material';
+} from '@mui/material'
 // hooks
-import useSettings from '../../hooks/useSettings';
+import useSettings from '../../hooks/useSettings'
 // layouts
-import Layout from '../../layouts';
+import Layout from '../../layouts'
 // routes
-import { PATH_DASHBOARD } from '../../routes/paths';
+import { PATH_DASHBOARD } from '../../routes/paths'
 // components
-import Page from '../../components/Page';
-import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
+import Page from '../../components/Page'
+import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs'
 // guards
-import RoleBasedGuard from '../../guards/RoleBasedGuard';
+import RoleBasedGuard from '../../guards/RoleBasedGuard'
 
 // ----------------------------------------------------------------------
 
 PermissionDenied.getLayout = function getLayout(page: React.ReactElement) {
-  return <Layout>{page}</Layout>;
-};
+  return <Layout>{page}</Layout>
+}
 
 // ----------------------------------------------------------------------
 
 export default function PermissionDenied() {
-  const { themeStretch } = useSettings();
+  const { themeStretch } = useSettings()
 
-  const [role, setRole] = useState('admin');
+  const [role, setRole] = useState(1)
 
-  const handleChangeRole = (event: React.MouseEvent<HTMLElement>, newRole: string | null) => {
+  const handleChangeRole = (event: React.MouseEvent<HTMLElement>, newRole: number | null) => {
     if (newRole !== null) {
-      setRole(newRole);
+      setRole(newRole)
     }
-  };
+  }
 
   return (
     <Page title="Permission Denied">
@@ -61,11 +61,11 @@ export default function PermissionDenied() {
           color="primary"
           sx={{ mb: 5 }}
         >
-          <ToggleButton value="admin" aria-label="admin role">
+          <ToggleButton value={0} aria-label="admin role">
             isAdmin
           </ToggleButton>
 
-          <ToggleButton value="user" aria-label="user role">
+          <ToggleButton value={3} aria-label="user role">
             isUser
           </ToggleButton>
         </ToggleButtonGroup>
@@ -93,5 +93,5 @@ export default function PermissionDenied() {
         </RoleBasedGuard>
       </Container>
     </Page>
-  );
+  )
 }

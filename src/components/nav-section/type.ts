@@ -1,5 +1,6 @@
 import { ReactElement } from 'react'
 import { BoxProps } from '@mui/material'
+import { Role } from 'src/@types/@ces'
 
 // ----------------------------------------------------------------------
 
@@ -10,7 +11,7 @@ export type NavListProps = {
   info?: ReactElement
   caption?: string
   disabled?: boolean
-  roles?: string[] | number[]
+  roles?: number[] | any
   children?: {
     title: string
     path: string
