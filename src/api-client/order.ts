@@ -11,5 +11,6 @@ export const orderApi = {
   },
   create: async (payload: Order) => await axiosClient.post('/order', payload),
   delete: async (id: string) => await axiosClient.delete(`/order/${id}`),
-  update: async (id: string, payload: Order) => await axiosClient.put(`/order/${id}`, payload),
+  update: async (id: string, status: number) =>
+    await axiosClient.put(`/order/${id}?status=${status}`),
 }

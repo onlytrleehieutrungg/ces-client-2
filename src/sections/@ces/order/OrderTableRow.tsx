@@ -36,7 +36,7 @@ export default function OrderTableRow({
 
     const mapStatus = (status: number) => {
         const rs = Object.values(Status)
-        return rs[status - 1]
+        return rs[status]
     }
 
     return (

@@ -15,6 +15,7 @@ import {
   Button,
   MenuItem,
   TextField,
+  Stack,
 } from '@mui/material';
 // utils
 // components
@@ -25,9 +26,15 @@ import Scrollbar from '../../../../components/Scrollbar';
 import { Order, Status } from 'src/@types/@ces/order';
 import { fDate } from 'src/utils/formatTime';
 import { fCurrency } from 'src/utils/formatNumber';
-import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs';
-import Iconify from 'src/components/Iconify';
+
 import { useState } from 'react';
+import { async } from '@firebase/util';
+import { orderApi } from 'src/api-client/order';
+import { toNumber } from 'lodash';
+import { useSnackbar } from 'notistack'
+import { useOrderDetail } from 'src/hooks/@ces/useOrder';
+import { PATH_CES } from 'src/routes/paths';
+import { useRouter } from 'next/router';
 
 // ----------------------------------------------------------------------
 
@@ -42,21 +49,18 @@ const RowResultStyle = styled(TableRow)(({ theme }) => ({
 
 type Props = {
   order?: Order;
+  handleEditOrderSubmit: (id: string, status: number) => void
 };
 
-export default function OrderDetails({ order }: Props) {
+export default function OrderDetails({ order, handleEditOrderSubmit }: Props) {
   const theme = useTheme();
   const [changeStatus, setChangeStatus] = useState(false)
+  const [statusValue, setStatusValue] = useState<number>()
+  const { query, push } = useRouter()
   if (!order) {
     return null;
   }
-  function handleUpdate() {
-    setChangeStatus(true);
-  }
-  const mapStatus = (status: number) => {
-    const rs = Object.values(Status)
-    return rs[status - 1]
-  }
+  const rs = Object.values(Status)
 
   const {
     id,
@@ -72,17 +76,17 @@ export default function OrderDetails({ order }: Props) {
     orderDetails
   } = order;
 
-  const STATUS_OPTIONS = [
-    'New',
-    'waiting for payment',
-    'waiting for ship',
-    'complete',
-    'cancel'
-  ]
+  const handleUpdateStatus = () => {
+    setChangeStatus(!changeStatus);
+  }
+  const handleUpdate = () => {
+    handleEditOrderSubmit(id, statusValue!)
+    setChangeStatus(!changeStatus)
+  }
+
+
   return (
     <>
-      {/* <InvoiceToolbar invoice={invoice} /> */}
-
       <Card sx={{ pt: 5, px: 5 }}>
         <Grid container>
           <Grid item xs={12} sm={6} sx={{ mb: 5 }}>
@@ -97,13 +101,14 @@ export default function OrderDetails({ order }: Props) {
                 }
                 sx={{ textTransform: 'uppercase', mb: 1 }}
               >
-                {mapStatus(status)}
+                {rs[status]}
               </Label> : <TextField
                 fullWidth
                 select
                 label="Status"
                 // value={filterStatus}
-                // onChange={onFilterStatus}
+                onChange={((e: React.ChangeEvent<HTMLInputElement>) => setStatusValue(toNumber(e.target.value))
+                )}
                 SelectProps={{
                   MenuProps: {
                     sx: { '& .MuiPaper-root': { maxHeight: 260 } },
@@ -114,10 +119,10 @@ export default function OrderDetails({ order }: Props) {
                   textTransform: 'capitalize',
                 }}
               >
-                {STATUS_OPTIONS.map((option) => (
+                {rs.map((value, index) => (
                   <MenuItem
-                    key={option}
-                    value={option}
+                    key={index}
+                    value={index}
                     sx={{
                       mx: 1,
                       my: 0.5,
@@ -126,7 +131,7 @@ export default function OrderDetails({ order }: Props) {
                       textTransform: 'capitalize',
                     }}
                   >
-                    {option}
+                    {value}
                   </MenuItem>
                 ))}
               </TextField>
@@ -137,11 +142,17 @@ export default function OrderDetails({ order }: Props) {
             </Box>
           </Grid>
           <Grid item xs={12} sm={6} sx={{ mb: 5 }}>
-            <Box sx={{ textAlign: { sm: 'right' } }}>
-              <Button variant="contained" onClick={handleUpdate} startIcon={<Iconify icon={'eva:plus-fill'} />}>
-                {changeStatus ? "Save" : 'Update'}
+
+            <Stack justifyContent="flex-end" direction="row" sx={{ textAlign: { sm: 'right' } }} spacing={2}>
+              {changeStatus ? <Button variant="contained" size='large' onClick={handleUpdate} >
+                Save
+              </Button> : ''}
+
+              <Button variant="contained" color={changeStatus ? "inherit" : 'primary'} size="large" onClick={handleUpdateStatus}>
+                {changeStatus ? "Cancel" : 'Update'}
               </Button>
-            </Box>
+
+            </Stack>
 
           </Grid>
 
@@ -188,7 +199,7 @@ export default function OrderDetails({ order }: Props) {
               </TableHead>
 
               <TableBody>
-                {orderDetails?.map((row, index) => (
+                {orderDetails?.map((row: any, index: any) => (
                   <TableRow
                     key={index}
                     sx={{
@@ -262,19 +273,6 @@ export default function OrderDetails({ order }: Props) {
         </Scrollbar>
 
         <Divider sx={{ mt: 5 }} />
-
-        {/* <Grid container>
-          <Grid item xs={12} md={9} sx={{ py: 3 }}>
-            <Typography variant="subtitle2">NOTES</Typography>
-            <Typography variant="body2">
-              We appreciate your business. Should you need us to add VAT or extra notes let us know!
-            </Typography>
-          </Grid>
-          <Grid item xs={12} md={3} sx={{ py: 3, textAlign: 'right' }}>
-            <Typography variant="subtitle2">Have a Question?</Typography>
-            <Typography variant="body2">support@minimals.cc</Typography>
-          </Grid>
-        </Grid> */}
       </Card>
     </>
   );

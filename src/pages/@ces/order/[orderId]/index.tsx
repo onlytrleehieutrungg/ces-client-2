@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 // @mui
 import { Container } from '@mui/material';
 // routes
-import { PATH_DASHBOARD } from '../../../../routes/paths';
+import { PATH_CES, PATH_DASHBOARD } from '../../../../routes/paths';
 // _mock_
 import { _invoices } from '../../../../_mock';
 // hooks
@@ -14,8 +14,10 @@ import Layout from '../../../../layouts';
 import Page from '../../../../components/Page';
 import HeaderBreadcrumbs from '../../../../components/HeaderBreadcrumbs';
 // sections
-import Invoice from '../../../../sections/@ces/order/details';
 import { useOrderDetail } from 'src/hooks/@ces/useOrder';
+import OrderDetails from 'src/sections/@ces/order/details';
+import { orderApi } from 'src/api-client/order';
+import { useSnackbar } from 'notistack';
 
 // ----------------------------------------------------------------------
 
@@ -27,21 +29,22 @@ InvoiceDetails.getLayout = function getLayout(page: React.ReactElement) {
 
 export default function InvoiceDetails() {
   const { themeStretch } = useSettings();
+  const { enqueueSnackbar } = useSnackbar()
 
   const { query, push } = useRouter()
   const { orderId } = query
-  const { data } = useOrderDetail({ id: `${orderId}` })
-  // const handleEditProductSubmit = async (payload: Product) => {
-  //   try {
-  //     await productApi.update(`${productId}`, payload)
-  //     // await update(data?.data.id, payload)
-  //     enqueueSnackbar('Update success!')
-  //     push(PATH_CES.product.root)
-  //   } catch (error) {
-  //     enqueueSnackbar('Update failed!')
-  //     console.error(error)
-  //   }
-  // }
+  const { data, mutate } = useOrderDetail({ id: `${orderId}` })
+  const handleEditOrderSubmit = async (id: string, status: number) => {
+    try {
+      await orderApi.update(id, status)
+      mutate()
+      enqueueSnackbar('Update success!')
+
+    } catch (error) {
+      enqueueSnackbar('Update failed!')
+      console.error(error)
+    }
+  }
 
   return (
     <Page title="Order: View">
@@ -58,7 +61,7 @@ export default function InvoiceDetails() {
           ]}
         />
 
-        <Invoice order={data?.data} />
+        <OrderDetails order={data?.data} handleEditOrderSubmit={handleEditOrderSubmit} />
       </Container>
     </Page>
   );
