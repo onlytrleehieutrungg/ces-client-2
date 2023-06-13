@@ -49,3 +49,19 @@ export const ROLE_OPTIONS_SA = [
       label: key,
     })),
 ]
+
+export enum AccountStatus {
+  'Active' = 1,
+  'In Active' = 2,
+  'Deleted' = 3,
+}
+
+export const ACCOUNT_STATUS_OPTIONS = [
+  { code: 'all', label: 'All' },
+  ...Object.entries(AccountStatus)
+    .filter(([_, value]) => typeof value === 'number')
+    .map(([key, value]) => ({
+      code: value as number,
+      label: key,
+    })),
+]

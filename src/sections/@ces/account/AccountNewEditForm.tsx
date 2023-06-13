@@ -66,12 +66,18 @@ const companyList = [
 // ----------------------------------------------------------------------
 
 type Props = {
+  isDetail?: boolean
   isEdit?: boolean
   currentUser?: AccountData
   onSubmit?: (payload: AccountPayload) => void
 }
 
-export default function AccountNewEditForm({ isEdit = false, currentUser, onSubmit }: Props) {
+export default function AccountNewEditForm({
+  isEdit = false,
+  isDetail = false,
+  currentUser,
+  onSubmit,
+}: Props) {
   const NewUserSchema = Yup.object().shape({
     name: Yup.string().required('Name is required'),
     email: Yup.string().required('Email is required').email(),
@@ -155,7 +161,7 @@ export default function AccountNewEditForm({ isEdit = false, currentUser, onSubm
                 color={values.status !== 1 ? 'error' : 'success'}
                 sx={{ textTransform: 'uppercase', position: 'absolute', top: 24, right: 24 }}
               >
-                {values.status === 1 ? 'Active' : 'Deactive'}
+                {values.status === 1 ? 'Active' : 'In Active'}
               </Label>
             )}
 
@@ -227,7 +233,9 @@ export default function AccountNewEditForm({ isEdit = false, currentUser, onSubm
             >
               <RHFTextField name="name" label="Name" />
               <RHFTextField name="email" label="Email Address" />
-              {!isEdit && <RHFTextField name="password" label="Password" type="password" />}
+              {!isEdit && !isDetail && (
+                <RHFTextField name="password" label="Password" type="password" />
+              )}
               <RHFTextField name="phone" label="Phone Number" />
               <RHFTextField name="address" label="Address" />
               <RHFSelect name="status" label="Status" placeholder="Status">
@@ -258,9 +266,11 @@ export default function AccountNewEditForm({ isEdit = false, currentUser, onSubm
             </Box>
 
             <Stack alignItems="flex-end" sx={{ mt: 3 }}>
-              <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-                {!isEdit ? 'Create User' : 'Save Changes'}
-              </LoadingButton>
+              {!isDetail && (
+                <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
+                  {!isEdit ? 'Create User' : 'Save Changes'}
+                </LoadingButton>
+              )}
             </Stack>
           </Card>
         </Grid>

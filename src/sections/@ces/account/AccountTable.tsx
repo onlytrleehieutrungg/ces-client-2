@@ -17,7 +17,7 @@ import { paramCase } from 'change-case'
 import { useRouter } from 'next/router'
 import { useSnackbar } from 'notistack'
 import { useState } from 'react'
-import { AccountData, ROLE_OPTIONS_SA, Role } from 'src/@types/@ces'
+import { AccountData, ROLE_OPTIONS_SA, Role, ACCOUNT_STATUS_OPTIONS } from 'src/@types/@ces'
 import { accountApi } from 'src/api-client'
 import Iconify from 'src/components/Iconify'
 import Scrollbar from 'src/components/Scrollbar'
@@ -28,34 +28,15 @@ import {
   TableSelectedActions,
 } from 'src/components/table'
 import { useAccountList } from 'src/hooks/@ces'
+import useAuth from 'src/hooks/useAuth'
 import useTable, { emptyRows, getComparator } from 'src/hooks/useTable'
 import useTabs from 'src/hooks/useTabs'
 import { PATH_CES } from 'src/routes/paths'
 import { confirmDialog } from 'src/utils/confirmDialog'
 import AccountTableRow from './AccountTableRow'
 import AccountTableToolbar from './AccountTableToolbar'
-import useAuth from 'src/hooks/useAuth'
 
 // ----------------------------------------------------------------------
-
-const STATUS_OPTIONS = [
-  {
-    code: 'all',
-    label: 'all',
-  },
-  {
-    code: 1,
-    label: 'active',
-  },
-  {
-    code: 2,
-    label: 'in active',
-  },
-  {
-    code: 3,
-    label: 'deleted',
-  },
-]
 
 const TABLE_HEAD = [
   { id: 'Name', label: 'Name', align: 'left' },
@@ -91,8 +72,12 @@ export default function AccountTable({}: Props) {
   } = useTable()
 
   const { push } = useRouter()
+
   const { user } = useAuth()
+
   const roleOptions = user?.roleId === Role['System Admin'] ? ROLE_OPTIONS_SA : undefined
+  const statusOptions = ACCOUNT_STATUS_OPTIONS
+
   const { enqueueSnackbar } = useSnackbar()
 
   const { data, mutate } = useAccountList({ params: { Page: '1' } })
@@ -162,7 +147,7 @@ export default function AccountTable({}: Props) {
         onChange={onChangeFilterStatus}
         sx={{ px: 2, bgcolor: 'background.neutral' }}
       >
-        {STATUS_OPTIONS.map((tab) => (
+        {statusOptions.map((tab) => (
           <Tab disableRipple key={tab.code} label={tab.label} value={tab.code} />
         ))}
       </Tabs>
