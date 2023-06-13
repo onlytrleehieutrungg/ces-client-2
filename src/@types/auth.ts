@@ -16,6 +16,12 @@ export type ActionMap<M extends { [index: string]: any }> = {
 
 export type AuthUser = null | Record<string, any>
 
+export type FixAuthState = {
+  isAuthenticated: boolean
+  isInitialized: boolean
+  user: any
+}
+
 export type AuthState = {
   isAuthenticated: boolean
   isInitialized: boolean

@@ -1,19 +1,19 @@
 // @mui
-import { Stack, Button, Typography } from '@mui/material';
+import { Stack, Button, Typography } from '@mui/material'
 // hooks
-import useAuth from '../../../hooks/useAuth';
-import useLocales from '../../../hooks/useLocales';
+import useAuth from '../../../hooks/useAuth'
+import useLocales from '../../../hooks/useLocales'
 // routes
-import { PATH_DOCS } from '../../../routes/paths';
+import { PATH_DOCS } from '../../../routes/paths'
 // assets
-import { DocIllustration } from '../../../assets';
+import { DocIllustration } from '../../../assets'
 
 // ----------------------------------------------------------------------
 
 export default function NavbarDocs() {
-  const { user } = useAuth();
+  const { user } = useAuth()
 
-  const { translate } = useLocales();
+  const { translate } = useLocales()
 
   return (
     <Stack
@@ -24,7 +24,7 @@ export default function NavbarDocs() {
 
       <div>
         <Typography gutterBottom variant="subtitle1">
-          {translate('docs.hi')}, {user?.displayName}
+          {translate('docs.hi')}, {user?.name}
         </Typography>
         <Typography variant="body2" sx={{ color: 'text.secondary', whiteSpace: 'pre-line' }}>
           {translate('docs.description')}
@@ -35,5 +35,5 @@ export default function NavbarDocs() {
         {translate('docs.documentation')}
       </Button>
     </Stack>
-  );
+  )
 }
