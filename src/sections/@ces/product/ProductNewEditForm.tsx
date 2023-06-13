@@ -1,5 +1,5 @@
 import * as Yup from 'yup';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSnackbar } from 'notistack';
 // next
 import { useRouter } from 'next/router';
@@ -13,7 +13,8 @@ import { Box, Card, Grid, Stack, Typography } from '@mui/material';
 import { fData } from '../../../utils/formatNumber';
 // routes
 import { PATH_CES } from '../../../routes/paths';
-
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
+import { v4 } from 'uuid'
 import {
     FormProvider,
     RHFSelect,
@@ -23,6 +24,9 @@ import {
 } from '../../../components/hook-form';
 import { Category, Product } from 'src/@types/@ces';
 import { useCategoryList } from 'src/hooks/@ces/useCategory';
+import { storage } from 'src/contexts/FirebaseContext';
+import Image from 'src/components/Image';
+import { async } from '@firebase/util';
 
 // ----------------------------------------------------------------------
 
@@ -33,10 +37,17 @@ type Props = {
     onSubmit?: (payload: Product) => void
 
 };
-
+type Image = {
+    name: string
+}
 export default function ProductNewEditForm({ isEdit = false, currentUser, onSubmit }: Props) {
     const { push } = useRouter();
     const { data, mutate } = useCategoryList({})
+
+    const [imageUpload, setimageUpload] = useState<File | null>(null);
+    const [imageUrl, setImageUrl] = useState<string>();
+
+
 
     const categories: Category[] = data?.data ?? []
     const { enqueueSnackbar } = useSnackbar();
@@ -61,7 +72,7 @@ export default function ProductNewEditForm({ isEdit = false, currentUser, onSubm
             description: currentUser?.description || '',
             serviceDuration: currentUser?.serviceDuration || '',
             type: currentUser?.type || '',
-            avatarUrl: currentUser?.avatarUrl || '',
+            imageUrl: currentUser?.imageUrl || '',
 
         }),
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -86,6 +97,7 @@ export default function ProductNewEditForm({ isEdit = false, currentUser, onSubm
 
     const values = watch();
 
+
     useEffect(() => {
         if (isEdit && currentUser) {
             reset(defaultValues);
@@ -108,17 +120,18 @@ export default function ProductNewEditForm({ isEdit = false, currentUser, onSubm
         }
     };
 
-    const handleDrop = useCallback(
-        (acceptedFiles) => {
-            const file = acceptedFiles[0];
 
+
+    const handleDrop = useCallback(
+        async (acceptedFiles) => {
+            const file = acceptedFiles[0];
+            const imageRef = ref(storage, `image/${file?.name + v4()}`);
             if (file) {
-                setValue(
-                    'avatarUrl',
-                    Object.assign(file, {
-                        preview: URL.createObjectURL(file),
-                    })
-                );
+                await uploadBytes(imageRef, file!).then((snapshot) => {
+                    getDownloadURL(snapshot.ref).then(url => {
+                        setValue('imageUrl', url.toString())
+                    });
+                })
             }
         },
         [setValue]
@@ -131,7 +144,7 @@ export default function ProductNewEditForm({ isEdit = false, currentUser, onSubm
                     <Card sx={{ py: 10, px: 3 }}>
                         <Box sx={{ mb: 5 }}>
                             <RHFUploadAvatar
-                                name="avatarUrl"
+                                name="imageUrl"
                                 accept="image/*"
                                 maxSize={3145728}
                                 onDrop={handleDrop}

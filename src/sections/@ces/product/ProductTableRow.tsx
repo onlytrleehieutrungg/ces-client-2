@@ -30,7 +30,7 @@ export default function ProductTableRow({
 }: Props) {
     const theme = useTheme();
 
-    const { name, price, quantity, description, category, avatarUrl } = row;
+    const { name, price, quantity, description, category, imageUrl } = row;
 
     const [openMenu, setOpenMenuActions] = useState<HTMLElement | null>(null);
 
@@ -49,7 +49,7 @@ export default function ProductTableRow({
             </TableCell>
 
             <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
-                <Avatar alt={name} src={avatarUrl} sx={{ mr: 2 }} />
+                <Avatar alt={name} src={imageUrl} sx={{ mr: 2 }} />
                 <Typography variant="subtitle2" noWrap>
                     {name}
                 </Typography>

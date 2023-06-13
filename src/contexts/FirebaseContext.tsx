@@ -11,15 +11,18 @@ import { getFirestore, collection, doc, getDoc, setDoc, DocumentData } from 'fir
 // @types
 import { ActionMap, AuthState, AuthUser, FirebaseContextType } from '../@types/auth';
 //
-import { FIREBASE_API } from '../config';
+import { FIREBASE_API, FIREBASE_API_CES } from '../config';
+import { getStorage } from 'firebase/storage';
 
 // ----------------------------------------------------------------------
 
 const ADMIN_EMAILS = ['test@gmail.com'];
 
-const firebaseApp = initializeApp(FIREBASE_API);
+const firebaseApp = initializeApp(FIREBASE_API_CES);
 
 const AUTH = getAuth(firebaseApp);
+
+export const storage = getStorage(firebaseApp)
 
 const DB = getFirestore(firebaseApp);
 

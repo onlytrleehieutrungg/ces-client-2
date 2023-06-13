@@ -4,7 +4,7 @@ export type Product = {
   id: string
   name: string
   price: number
-  avatarUrl: string
+  imageUrl: string
   quantity: number
   status: string
   updatedAt: string
