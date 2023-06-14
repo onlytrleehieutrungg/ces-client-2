@@ -17,7 +17,13 @@ import { paramCase } from 'change-case'
 import { useRouter } from 'next/router'
 import { useSnackbar } from 'notistack'
 import { useState } from 'react'
-import { AccountData, ROLE_OPTIONS_SA, Role, ACCOUNT_STATUS_OPTIONS } from 'src/@types/@ces'
+import {
+  ACCOUNT_STATUS_OPTIONS_SA,
+  AccountData,
+  ROLE_OPTIONS_EA,
+  ROLE_OPTIONS_SA,
+  Role,
+} from 'src/@types/@ces'
 import { accountApi } from 'src/api-client'
 import Iconify from 'src/components/Iconify'
 import Scrollbar from 'src/components/Scrollbar'
@@ -75,8 +81,8 @@ export default function AccountTable({}: Props) {
 
   const { user } = useAuth()
 
-  const roleOptions = user?.roleId === Role['System Admin'] ? ROLE_OPTIONS_SA : undefined
-  const statusOptions = ACCOUNT_STATUS_OPTIONS
+  const roleOptions = user?.roleId === Role['System Admin'] ? ROLE_OPTIONS_SA : ROLE_OPTIONS_EA
+  const statusOptions = ACCOUNT_STATUS_OPTIONS_SA
 
   const { enqueueSnackbar } = useSnackbar()
 

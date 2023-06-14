@@ -22,7 +22,7 @@ import { paramCase } from 'change-case'
 import { useRouter } from 'next/router'
 import { useSnackbar } from 'notistack'
 import { useState } from 'react'
-import { AccountData, ACCOUNT_STATUS_OPTIONS } from 'src/@types/@ces'
+import { AccountData, ACCOUNT_STATUS_OPTIONS_SA } from 'src/@types/@ces'
 import { projectApi } from 'src/api-client'
 import Iconify from 'src/components/Iconify'
 import Scrollbar from 'src/components/Scrollbar'
@@ -84,7 +84,7 @@ export default function AccountTableCustom({}: Props) {
 
   // const roleOptions = user?.roleId === Role['System Admin'] ? ROLE_OPTIONS_SA : undefined
   const roleOptions = undefined
-  const statusOptions = ACCOUNT_STATUS_OPTIONS
+  const statusOptions = ACCOUNT_STATUS_OPTIONS_SA
 
   const { data } = useAccountList({})
   const accountList: AccountData[] = data?.data ?? []

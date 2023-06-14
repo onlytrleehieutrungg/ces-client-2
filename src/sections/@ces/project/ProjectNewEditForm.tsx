@@ -13,7 +13,7 @@ import { fData } from '../../../utils/formatNumber'
 // @types
 // _mock
 // components
-import { ProjectData, ProjectPayload } from 'src/@types/@ces'
+import { PROJECT_STATUS_OPTIONS_FORM, ProjectData, ProjectPayload } from 'src/@types/@ces'
 import Label from '../../../components/Label'
 import {
   FormProvider,
@@ -21,18 +21,6 @@ import {
   RHFTextField,
   RHFUploadAvatar,
 } from '../../../components/hook-form'
-
-//
-export const statusList = [
-  {
-    code: 1,
-    label: 'Active',
-  },
-  {
-    code: 2,
-    label: 'Inactive',
-  },
-]
 
 // ----------------------------------------------------------------------
 
@@ -55,7 +43,7 @@ export default function ProjectNewEditForm({ isEdit = false, currentUser, onSubm
       name: currentUser?.name || '',
       address: currentUser?.address || '',
       imageUrl: currentUser?.imageUrl !== 'string' ? currentUser?.imageUrl : '',
-      status: currentUser ? currentUser?.status : statusList[0]?.code,
+      status: currentUser?.status,
     }),
     [currentUser]
   )
@@ -105,6 +93,8 @@ export default function ProjectNewEditForm({ isEdit = false, currentUser, onSubm
     },
     [setValue]
   )
+
+  const statusList = PROJECT_STATUS_OPTIONS_FORM
 
   return (
     <FormProvider methods={methods} onSubmit={handleSubmit(handleFormSubmit)}>
@@ -191,6 +181,7 @@ export default function ProjectNewEditForm({ isEdit = false, currentUser, onSubm
               <RHFTextField name="address" label="Address" />
 
               <RHFSelect name="status" label="Status" placeholder="Status">
+                <option value={undefined} />
                 {statusList.map((option) => (
                   <option key={option.code} value={option.code}>
                     {option.label}

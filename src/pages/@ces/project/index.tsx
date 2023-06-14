@@ -24,7 +24,7 @@ import { useRouter } from 'next/router'
 import { useSnackbar } from 'notistack'
 import { useState } from 'react'
 import { Role } from 'src/@types/@ces'
-import { ProjectData } from 'src/@types/@ces/project'
+import { PROJECT_STATUS_OPTIONS, ProjectData } from 'src/@types/@ces/project'
 import { projectApi } from 'src/api-client'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
 import Iconify from 'src/components/Iconify'
@@ -46,21 +46,6 @@ import ProjectTableToolbar from 'src/sections/@ces/project/ProjectTableToolbar'
 import { confirmDialog } from 'src/utils/confirmDialog'
 
 // ----------------------------------------------------------------------
-
-const STATUS_OPTIONS = [
-  {
-    code: 'all',
-    label: 'all',
-  },
-  {
-    code: 1,
-    label: 'active',
-  },
-  {
-    code: 2,
-    label: 'in active',
-  },
-]
 
 const TABLE_HEAD = [
   { id: 'Name', label: 'Name', align: 'left' },
@@ -104,8 +89,9 @@ export default function ProjectPage() {
   const { enqueueSnackbar } = useSnackbar()
 
   const { data } = useProjectList({})
-
   const projectList: ProjectData[] = data?.data || []
+
+  const statusList = PROJECT_STATUS_OPTIONS
 
   const [filterName, setFilterName] = useState('')
 
@@ -187,7 +173,7 @@ export default function ProjectPage() {
               onChange={onChangeFilterStatus}
               sx={{ px: 2, bgcolor: 'background.neutral' }}
             >
-              {STATUS_OPTIONS.map((tab) => (
+              {statusList.map((tab) => (
                 <Tab disableRipple key={tab.code} label={tab.label} value={tab.code} />
               ))}
             </Tabs>
