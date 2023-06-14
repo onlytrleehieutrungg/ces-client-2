@@ -1,40 +1,20 @@
 // @mui
-import { styled, useTheme } from '@mui/material/styles';
 import {
-  Box,
-  Card,
-  Grid,
-  Table,
-  Divider,
-  TableRow,
-  TableHead,
-  TableCell,
-  Typography,
-  TableContainer,
-  TableBody,
-  Button,
-  MenuItem,
-  TextField,
-  Stack,
+  Box, Button, Card, Divider, Grid, MenuItem, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography
 } from '@mui/material';
+import { styled, useTheme } from '@mui/material/styles';
+import { toNumber } from 'lodash';
+import { useRouter } from 'next/router';
+import { useState } from 'react';
+//
+import { Order, Status } from 'src/@types/@ces/order';
+import { fCurrency } from 'src/utils/formatNumber';
+import { fDate } from 'src/utils/formatTime';
 // utils
 // components
 import Label from '../../../../components/Label';
-import Image from '../../../../components/Image';
 import Scrollbar from '../../../../components/Scrollbar';
-//
-import { Order, Status } from 'src/@types/@ces/order';
-import { fDate } from 'src/utils/formatTime';
-import { fCurrency } from 'src/utils/formatNumber';
 
-import { useState } from 'react';
-import { async } from '@firebase/util';
-import { orderApi } from 'src/api-client/order';
-import { toNumber } from 'lodash';
-import { useSnackbar } from 'notistack'
-import { useOrderDetail } from 'src/hooks/@ces/useOrder';
-import { PATH_CES } from 'src/routes/paths';
-import { useRouter } from 'next/router';
 
 // ----------------------------------------------------------------------
 
@@ -94,9 +74,11 @@ export default function OrderDetails({ order, handleEditOrderSubmit }: Props) {
               {!changeStatus ? <Label
                 variant={theme.palette.mode === 'light' ? 'ghost' : 'filled'}
                 color={
-                  (status === 1 && 'success') ||
-                  (status === 0 && 'warning') ||
-                  (status === 2 && 'error') ||
+                  (status === 0 && 'primary') ||
+                  (status === 1 && 'warning') ||
+                  (status === 2 && 'info') ||
+                  (status === 3 && 'success') ||
+                  (status === 4 && 'error') ||
                   'default'
                 }
                 sx={{ textTransform: 'uppercase', mb: 1 }}

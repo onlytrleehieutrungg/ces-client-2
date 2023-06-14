@@ -34,7 +34,6 @@ export default function AccountEditPage() {
     try {
       await accountApi.update(`${accountId}`, payload)
       // await update(data?.data.id, payload)
-
       enqueueSnackbar('Update success!')
       push(PATH_CES.account.root)
     } catch (error) {

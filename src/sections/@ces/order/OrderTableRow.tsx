@@ -53,6 +53,8 @@ export default function OrderTableRow({
                 <Label
                     variant={theme.palette.mode === 'light' ? 'ghost' : 'filled'}
                     color={
+                        (mapStatus(status) === 'New' && 'primary') ||
+                        (mapStatus(status) === 'Waiting for ship' && 'info') ||
                         (mapStatus(status) === 'Complete' && 'success') ||
                         (mapStatus(status) === 'Waiting for payment' && 'warning') ||
                         (mapStatus(status) === 'Cancel' && 'error') ||
