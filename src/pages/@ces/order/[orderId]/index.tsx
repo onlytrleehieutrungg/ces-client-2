@@ -1,23 +1,23 @@
 // next
-import { useRouter } from 'next/router';
 // @mui
 import { Container } from '@mui/material';
-// routes
-import { PATH_CES, PATH_DASHBOARD } from '../../../../routes/paths';
-// _mock_
-import { _invoices } from '../../../../_mock';
+import { useRouter } from 'next/router';
+import { useSnackbar } from 'notistack';
+import { Role } from 'src/@types/@ces';
+import { orderApi } from 'src/api-client/order';
+import RoleBasedGuard from 'src/guards/RoleBasedGuard';
+// sections
+import { useOrderDetail } from 'src/hooks/@ces/useOrder';
+import OrderDetails from 'src/sections/@ces/order/details';
+import HeaderBreadcrumbs from '../../../../components/HeaderBreadcrumbs';
+// components
+import Page from '../../../../components/Page';
 // hooks
 import useSettings from '../../../../hooks/useSettings';
 // layouts
 import Layout from '../../../../layouts';
-// components
-import Page from '../../../../components/Page';
-import HeaderBreadcrumbs from '../../../../components/HeaderBreadcrumbs';
-// sections
-import { useOrderDetail } from 'src/hooks/@ces/useOrder';
-import OrderDetails from 'src/sections/@ces/order/details';
-import { orderApi } from 'src/api-client/order';
-import { useSnackbar } from 'notistack';
+// routes
+import { PATH_CES, PATH_DASHBOARD } from '../../../../routes/paths';
 
 // ----------------------------------------------------------------------
 
@@ -39,7 +39,7 @@ export default function InvoiceDetails() {
       await orderApi.update(id, status)
       mutate()
       enqueueSnackbar('Update success!')
-
+      push(PATH_CES.order.root)
     } catch (error) {
       enqueueSnackbar('Update failed!')
       console.error(error)
@@ -47,22 +47,24 @@ export default function InvoiceDetails() {
   }
 
   return (
-    <Page title="Order: View">
-      <Container maxWidth={themeStretch ? false : 'lg'}>
-        <HeaderBreadcrumbs
-          heading="Order Details"
-          links={[
-            { name: 'Dashboard', href: PATH_DASHBOARD.root },
-            {
-              name: 'Order',
-              href: PATH_DASHBOARD.invoice.root,
-            },
-            { name: `${orderId}` || '' },
-          ]}
-        />
+    <RoleBasedGuard hasContent roles={[Role['Supplier Admin']]}>
+      <Page title="Order: View">
+        <Container maxWidth={themeStretch ? false : 'lg'}>
+          <HeaderBreadcrumbs
+            heading="Order Details"
+            links={[
+              { name: 'Dashboard', href: PATH_DASHBOARD.root },
+              {
+                name: 'Order',
+                href: PATH_DASHBOARD.invoice.root,
+              },
+              { name: `${orderId}` || '' },
+            ]}
+          />
 
-        <OrderDetails order={data?.data} handleEditOrderSubmit={handleEditOrderSubmit} />
-      </Container>
-    </Page>
+          <OrderDetails order={data?.data} handleEditOrderSubmit={handleEditOrderSubmit} />
+        </Container>
+      </Page>
+    </RoleBasedGuard>
   );
 }

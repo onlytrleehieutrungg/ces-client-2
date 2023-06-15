@@ -1,11 +1,10 @@
-import { useState } from 'react';
+import { Checkbox, MenuItem, TableCell, TableRow } from '@mui/material';
 // @mui
 import { useTheme } from '@mui/material/styles';
-import { Avatar, Checkbox, TableRow, TableCell, Typography, MenuItem } from '@mui/material';
-import { TableMoreMenu } from 'src/components/table';
-import Iconify from 'src/components/Iconify';
-import Label from 'src/components/Label';
+import { useState } from 'react';
 import { Category } from 'src/@types/@ces';
+import Iconify from 'src/components/Iconify';
+import { TableMoreMenu } from 'src/components/table';
 // @types
 
 // components

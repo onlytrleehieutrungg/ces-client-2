@@ -1,32 +1,20 @@
-import * as Yup from 'yup';
-import { useCallback, useEffect, useMemo } from 'react';
-import { useSnackbar } from 'notistack';
-// next
-import { useRouter } from 'next/router';
-// form
-import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 // @mui
 import { LoadingButton } from '@mui/lab';
-import { Box, Card, Grid, Stack, Switch, Typography, FormControlLabel } from '@mui/material';
-// utils
-import { fData } from '../../../utils/formatNumber';
-// routes
-import { PATH_CES, PATH_DASHBOARD } from '../../../routes/paths';
-// @types
-import { UserManager } from '../../../@types/user';
-// _mock
-import { countries } from '../../../_mock';
-// components
-import Label from '../../../components/Label';
-import {
-    FormProvider,
-    RHFSelect,
-    RHFSwitch,
-    RHFTextField,
-    RHFUploadAvatar,
-} from '../../../components/hook-form';
+import { Box, Card, Grid, Stack } from '@mui/material';
+// next
+import { useRouter } from 'next/router';
+import { useSnackbar } from 'notistack';
+import { useEffect, useMemo } from 'react';
+// form
+import { useForm } from 'react-hook-form';
 import { Category } from 'src/@types/@ces';
+import * as Yup from 'yup';
+import {
+    FormProvider, RHFTextField
+} from '../../../components/hook-form';
+// routes
+import { PATH_CES } from '../../../routes/paths';
 ;
 
 // ----------------------------------------------------------------------

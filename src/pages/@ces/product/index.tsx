@@ -1,6 +1,3 @@
-import NextLink from 'next/link'
-import Page from 'src/components/Page'
-import Layout from 'src/layouts'
 // @mui
 import {
   Box,
@@ -14,41 +11,45 @@ import {
   TableBody,
   TableContainer,
   TablePagination,
-  Tooltip,
+  Tooltip
 } from '@mui/material'
 import { paramCase } from 'change-case'
+import NextLink from 'next/link'
 import { useRouter } from 'next/router'
+import { useSnackbar } from 'notistack'
 import { useState } from 'react'
-// import { UserManager } from 'src/@types/user'
-// import { _userList } from 'src/_mock'
+import { Role } from 'src/@types/@ces'
+import { Product } from 'src/@types/@ces/product'
+import { productApi } from 'src/api-client/product'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
 import Iconify from 'src/components/Iconify'
+import Page from 'src/components/Page'
 import Scrollbar from 'src/components/Scrollbar'
 import {
   TableEmptyRows,
   TableHeadCustom,
   TableNoData,
-  TableSelectedActions,
+  TableSelectedActions
 } from 'src/components/table'
+import RoleBasedGuard from 'src/guards/RoleBasedGuard'
+import { useProduct } from 'src/hooks/@ces/useProduct'
 import useTable, { emptyRows, getComparator } from 'src/hooks/useTable'
 import useTabs from 'src/hooks/useTabs'
+import Layout from 'src/layouts'
 import { PATH_CES } from 'src/routes/paths'
-import { confirmDialog } from 'src/utils/confirmDialog'
 import ProductTableRow from 'src/sections/@ces/product/ProductTableRow'
-import { productApi } from 'src/api-client/product'
-import { Product } from 'src/@types/@ces/product'
-import { useProduct } from 'src/hooks/@ces/useProduct'
-import { useSnackbar } from 'notistack'
 import ProductTableToolbar from 'src/sections/@ces/product/ProductTableToolbar'
+import { confirmDialog } from 'src/utils/confirmDialog'
+
 
 // ----------------------------------------------------------------------
 
 
 const TABLE_HEAD = [
-  { id: 'Name', label: 'Name', align: 'left' },
-  { id: 'Description', label: 'Description', align: 'left' },
-  { id: 'Price', label: 'Price', align: 'left' },
-  { id: 'Quantity', label: 'Quantity', align: 'left' },
+  { id: 'name', label: 'Name', align: 'left' },
+  { id: 'description', label: 'Description', align: 'left' },
+  { id: 'price', label: 'Price', align: 'left' },
+  { id: 'quantity', label: 'Quantity', align: 'left' },
   { id: 'category.name', label: 'Carogory', align: 'left' },
   { id: '' },
 
@@ -138,111 +139,113 @@ export default function ProductPage() {
     (!dataFiltered.length && !!filterRole) ||
     (!dataFiltered.length && !!filterStatus)
   return (
-    // <RouterGuard acceptRoles={[UserRole.EMPLOYEEA]}>
-    <Page title="Product: List">
-      <Container>
-        <HeaderBreadcrumbs
-          heading="Product List"
-          links={[
-            { name: 'Dashboard', href: '' },
-            { name: 'Product', href: '' },
-            { name: 'List' },
-          ]}
-          action={
-            <NextLink href={PATH_CES.product.new} passHref>
-              <Button variant="contained" startIcon={<Iconify icon={'eva:plus-fill'} />}>
-                New Product
-              </Button>
-            </NextLink>
-          }
-        />
-        <Card>
-          <ProductTableToolbar filterName={filterName} onFilterName={handleFilterName} />
 
-          <Scrollbar>
-            <TableContainer sx={{ minWidth: 800, position: 'relative' }}>
-              {selected.length > 0 && (
-                <TableSelectedActions
-                  dense={dense}
-                  numSelected={selected.length}
-                  rowCount={tableData.length}
-                  onSelectAllRows={(checked) =>
-                    onSelectAllRows(
-                      checked,
-                      tableData.map((row) => `${row.id}`)
-                    )
-                  }
-                  actions={
-                    <Tooltip title="Delete">
-                      <IconButton color="primary" onClick={() => handleDeleteRows(selected)}>
-                        <Iconify icon={'eva:trash-2-outline'} />
-                      </IconButton>
-                    </Tooltip>
-                  }
-                />
-              )}
+    <RoleBasedGuard hasContent roles={[Role['Supplier Admin']]}>
+      <Page title="Product: List">
+        <Container>
+          <HeaderBreadcrumbs
+            heading="Product List"
+            links={[
+              { name: 'Dashboard', href: '' },
+              { name: 'Product', href: '' },
+              { name: 'List' },
+            ]}
+            action={
+              <NextLink href={PATH_CES.product.new} passHref>
+                <Button variant="contained" startIcon={<Iconify icon={'eva:plus-fill'} />}>
+                  New Product
+                </Button>
+              </NextLink>
+            }
+          />
+          <Card>
+            <ProductTableToolbar filterName={filterName} onFilterName={handleFilterName} />
 
-              <Table size={dense ? 'small' : 'medium'}>
-                <TableHeadCustom
-                  order={order}
-                  orderBy={orderBy}
-                  headLabel={TABLE_HEAD}
-                  rowCount={tableData.length}
-                  numSelected={selected.length}
-                  onSort={onSort}
-                  onSelectAllRows={(checked) =>
-                    onSelectAllRows(
-                      checked,
-                      tableData.map((row) => `${row.id}`)
-                    )
-                  }
-                />
-                <TableBody>
-                  {dataFiltered
-                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                    .map((row) => (
-                      <ProductTableRow
-                        key={`${row.id}`}
-                        row={row}
-                        selected={selected.includes(`${row.id}`)}
-                        onSelectRow={() => onSelectRow(`${row.id}`)}
-                        onDeleteRow={() => handleDeleteRow(`${row.id}`)}
-                        onEditRow={() => handleEditRow(row.id)}
-                      />
-                    ))}
-
-                  <TableEmptyRows
-                    height={denseHeight}
-                    emptyRows={emptyRows(page, rowsPerPage, tableData.length)}
+            <Scrollbar>
+              <TableContainer sx={{ minWidth: 800, position: 'relative' }}>
+                {selected.length > 0 && (
+                  <TableSelectedActions
+                    dense={dense}
+                    numSelected={selected.length}
+                    rowCount={tableData.length}
+                    onSelectAllRows={(checked) =>
+                      onSelectAllRows(
+                        checked,
+                        tableData.map((row) => `${row.id}`)
+                      )
+                    }
+                    actions={
+                      <Tooltip title="Delete">
+                        <IconButton color="primary" onClick={() => handleDeleteRows(selected)}>
+                          <Iconify icon={'eva:trash-2-outline'} />
+                        </IconButton>
+                      </Tooltip>
+                    }
                   />
+                )}
 
-                  <TableNoData isNotFound={isNotFound} />
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Scrollbar>
+                <Table size={dense ? 'small' : 'medium'}>
+                  <TableHeadCustom
+                    order={order}
+                    orderBy={orderBy}
+                    headLabel={TABLE_HEAD}
+                    rowCount={tableData.length}
+                    numSelected={selected.length}
+                    onSort={onSort}
+                    onSelectAllRows={(checked) =>
+                      onSelectAllRows(
+                        checked,
+                        tableData.map((row) => `${row.id}`)
+                      )
+                    }
+                  />
+                  <TableBody>
+                    {dataFiltered
+                      .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                      .map((row) => (
+                        <ProductTableRow
+                          key={`${row.id}`}
+                          row={row}
+                          selected={selected.includes(`${row.id}`)}
+                          onSelectRow={() => onSelectRow(`${row.id}`)}
+                          onDeleteRow={() => handleDeleteRow(`${row.id}`)}
+                          onEditRow={() => handleEditRow(row.id)}
+                        />
+                      ))}
 
-          <Box sx={{ position: 'relative' }}>
-            <TablePagination
-              rowsPerPageOptions={[5, 10, 25]}
-              component="div"
-              count={dataFiltered.length}
-              rowsPerPage={rowsPerPage}
-              page={page}
-              onPageChange={onChangePage}
-              onRowsPerPageChange={onChangeRowsPerPage}
-            />
+                    <TableEmptyRows
+                      height={denseHeight}
+                      emptyRows={emptyRows(page, rowsPerPage, tableData.length)}
+                    />
 
-            <FormControlLabel
-              control={<Switch checked={dense} onChange={onChangeDense} />}
-              label="Dense"
-              sx={{ px: 3, py: 1.5, top: 0, position: { md: 'absolute' } }}
-            />
-          </Box>
-        </Card>
-      </Container>
-    </Page>
-    // </RouterGuard>
+                    <TableNoData isNotFound={isNotFound} />
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Scrollbar>
+
+            <Box sx={{ position: 'relative' }}>
+              <TablePagination
+                rowsPerPageOptions={[5, 10, 25]}
+                component="div"
+                count={dataFiltered.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={onChangePage}
+                onRowsPerPageChange={onChangeRowsPerPage}
+              />
+
+              <FormControlLabel
+                control={<Switch checked={dense} onChange={onChangeDense} />}
+                label="Dense"
+                sx={{ px: 3, py: 1.5, top: 0, position: { md: 'absolute' } }}
+              />
+            </Box>
+          </Card>
+        </Container>
+      </Page>
+
+    </RoleBasedGuard >
   )
 }
 

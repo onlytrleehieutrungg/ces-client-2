@@ -1,13 +1,13 @@
 import { Container } from '@mui/material'
 import { useRouter } from 'next/router'
 import { useSnackbar } from 'notistack'
-import { Product } from 'src/@types/@ces'
+import { Product, Role } from 'src/@types/@ces'
 import { productApi } from 'src/api-client/product'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
 import Page from 'src/components/Page'
+import RoleBasedGuard from 'src/guards/RoleBasedGuard'
 import Layout from 'src/layouts'
 import { PATH_CES } from 'src/routes/paths'
-import AccountNewEditForm from 'src/sections/@ces/account/AccountNewEditForm'
 import ProductNewEditForm from 'src/sections/@ces/product/ProductNewEditForm'
 // ----------------------------------------------------------------------
 
@@ -33,18 +33,20 @@ export default function ProductCreatePage() {
   }
 
   return (
-    <Page title="Product: Create a new Product">
-      <Container>
-        <HeaderBreadcrumbs
-          heading="Create a new Product"
-          links={[
-            { name: 'Dashboard', href: '' },
-            { name: 'Product', href: '' },
-            { name: 'New Product' },
-          ]}
-        />
-        <ProductNewEditForm onSubmit={handleCreateProductSubmit} />
-      </Container>
-    </Page>
+    <RoleBasedGuard hasContent roles={[Role['Supplier Admin']]}>
+      <Page title="Product: Create a new Product">
+        <Container>
+          <HeaderBreadcrumbs
+            heading="Create a new Product"
+            links={[
+              { name: 'Dashboard', href: '' },
+              { name: 'Product', href: '' },
+              { name: 'New Product' },
+            ]}
+          />
+          <ProductNewEditForm onSubmit={handleCreateProductSubmit} />
+        </Container>
+      </Page>
+    </RoleBasedGuard>
   )
 }
