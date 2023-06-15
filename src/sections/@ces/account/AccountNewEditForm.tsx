@@ -93,7 +93,11 @@ export default function AccountNewEditForm({
       imageUrl: currentUser?.imageUrl !== 'string' ? currentUser?.imageUrl : '',
       status: currentUser?.status,
       roleId: currentUser?.roleId,
-      companyId: currentUser?.companyId || user?.companyId,
+      companyId: currentUser?.companyId
+        ? currentUser.companyId
+        : user?.roleId === Role['System Admin']
+        ? null
+        : user?.companyId,
       password: '',
     }),
     [currentUser, user]
