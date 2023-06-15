@@ -17,7 +17,13 @@ import { paramCase } from 'change-case'
 import { useRouter } from 'next/router'
 import { useSnackbar } from 'notistack'
 import { useState } from 'react'
-import { AccountData } from 'src/@types/@ces'
+import {
+  ACCOUNT_STATUS_OPTIONS_SA,
+  AccountData,
+  ROLE_OPTIONS_EA,
+  ROLE_OPTIONS_SA,
+  Role,
+} from 'src/@types/@ces'
 import { accountApi } from 'src/api-client'
 import Iconify from 'src/components/Iconify'
 import Scrollbar from 'src/components/Scrollbar'
@@ -28,6 +34,7 @@ import {
   TableSelectedActions,
 } from 'src/components/table'
 import { useAccountList } from 'src/hooks/@ces'
+import useAuth from 'src/hooks/useAuth'
 import useTable, { emptyRows, getComparator } from 'src/hooks/useTable'
 import useTabs from 'src/hooks/useTabs'
 import { PATH_CES } from 'src/routes/paths'
@@ -36,44 +43,6 @@ import AccountTableRow from './AccountTableRow'
 import AccountTableToolbar from './AccountTableToolbar'
 
 // ----------------------------------------------------------------------
-
-const STATUS_OPTIONS = [
-  {
-    code: 'all',
-    label: 'all',
-  },
-  {
-    code: 1,
-    label: 'active',
-  },
-  {
-    code: 2,
-    label: 'inActive',
-  },
-  {
-    code: 3,
-    label: 'Deleted',
-  },
-]
-
-const ROLE_OPTIONS = [
-  {
-    code: 'all',
-    label: 'all',
-  },
-  {
-    code: 1,
-    label: 'Supplier Admin',
-  },
-  {
-    code: 2,
-    label: 'Enterprise Admin',
-  },
-  {
-    code: 3,
-    label: 'Employee',
-  },
-]
 
 const TABLE_HEAD = [
   { id: 'Name', label: 'Name', align: 'left' },
@@ -98,7 +67,7 @@ export default function AccountTable({}: Props) {
     setPage,
     //
     selected,
-    setSelected,
+    // setSelected,
     onSelectRow,
     onSelectAllRows,
     //
@@ -109,6 +78,11 @@ export default function AccountTable({}: Props) {
   } = useTable()
 
   const { push } = useRouter()
+
+  const { user } = useAuth()
+
+  const roleOptions = user?.roleId === Role['System Admin'] ? ROLE_OPTIONS_SA : ROLE_OPTIONS_EA
+  const statusOptions = ACCOUNT_STATUS_OPTIONS_SA
 
   const { enqueueSnackbar } = useSnackbar()
 
@@ -135,7 +109,7 @@ export default function AccountTable({}: Props) {
       try {
         await accountApi.delete(id)
         mutate()
-        enqueueSnackbar('Delete successfull')
+        enqueueSnackbar('Delete successful')
       } catch (error) {
         enqueueSnackbar('Delete failed')
         console.error(error)
@@ -179,7 +153,7 @@ export default function AccountTable({}: Props) {
         onChange={onChangeFilterStatus}
         sx={{ px: 2, bgcolor: 'background.neutral' }}
       >
-        {STATUS_OPTIONS.map((tab) => (
+        {statusOptions.map((tab) => (
           <Tab disableRipple key={tab.code} label={tab.label} value={tab.code} />
         ))}
       </Tabs>
@@ -191,7 +165,7 @@ export default function AccountTable({}: Props) {
         filterRole={filterRole}
         onFilterName={handleFilterName}
         onFilterRole={handleFilterRole}
-        optionsRole={ROLE_OPTIONS}
+        optionsRole={roleOptions}
       />
 
       <Scrollbar>

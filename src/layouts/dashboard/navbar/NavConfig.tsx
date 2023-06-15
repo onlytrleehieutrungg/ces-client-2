@@ -4,6 +4,7 @@ import { PATH_CES, PATH_DASHBOARD, PATH_SYS } from '../../../routes/paths'
 import Label from '../../../components/Label'
 import Iconify from '../../../components/Iconify'
 import SvgIconStyle from '../../../components/SvgIconStyle'
+import { Role } from 'src/@types/@ces'
 
 // ----------------------------------------------------------------------
 
@@ -38,13 +39,13 @@ const navConfig = [
         title: 'account',
         path: PATH_CES.account.root,
         icon: ICONS.user,
-        // roles: ['sa'],
+        roles: [Role['System Admin'], Role['Enterprise Admin']],
       },
       {
         title: 'project',
         path: PATH_CES.project.root,
         icon: ICONS.project,
-        roles: ['ea'],
+        roles: [Role['Enterprise Admin']],
       },
 
       { title: 'order', path: PATH_CES.order.root, icon: ICONS.invoice },

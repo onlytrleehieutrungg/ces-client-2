@@ -1,18 +1,18 @@
-import { forwardRef } from 'react';
+import { forwardRef } from 'react'
 // next
-import NextLink from 'next/link';
+import NextLink from 'next/link'
 // @mui
-import { Box, Link, ListItemText, Typography, Tooltip } from '@mui/material';
+import { Box, Link, ListItemText, Typography, Tooltip } from '@mui/material'
 // hooks
-import useLocales from '../../../hooks/useLocales';
+import useLocales from '../../../hooks/useLocales'
 // guards
-import RoleBasedGuard from '../../../guards/RoleBasedGuard';
+import RoleBasedGuard from '../../../guards/RoleBasedGuard'
 // type
-import { NavItemProps } from '../type';
+import { NavItemProps } from '../type'
 //
-import Iconify from '../../Iconify';
-import { ListItemStyle, ListItemTextStyle, ListItemIconStyle, ListItemStyleProps } from './style';
-import { isExternalLink } from '..';
+import Iconify from '../../Iconify'
+import { ListItemStyle, ListItemTextStyle, ListItemIconStyle, ListItemStyleProps } from './style'
+import { isExternalLink } from '..'
 
 // ----------------------------------------------------------------------
 
@@ -25,12 +25,12 @@ const ListItem = forwardRef<HTMLDivElement & HTMLAnchorElement, ListItemStylePro
       </ListItemStyle>
     </RoleBasedGuard>
   )
-);
+)
 
 export function NavItemRoot({ item, isCollapse, open = false, active, onOpen }: NavItemProps) {
-  const { translate } = useLocales();
+  const { translate } = useLocales()
 
-  const { title, path, icon, info, children, disabled, caption, roles } = item;
+  const { title, path, icon, info, children, disabled, caption, roles } = item
 
   const renderContent = (
     <>
@@ -59,14 +59,14 @@ export function NavItemRoot({ item, isCollapse, open = false, active, onOpen }: 
         </>
       )}
     </>
-  );
+  )
 
   if (children) {
     return (
       <ListItem onClick={onOpen} activeRoot={active} disabled={disabled} roles={roles}>
         {renderContent}
       </ListItem>
-    );
+    )
   }
 
   return isExternalLink(path) ? (
@@ -86,17 +86,17 @@ export function NavItemRoot({ item, isCollapse, open = false, active, onOpen }: 
         {renderContent}
       </ListItem>
     </NextLink>
-  );
+  )
 }
 
 // ----------------------------------------------------------------------
 
-type NavItemSubProps = Omit<NavItemProps, 'isCollapse'>;
+type NavItemSubProps = Omit<NavItemProps, 'isCollapse'>
 
 export function NavItemSub({ item, open = false, active = false, onOpen }: NavItemSubProps) {
-  const { translate } = useLocales();
+  const { translate } = useLocales()
 
-  const { title, path, info, children, disabled, caption, roles } = item;
+  const { title, path, info, children, disabled, caption, roles } = item
 
   const renderContent = (
     <>
@@ -120,14 +120,14 @@ export function NavItemSub({ item, open = false, active = false, onOpen }: NavIt
       {info && info}
       {children && <ArrowIcon open={open} />}
     </>
-  );
+  )
 
   if (children) {
     return (
       <ListItem onClick={onOpen} activeSub={active} subItem disabled={disabled} roles={roles}>
         {renderContent}
       </ListItem>
-    );
+    )
   }
 
   return isExternalLink(path) ? (
@@ -148,14 +148,14 @@ export function NavItemSub({ item, open = false, active = false, onOpen }: NavIt
         {renderContent}
       </ListItem>
     </NextLink>
-  );
+  )
 }
 
 // ----------------------------------------------------------------------
 
 type DotIconProps = {
-  active: boolean;
-};
+  active: boolean
+}
 
 export function DotIcon({ active }: DotIconProps) {
   return (
@@ -178,14 +178,14 @@ export function DotIcon({ active }: DotIconProps) {
         }}
       />
     </ListItemIconStyle>
-  );
+  )
 }
 
 // ----------------------------------------------------------------------
 
 type ArrowIconProps = {
-  open: boolean;
-};
+  open: boolean
+}
 
 export function ArrowIcon({ open }: ArrowIconProps) {
   return (
@@ -193,5 +193,5 @@ export function ArrowIcon({ open }: ArrowIconProps) {
       icon={open ? 'eva:arrow-ios-downward-fill' : 'eva:arrow-ios-forward-fill'}
       sx={{ width: 16, height: 16, ml: 1 }}
     />
-  );
+  )
 }

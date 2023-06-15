@@ -1,15 +1,15 @@
 // @mui
-import { useTheme } from '@mui/material/styles';
-import { Container, Grid, Stack, Button } from '@mui/material';
+import { useTheme } from '@mui/material/styles'
+import { Container, Grid, Stack, Button } from '@mui/material'
 // hooks
-import useAuth from '../../hooks/useAuth';
-import useSettings from '../../hooks/useSettings';
+import useAuth from '../../hooks/useAuth'
+import useSettings from '../../hooks/useSettings'
 // layouts
-import Layout from '../../layouts';
+import Layout from '../../layouts'
 // _mock_
-import { _appFeatured, _appAuthors, _appInstalled, _appRelated, _appInvoices } from '../../_mock';
+import { _appFeatured, _appAuthors, _appInstalled, _appRelated, _appInvoices } from '../../_mock'
 // components
-import Page from '../../components/Page';
+import Page from '../../components/Page'
 // sections
 import {
   AppWidget,
@@ -22,24 +22,24 @@ import {
   AppWidgetSummary,
   AppCurrentDownload,
   AppTopInstalledCountries,
-} from '../../sections/@dashboard/general/app';
+} from '../../sections/@dashboard/general/app'
 // assets
-import { SeoIllustration } from '../../assets';
+import { SeoIllustration } from '../../assets'
 
 // ----------------------------------------------------------------------
 
 GeneralApp.getLayout = function getLayout(page: React.ReactElement) {
-  return <Layout>{page}</Layout>;
-};
+  return <Layout>{page}</Layout>
+}
 
 // ----------------------------------------------------------------------
 
 export default function GeneralApp() {
-  const { user } = useAuth();
+  const { user } = useAuth()
 
-  const theme = useTheme();
+  const theme = useTheme()
 
-  const { themeStretch } = useSettings();
+  const { themeStretch } = useSettings()
 
   return (
     <Page title="General: App">
@@ -47,7 +47,7 @@ export default function GeneralApp() {
         <Grid container spacing={3}>
           <Grid item xs={12} md={8}>
             <AppWelcome
-              title={`Welcome back! \n ${user?.displayName}`}
+              title={`Welcome back! \n ${user?.name}`}
               description="If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything."
               img={
                 <SeoIllustration
@@ -179,5 +179,5 @@ export default function GeneralApp() {
         </Grid>
       </Container>
     </Page>
-  );
+  )
 }

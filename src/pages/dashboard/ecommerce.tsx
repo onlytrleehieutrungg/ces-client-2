@@ -1,20 +1,20 @@
 // @mui
-import { useTheme } from '@mui/material/styles';
-import { Container, Grid, Button } from '@mui/material';
+import { useTheme } from '@mui/material/styles'
+import { Container, Grid, Button } from '@mui/material'
 // hooks
-import useAuth from '../../hooks/useAuth';
-import useSettings from '../../hooks/useSettings';
+import useAuth from '../../hooks/useAuth'
+import useSettings from '../../hooks/useSettings'
 // layouts
-import Layout from '../../layouts';
+import Layout from '../../layouts'
 // _mock_
 import {
   _ecommerceNewProducts,
   _ecommerceSalesOverview,
   _ecommerceBestSalesman,
   _ecommerceLatestProducts,
-} from '../../_mock';
+} from '../../_mock'
 // components
-import Page from '../../components/Page';
+import Page from '../../components/Page'
 // sections
 import {
   EcommerceNewProducts,
@@ -25,24 +25,24 @@ import {
   EcommerceSalesOverview,
   EcommerceLatestProducts,
   EcommerceCurrentBalance,
-} from '../../sections/@dashboard/general/e-commerce';
-import { AppWelcome } from '../../sections/@dashboard/general/app';
+} from '../../sections/@dashboard/general/e-commerce'
+import { AppWelcome } from '../../sections/@dashboard/general/app'
 // assets
-import { MotivationIllustration } from '../../assets';
+import { MotivationIllustration } from '../../assets'
 
 // ----------------------------------------------------------------------
 
 GeneralEcommerce.getLayout = function getLayout(page: React.ReactElement) {
-  return <Layout>{page}</Layout>;
-};
+  return <Layout>{page}</Layout>
+}
 
 //
 export default function GeneralEcommerce() {
-  const { user } = useAuth();
+  const { user } = useAuth()
 
-  const theme = useTheme();
+  const theme = useTheme()
 
-  const { themeStretch } = useSettings();
+  const { themeStretch } = useSettings()
 
   return (
     <Page title="General: E-commerce">
@@ -50,7 +50,7 @@ export default function GeneralEcommerce() {
         <Grid container spacing={3}>
           <Grid item xs={12} md={8}>
             <AppWelcome
-              title={`Congratulations! \n ${user?.displayName}`}
+              title={`Congratulations! \n ${user?.name}`}
               description="Best seller of the month You have done 57.6% more sales today."
               img={
                 <MotivationIllustration
@@ -170,5 +170,5 @@ export default function GeneralEcommerce() {
         </Grid>
       </Container>
     </Page>
-  );
+  )
 }

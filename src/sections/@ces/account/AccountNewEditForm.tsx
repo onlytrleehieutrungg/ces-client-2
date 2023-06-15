@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import * as Yup from 'yup'
 // next
 // form
@@ -6,14 +6,34 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { Controller, useForm } from 'react-hook-form'
 // @mui
 import { LoadingButton } from '@mui/lab'
-import { Box, Card, FormControlLabel, Grid, Stack, Switch, Typography } from '@mui/material'
+import {
+  Box,
+  Card,
+  FormControlLabel,
+  Grid,
+  IconButton,
+  InputAdornment,
+  Stack,
+  Switch,
+  Typography,
+} from '@mui/material'
 // utils
 import { fData } from '../../../utils/formatNumber'
 // routes
 // @types
 // _mock
 // components
-import { AccountData, AccountPayload } from 'src/@types/@ces/account'
+import {
+  ACCOUNT_STATUS_OPTIONS_FORM,
+  AccountData,
+  AccountPayload,
+  ROLE_OPTIONS_FORM_EA,
+  ROLE_OPTIONS_SA,
+  Role,
+} from 'src/@types/@ces/account'
+import Iconify from 'src/components/Iconify'
+import { useCompanyList } from 'src/hooks/@ces'
+import useAuth from 'src/hooks/useAuth'
 import Label from '../../../components/Label'
 import {
   FormProvider,
@@ -22,67 +42,47 @@ import {
   RHFUploadAvatar,
 } from '../../../components/hook-form'
 
-//
-const roleList = [
-  {
-    code: 1,
-    label: 'Supplier Admin',
-  },
-  {
-    code: 2,
-    label: 'Enterprise Admin',
-  },
-  {
-    code: 3,
-    label: 'Employee',
-  },
-]
-export const statusList = [
-  {
-    code: 1,
-    label: 'Active',
-  },
-  {
-    code: 2,
-    label: 'Banned',
-  },
-]
-
-const companyList = [
-  {
-    code: 1,
-    label: 'Company 1',
-  },
-  {
-    code: 2,
-    label: 'Company 2',
-  },
-  {
-    code: 3,
-    label: 'Company 3',
-  },
-]
-
 // ----------------------------------------------------------------------
 
 type Props = {
+  isDetail?: boolean
   isEdit?: boolean
   currentUser?: AccountData
   onSubmit?: (payload: AccountPayload) => void
 }
 
-export default function AccountNewEditForm({ isEdit = false, currentUser, onSubmit }: Props) {
-  const NewUserSchema = Yup.object().shape({
-    name: Yup.string().required('Name is required'),
-    email: Yup.string().required('Email is required').email(),
-    address: Yup.string().required('Address is required'),
-    phone: Yup.string().required('Phone is required'),
-    // imageUrl: Yup.string().required('Image is required'),
-    status: Yup.number().required('Status is required'),
-    roleId: Yup.number().required('Role is required'),
-    companyId: Yup.number().required('Company is required'),
-    // password: Yup.string().required('Password is required'),
-  })
+export default function AccountNewEditForm({
+  isEdit = false,
+  isDetail = false,
+  currentUser,
+  onSubmit,
+}: Props) {
+  const [showPassword, setShowPassword] = useState(false)
+
+  const NewUserSchema = isEdit
+    ? Yup.object().shape({
+        name: Yup.string().required('Name is required'),
+        email: Yup.string().required('Email is required').email(),
+        address: Yup.string().required('Address is required'),
+        phone: Yup.string().required('Phone is required'),
+        status: Yup.number().required('Status is required'),
+        roleId: Yup.number().required('Role is required'),
+        companyId: Yup.number().required('Company is required'),
+        // imageUrl: Yup.string().required('Image is required'),
+      })
+    : Yup.object().shape({
+        name: Yup.string().required('Name is required'),
+        email: Yup.string().required('Email is required').email('Email must be a valid email'),
+        address: Yup.string().required('Address is required'),
+        phone: Yup.string().required('Phone is required'),
+        status: Yup.number().required('Status is required'),
+        roleId: Yup.number().required('Role is required'),
+        companyId: Yup.number().required('Company is required'),
+        password: Yup.string()
+          .required('Password is required')
+          .min(8, 'Password must be at least 8 characters'),
+        // imageUrl: Yup.string().required('Image is required'),
+      })
 
   const defaultValues = useMemo(
     () => ({
@@ -91,7 +91,7 @@ export default function AccountNewEditForm({ isEdit = false, currentUser, onSubm
       address: currentUser?.address || '',
       phone: currentUser?.phone || '',
       imageUrl: currentUser?.imageUrl !== 'string' ? currentUser?.imageUrl : '',
-      status: currentUser ? currentUser?.status : statusList[0]?.code,
+      status: currentUser?.status,
       roleId: currentUser?.roleId,
       companyId: currentUser?.companyId,
       password: '',
@@ -144,6 +144,18 @@ export default function AccountNewEditForm({ isEdit = false, currentUser, onSubm
     },
     [setValue]
   )
+  const { user } = useAuth()
+
+  const { data: companyData } = useCompanyList({})
+  const companyList = companyData.data
+  const statusList = ACCOUNT_STATUS_OPTIONS_FORM
+
+  type RoleOptions = typeof ROLE_OPTIONS_SA | typeof ROLE_OPTIONS_FORM_EA
+  const roleOptionsLookup: Partial<Record<Role, RoleOptions>> = {
+    [Role['System Admin']]: ROLE_OPTIONS_SA,
+    [Role['Enterprise Admin']]: ROLE_OPTIONS_FORM_EA,
+  }
+  const roleList: RoleOptions = roleOptionsLookup[user?.roleId as Role] || []
 
   return (
     <FormProvider methods={methods} onSubmit={handleSubmit(handleFormSubmit)}>
@@ -155,7 +167,7 @@ export default function AccountNewEditForm({ isEdit = false, currentUser, onSubm
                 color={values.status !== 1 ? 'error' : 'success'}
                 sx={{ textTransform: 'uppercase', position: 'absolute', top: 24, right: 24 }}
               >
-                {values.status === 1 ? 'Active' : 'Deactive'}
+                {values.status === 1 ? 'Active' : 'In Active'}
               </Label>
             )}
 
@@ -227,10 +239,26 @@ export default function AccountNewEditForm({ isEdit = false, currentUser, onSubm
             >
               <RHFTextField name="name" label="Name" />
               <RHFTextField name="email" label="Email Address" />
-              {!isEdit && <RHFTextField name="password" label="Password" type="password" />}
+              {!isEdit && !isDetail && (
+                <RHFTextField
+                  name="password"
+                  label="Password"
+                  type={showPassword ? 'text' : 'password'}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                          <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              )}
               <RHFTextField name="phone" label="Phone Number" />
               <RHFTextField name="address" label="Address" />
               <RHFSelect name="status" label="Status" placeholder="Status">
+                <option value={undefined} />
                 {statusList.map((option) => (
                   <option key={option.code} value={option.code}>
                     {option.label}
@@ -240,7 +268,7 @@ export default function AccountNewEditForm({ isEdit = false, currentUser, onSubm
 
               <RHFSelect name="roleId" label="Role" placeholder="Role">
                 <option value={undefined} />
-                {roleList.map((option) => (
+                {roleList?.map((option) => (
                   <option key={option.code} value={option.code}>
                     {option.label}
                   </option>
@@ -249,18 +277,20 @@ export default function AccountNewEditForm({ isEdit = false, currentUser, onSubm
 
               <RHFSelect name="companyId" label="Company" placeholder="Company">
                 <option value={undefined} />
-                {companyList.map((option) => (
-                  <option key={option.code} value={option.code}>
-                    {option.label}
+                {companyList?.map((option) => (
+                  <option key={option.id} value={option.id}>
+                    {option.name}
                   </option>
                 ))}
               </RHFSelect>
             </Box>
 
             <Stack alignItems="flex-end" sx={{ mt: 3 }}>
-              <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-                {!isEdit ? 'Create User' : 'Save Changes'}
-              </LoadingButton>
+              {!isDetail && (
+                <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
+                  {!isEdit ? 'Create User' : 'Save Changes'}
+                </LoadingButton>
+              )}
             </Stack>
           </Card>
         </Grid>

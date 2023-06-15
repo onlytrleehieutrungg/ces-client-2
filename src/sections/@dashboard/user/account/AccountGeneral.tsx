@@ -1,18 +1,18 @@
-import * as Yup from 'yup';
-import { useSnackbar } from 'notistack';
-import { useCallback } from 'react';
+import * as Yup from 'yup'
+import { useSnackbar } from 'notistack'
+import { useCallback } from 'react'
 // form
-import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
+import { useForm } from 'react-hook-form'
+import { yupResolver } from '@hookform/resolvers/yup'
 // @mui
-import { Box, Grid, Card, Stack, Typography } from '@mui/material';
-import { LoadingButton } from '@mui/lab';
+import { Box, Grid, Card, Stack, Typography } from '@mui/material'
+import { LoadingButton } from '@mui/lab'
 // hooks
-import useAuth from '../../../../hooks/useAuth';
+import useAuth from '../../../../hooks/useAuth'
 // utils
-import { fData } from '../../../../utils/formatNumber';
+import { fData } from '../../../../utils/formatNumber'
 // _mock
-import { countries } from '../../../../_mock';
+import { countries } from '../../../../_mock'
 // components
 import {
   FormProvider,
@@ -20,70 +20,70 @@ import {
   RHFSelect,
   RHFTextField,
   RHFUploadAvatar,
-} from '../../../../components/hook-form';
+} from '../../../../components/hook-form'
 
 // ----------------------------------------------------------------------
 
 type FormValuesProps = {
-  displayName: string;
-  email: string;
-  photoURL: File | any;
-  phoneNumber: string | null;
-  country: string | null;
-  address: string | null;
-  state: string | null;
-  city: string | null;
-  zipCode: string | null;
-  about: string | null;
-  isPublic: boolean;
-};
+  displayName: string
+  email: string
+  photoURL: File | any
+  phoneNumber: string | null
+  country: string | null
+  address: string | null
+  state: string | null
+  city: string | null
+  zipCode: string | null
+  about: string | null
+  isPublic: boolean
+}
 
 export default function AccountGeneral() {
-  const { enqueueSnackbar } = useSnackbar();
+  const { enqueueSnackbar } = useSnackbar()
 
-  const { user } = useAuth();
+  const { user } = useAuth()
 
   const UpdateUserSchema = Yup.object().shape({
     displayName: Yup.string().required('Name is required'),
-  });
+  })
 
   const defaultValues = {
-    displayName: user?.displayName || '',
+    displayName: user?.name || '',
     email: user?.email || '',
-    photoURL: user?.photoURL || '',
-    phoneNumber: user?.phoneNumber || '',
-    country: user?.country || '',
-    address: user?.address || '',
-    state: user?.state || '',
-    city: user?.city || '',
-    zipCode: user?.zipCode || '',
-    about: user?.about || '',
-    isPublic: user?.isPublic || false,
-  };
+    // photoURL: user?.photoURL || '',
+    // phoneNumber: user?.phoneNumber || '',
+    // country: user?.country || '',
+    // address: user?.address || '',
+    // state: user?.state || '',
+    // city: user?.city || '',
+    // zipCode: user?.zipCode || '',
+    // about: user?.about || '',
+    // isPublic: user?.isPublic || false,
+  }
 
   const methods = useForm<FormValuesProps>({
     resolver: yupResolver(UpdateUserSchema),
     defaultValues,
-  });
+  })
 
   const {
     setValue,
     handleSubmit,
     formState: { isSubmitting },
-  } = methods;
+  } = methods
 
   const onSubmit = async (data: FormValuesProps) => {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      enqueueSnackbar('Update success!');
+      await new Promise((resolve) => setTimeout(resolve, 500))
+      enqueueSnackbar('Update success!')
     } catch (error) {
-      console.error(error);
+      console.error(error)
     }
-  };
+  }
 
   const handleDrop = useCallback(
     (acceptedFiles) => {
-      const file = acceptedFiles[0];
+      const file = acceptedFiles[0]
 
       if (file) {
         setValue(
@@ -91,11 +91,11 @@ export default function AccountGeneral() {
           Object.assign(file, {
             preview: URL.createObjectURL(file),
           })
-        );
+        )
       }
     },
     [setValue]
-  );
+  )
 
   return (
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
@@ -175,5 +175,5 @@ export default function AccountGeneral() {
         </Grid>
       </Grid>
     </FormProvider>
-  );
+  )
 }

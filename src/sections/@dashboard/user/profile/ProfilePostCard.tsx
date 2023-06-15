@@ -73,7 +73,7 @@ export default function ProfilePostCard({ post }: Props) {
         avatar={<MyAvatar />}
         title={
           <Link variant="subtitle2" color="text.primary">
-            {user?.displayName}
+            {user?.name}
           </Link>
         }
         subheader={

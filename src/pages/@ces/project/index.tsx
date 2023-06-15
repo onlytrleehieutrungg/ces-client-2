@@ -23,7 +23,9 @@ import { paramCase } from 'change-case'
 import { useRouter } from 'next/router'
 import { useSnackbar } from 'notistack'
 import { useState } from 'react'
-import { ProjectData } from 'src/@types/@ces/project'
+import { Role } from 'src/@types/@ces'
+import { PROJECT_STATUS_OPTIONS, ProjectData } from 'src/@types/@ces/project'
+import { projectApi } from 'src/api-client'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
 import Iconify from 'src/components/Iconify'
 import Scrollbar from 'src/components/Scrollbar'
@@ -33,58 +35,17 @@ import {
   TableNoData,
   TableSelectedActions,
 } from 'src/components/table'
+import RoleBasedGuard from 'src/guards/RoleBasedGuard'
 import { useProjectList } from 'src/hooks/@ces'
+import useSettings from 'src/hooks/useSettings'
 import useTable, { emptyRows, getComparator } from 'src/hooks/useTable'
 import useTabs from 'src/hooks/useTabs'
 import { PATH_CES } from 'src/routes/paths'
 import ProjectTableRow from 'src/sections/@ces/project/ProjectTableRow'
 import ProjectTableToolbar from 'src/sections/@ces/project/ProjectTableToolbar'
 import { confirmDialog } from 'src/utils/confirmDialog'
-import useSettings from 'src/hooks/useSettings'
-import { projectApi } from 'src/api-client'
-import RoleBasedGuard from 'src/guards/RoleBasedGuard'
 
 // ----------------------------------------------------------------------
-
-const STATUS_OPTIONS = [
-  {
-    code: 'all',
-    label: 'all',
-  },
-  {
-    code: 1,
-    label: 'active',
-  },
-  {
-    code: 2,
-    label: 'deactive',
-  },
-]
-
-const ROLE_OPTIONS = [
-  {
-    code: 'all',
-    label: 'all',
-  },
-  {
-    code: 1,
-    label: 'Supplier Admin',
-  },
-  {
-    code: 2,
-    label: 'Enterprise Admin',
-  },
-  {
-    code: 3,
-    label: 'Employee',
-  },
-]
-
-// const TABLE_HEAD = Object.keys(jsonData).map((key) => ({
-//   id: key.toLowerCase(),
-//   label: key.charAt(0).toUpperCase() + key.slice(1),
-//   align: 'left'
-// }));
 
 const TABLE_HEAD = [
   { id: 'Name', label: 'Name', align: 'left' },
@@ -92,8 +53,6 @@ const TABLE_HEAD = [
   { id: 'Company Id', label: 'Company Id', align: 'left' },
   { id: '' },
 ]
-
-// ----------------------------------------------------------------------
 
 // ----------------------------------------------------------------------
 
@@ -113,7 +72,7 @@ export default function ProjectPage() {
     setPage,
     //
     selected,
-    setSelected,
+    // setSelected,
     onSelectRow,
     onSelectAllRows,
     //
@@ -129,9 +88,10 @@ export default function ProjectPage() {
 
   const { enqueueSnackbar } = useSnackbar()
 
-  const { data, mutate } = useProjectList({})
-
+  const { data } = useProjectList({})
   const projectList: ProjectData[] = data?.data || []
+
+  const statusList = PROJECT_STATUS_OPTIONS
 
   const [filterName, setFilterName] = useState('')
 
@@ -153,7 +113,7 @@ export default function ProjectPage() {
       await projectApi.delete(id)
       // await remove(id)
       // mutate({ ...data, data: [] }, true)
-      enqueueSnackbar('Delete successfull')
+      enqueueSnackbar('Delete successful')
     })
   }
 
@@ -185,7 +145,7 @@ export default function ProjectPage() {
     (!dataFiltered.length && !!filterStatus)
 
   return (
-    <RoleBasedGuard hasContent roles={['ea']}>
+    <RoleBasedGuard hasContent roles={[Role['Enterprise Admin']]}>
       <Page title="Project: List">
         <Container maxWidth={themeStretch ? false : 'lg'}>
           <HeaderBreadcrumbs
@@ -213,7 +173,7 @@ export default function ProjectPage() {
               onChange={onChangeFilterStatus}
               sx={{ px: 2, bgcolor: 'background.neutral' }}
             >
-              {STATUS_OPTIONS.map((tab) => (
+              {statusList.map((tab) => (
                 <Tab disableRipple key={tab.code} label={tab.label} value={tab.code} />
               ))}
             </Tabs>
@@ -225,7 +185,7 @@ export default function ProjectPage() {
               filterRole={filterRole}
               onFilterName={handleFilterName}
               onFilterRole={handleFilterRole}
-              optionsRole={ROLE_OPTIONS}
+              // optionsRole={ROLE_OPTIONS}
             />
 
             <Scrollbar>

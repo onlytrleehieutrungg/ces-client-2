@@ -40,3 +40,23 @@ export type AddProjectMemberPayload = {
   projectId: string
   accountId: string[]
 }
+
+export enum ProjectStatus {
+  'Active' = 1,
+  'In Active' = 2,
+  // 'Deleted' = 3,
+}
+
+const filterStatusOptions = (filterFn: (value: ProjectStatus) => boolean) =>
+  Object.entries(ProjectStatus)
+    .filter(([_, value]) => typeof value === 'number' && filterFn(value))
+    .map(([key, value]) => ({ code: value as number, label: key }))
+
+export const PROJECT_STATUS_OPTIONS = [
+  { code: 'all', label: 'All' },
+  ...filterStatusOptions(() => true),
+]
+
+export const PROJECT_STATUS_OPTIONS_FORM = filterStatusOptions((value) =>
+  [ProjectStatus['Active'], ProjectStatus['In Active']].includes(value)
+)

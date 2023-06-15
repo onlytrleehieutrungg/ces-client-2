@@ -20,7 +20,7 @@ export interface ListItemStyleProps extends IProps {
   activeRoot?: boolean;
   activeSub?: boolean;
   subItem?: boolean;
-  roles?: string[];
+  roles?: number[];
 }
 
 export const ListItemStyle = styled(ListItemButton, {

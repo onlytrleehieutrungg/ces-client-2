@@ -5,7 +5,7 @@ import Iconify from 'src/components/Iconify'
 // ----------------------------------------------------------------------
 
 type Props = {
-  optionsRole: {
+  optionsRole?: {
     code: number | string
     label: string
   }[]

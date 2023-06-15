@@ -1,26 +1,25 @@
-import { useEffect } from 'react';
+import { useEffect } from 'react'
 // next
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/router'
 // @mui
-import { styled, useTheme } from '@mui/material/styles';
-import { Box, Stack, Drawer } from '@mui/material';
+import { Box, Drawer, Stack } from '@mui/material'
+import { styled, useTheme } from '@mui/material/styles'
 // hooks
-import useResponsive from '../../../hooks/useResponsive';
-import useCollapseDrawer from '../../../hooks/useCollapseDrawer';
+import useCollapseDrawer from '../../../hooks/useCollapseDrawer'
+import useResponsive from '../../../hooks/useResponsive'
 // utils
-import cssStyles from '../../../utils/cssStyles';
+import cssStyles from '../../../utils/cssStyles'
 // config
-import { NAVBAR } from '../../../config';
+import { NAVBAR } from '../../../config'
 // components
-import Logo from '../../../components/Logo';
-import Scrollbar from '../../../components/Scrollbar';
-import { NavSectionVertical } from '../../../components/nav-section';
+import Logo from '../../../components/Logo'
+import Scrollbar from '../../../components/Scrollbar'
+import { NavSectionVertical } from '../../../components/nav-section'
 //
-import NavbarDocs from './NavbarDocs';
-import NavbarAccount from './NavbarAccount';
-import CollapseButton from './CollapseButton';
-import useAuth from 'src/hooks/useAuth';
-import navConfig from './NavConfig';
+import CollapseButton from './CollapseButton'
+import navConfig from './NavConfig'
+import NavbarAccount from './NavbarAccount'
+import NavbarDocs from './NavbarDocs'
 
 // ----------------------------------------------------------------------
 
@@ -31,33 +30,31 @@ const RootStyle = styled('div')(({ theme }) => ({
       duration: theme.transitions.duration.shorter,
     }),
   },
-}));
+}))
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  isOpenSidebar: boolean;
-  onCloseSidebar: VoidFunction;
-};
-
+  isOpenSidebar: boolean
+  onCloseSidebar: VoidFunction
+}
 
 export default function NavbarVertical({ isOpenSidebar, onCloseSidebar }: Props) {
-  const theme = useTheme();
+  const theme = useTheme()
 
-  const { pathname } = useRouter();
+  const { pathname } = useRouter()
 
-  const isDesktop = useResponsive('up', 'lg');
-  const { user } = useAuth();
-  const role = user?.roleId;
+  const isDesktop = useResponsive('up', 'lg')
+
   const { isCollapse, collapseClick, collapseHover, onToggleCollapse, onHoverEnter, onHoverLeave } =
-    useCollapseDrawer();
+    useCollapseDrawer()
 
   useEffect(() => {
     if (isOpenSidebar) {
-      onCloseSidebar();
+      onCloseSidebar()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname]);
+  }, [pathname])
 
   const renderContent = (
     <Scrollbar
@@ -93,7 +90,7 @@ export default function NavbarVertical({ isOpenSidebar, onCloseSidebar }: Props)
 
       {!isCollapse && <NavbarDocs />}
     </Scrollbar>
-  );
+  )
 
   return (
     <RootStyle
@@ -145,5 +142,5 @@ export default function NavbarVertical({ isOpenSidebar, onCloseSidebar }: Props)
         </Drawer>
       )}
     </RootStyle>
-  );
+  )
 }

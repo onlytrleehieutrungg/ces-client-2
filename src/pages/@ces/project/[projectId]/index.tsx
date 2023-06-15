@@ -3,7 +3,7 @@ import { capitalCase } from 'change-case'
 import { Box, Container, Tab, Tabs } from '@mui/material'
 import { useRouter } from 'next/router'
 import { useSnackbar } from 'notistack'
-import { ProjectPayload } from 'src/@types/@ces'
+import { ProjectPayload, Role } from 'src/@types/@ces'
 import { projectApi } from 'src/api-client'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
 import Iconify from 'src/components/Iconify'
@@ -35,14 +35,12 @@ export default function ProjectDetails() {
   const { query } = useRouter()
   const { projectId } = query
 
-  // const { update } = useProject({ id: '1' })
-
   const { data } = useProjectDetails({ id: `${projectId}` })
 
   const handleEditProjectSubmit = async (payload: ProjectPayload) => {
     try {
       await projectApi.update(`${projectId}`, payload)
-      // await update(data?.data?.id, payload)
+
       enqueueSnackbar('Update success!')
     } catch (error) {
       enqueueSnackbar('Update failed!')
@@ -66,7 +64,7 @@ export default function ProjectDetails() {
   ]
 
   return (
-    <RoleBasedGuard hasContent roles={['ea']}>
+    <RoleBasedGuard hasContent roles={[Role['Enterprise Admin']]}>
       <Page title="Project: Project Settings">
         <Container maxWidth={themeStretch ? false : 'lg'}>
           <HeaderBreadcrumbs

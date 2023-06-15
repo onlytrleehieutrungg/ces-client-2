@@ -1,11 +1,13 @@
 import { useState } from 'react'
 // @mui
 import { useTheme } from '@mui/material/styles'
-import { Avatar, Checkbox, TableRow, TableCell, Typography, MenuItem } from '@mui/material'
+import { Checkbox, TableRow, TableCell, Typography, MenuItem } from '@mui/material'
 import { AccountData } from 'src/@types/@ces/account'
 import Label from 'src/components/Label'
 import { TableMoreMenu } from 'src/components/table'
 import Iconify from 'src/components/Iconify'
+import createAvatar from 'src/utils/createAvatar'
+import Avatar from 'src/components/Avatar'
 // @types
 // import { UserManager } from '../../../../@types/user';
 // // components
@@ -64,7 +66,10 @@ export default function AccountTableRow({
       </TableCell>
 
       <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
-        <Avatar alt={name} src={imageUrl} sx={{ mr: 2 }} />
+        <Avatar src={imageUrl} alt={name} sx={{ mr: 2 }}>
+          {createAvatar(name).name}
+        </Avatar>
+
         <Typography variant="subtitle2" noWrap>
           {name}
         </Typography>

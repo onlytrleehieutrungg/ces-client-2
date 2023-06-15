@@ -1,6 +1,11 @@
 import {
   Box,
+  Button,
   Card,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   Divider,
   FormControlLabel,
   IconButton,
@@ -17,7 +22,7 @@ import { paramCase } from 'change-case'
 import { useRouter } from 'next/router'
 import { useSnackbar } from 'notistack'
 import { useState } from 'react'
-import { AccountData } from 'src/@types/@ces'
+import { AccountData, ACCOUNT_STATUS_OPTIONS_SA } from 'src/@types/@ces'
 import { projectApi } from 'src/api-client'
 import Iconify from 'src/components/Iconify'
 import Scrollbar from 'src/components/Scrollbar'
@@ -27,49 +32,16 @@ import {
   TableNoData,
   TableSelectedActions,
 } from 'src/components/table'
-import { useAccountList, useProjectDetails } from 'src/hooks/@ces'
+import { useAccountDetails, useAccountList, useProjectDetails } from 'src/hooks/@ces'
 import useTable, { emptyRows, getComparator } from 'src/hooks/useTable'
 import useTabs from 'src/hooks/useTabs'
 import { PATH_CES } from 'src/routes/paths'
 import { confirmDialog } from 'src/utils/confirmDialog'
+import AccountNewEditForm from './AccountNewEditForm'
 import AccountTableRowCustom from './AccountTableRowCustom'
 import AccountTableToolbar from './AccountTableToolbar'
 
 // ----------------------------------------------------------------------
-
-const STATUS_OPTIONS = [
-  {
-    code: 'all',
-    label: 'all',
-  },
-  {
-    code: 1,
-    label: 'active',
-  },
-  {
-    code: 2,
-    label: 'deactive',
-  },
-]
-
-const ROLE_OPTIONS = [
-  {
-    code: 'all',
-    label: 'all',
-  },
-  {
-    code: 1,
-    label: 'Supplier Admin',
-  },
-  {
-    code: 2,
-    label: 'Enterprise Admin',
-  },
-  {
-    code: 3,
-    label: 'Employee',
-  },
-]
 
 const TABLE_HEAD = [
   { id: 'Name', label: 'Name', align: 'left' },
@@ -110,6 +82,10 @@ export default function AccountTableCustom({}: Props) {
   const { data: currentProject, mutate: mutateProject } = useProjectDetails({ id: `${projectId}` })
   const projectDetails = currentProject?.data
 
+  // const roleOptions = user?.roleId === Role['System Admin'] ? ROLE_OPTIONS_SA : undefined
+  const roleOptions = undefined
+  const statusOptions = ACCOUNT_STATUS_OPTIONS_SA
+
   const { data } = useAccountList({})
   const accountList: AccountData[] = data?.data ?? []
 
@@ -137,7 +113,7 @@ export default function AccountTableCustom({}: Props) {
         })
         mutateProject()
 
-        enqueueSnackbar('Remove successfull')
+        enqueueSnackbar('Remove successful')
       } catch (error) {
         console.error(error)
       }
@@ -152,7 +128,7 @@ export default function AccountTableCustom({}: Props) {
       })
       mutateProject()
 
-      enqueueSnackbar('Add successfull')
+      enqueueSnackbar('Add successful')
     } catch (error) {
       console.error(error)
     }
@@ -166,7 +142,7 @@ export default function AccountTableCustom({}: Props) {
         })
         mutateProject()
 
-        enqueueSnackbar('Remove successfull')
+        enqueueSnackbar('Remove successful')
       } catch (error) {
         console.error(error)
       }
@@ -178,7 +154,8 @@ export default function AccountTableCustom({}: Props) {
   }
 
   const handleClickRow = (id: string) => {
-    // push(PATH_CES.account.detail(paramCase(id)))
+    setAccountId(id)
+    handleClickOpen()
   }
 
   const handleAddMemberRow = async (id: string) => {
@@ -189,7 +166,7 @@ export default function AccountTableCustom({}: Props) {
       })
       mutateProject()
 
-      enqueueSnackbar('Add successfull')
+      enqueueSnackbar('Add successful')
     } catch (error) {
       console.error(error)
     }
@@ -209,8 +186,21 @@ export default function AccountTableCustom({}: Props) {
     (!dataFiltered.length && !!filterName) ||
     (!dataFiltered.length && !!filterRole) ||
     (!dataFiltered.length && !!filterStatus)
+
+  const [open, setOpen] = useState(false)
+  const [accountId, setAccountId] = useState('')
+
+  const handleClickOpen = () => {
+    setOpen(true)
+  }
+
+  const handleClose = () => {
+    setOpen(false)
+  }
+
   return (
     <Card>
+      {open && <AccountDetails handleClose={handleClose} id={accountId} />}
       <Tabs
         allowScrollButtonsMobile
         variant="scrollable"
@@ -219,7 +209,7 @@ export default function AccountTableCustom({}: Props) {
         onChange={onChangeFilterStatus}
         sx={{ px: 2, bgcolor: 'background.neutral' }}
       >
-        {STATUS_OPTIONS.map((tab) => (
+        {statusOptions.map((tab) => (
           <Tab disableRipple key={tab.code} label={tab.label} value={tab.code} />
         ))}
       </Tabs>
@@ -231,7 +221,7 @@ export default function AccountTableCustom({}: Props) {
         filterRole={filterRole}
         onFilterName={handleFilterName}
         onFilterRole={handleFilterRole}
-        optionsRole={ROLE_OPTIONS}
+        optionsRole={roleOptions}
       />
 
       <Scrollbar>
@@ -379,4 +369,30 @@ function applySortFilter({
   }
 
   return tableData
+}
+
+// ----------------------------------------------------------------
+
+type AccountDetailsProps = {
+  id: string
+  handleClose: any
+}
+
+function AccountDetails({ handleClose, id }: AccountDetailsProps) {
+  const { data } = useAccountDetails({ id: id })
+  const account = data?.data
+
+  return (
+    <Dialog fullWidth maxWidth="lg" open onClose={handleClose}>
+      <DialogTitle>Employee Details</DialogTitle>
+
+      <DialogContent>
+        {account ? <AccountNewEditForm isDetail currentUser={account} /> : <div>Loading...</div>}
+      </DialogContent>
+
+      <DialogActions>
+        <Button onClick={handleClose}>Close</Button>
+      </DialogActions>
+    </Dialog>
+  )
 }
