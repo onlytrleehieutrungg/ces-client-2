@@ -21,7 +21,7 @@ export default function RoleBasedGuard({ hasContent, roles, children }: RoleBase
 
   const currentRole = user?.roleId
 
-  if (typeof roles !== 'undefined' && !roles.includes(currentRole || 999)) {
+  if (typeof roles !== 'undefined' && !roles.includes(currentRole!)) {
     return hasContent ? (
       <Container component={MotionContainer} sx={{ textAlign: 'center' }}>
         <m.div variants={varBounce().in}>
