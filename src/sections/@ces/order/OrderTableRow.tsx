@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { Checkbox, MenuItem, TableCell, TableRow } from '@mui/material';
 // @mui
 import { useTheme } from '@mui/material/styles';
-import { Checkbox, TableRow, TableCell, MenuItem } from '@mui/material';
-import { TableMoreMenu } from 'src/components/table';
-import Iconify from 'src/components/Iconify';
+import { useState } from 'react';
 import { Order, Status } from 'src/@types/@ces/order';
+import Iconify from 'src/components/Iconify';
 import Label from 'src/components/Label';
+import { TableMoreMenu } from 'src/components/table';
 type Props = {
     row: Order;
     selected: boolean;
@@ -56,7 +56,7 @@ export default function OrderTableRow({
                         (mapStatus(status) === 'New' && 'primary') ||
                         (mapStatus(status) === 'Waiting for ship' && 'info') ||
                         (mapStatus(status) === 'Complete' && 'success') ||
-                        (mapStatus(status) === 'Waiting for payment' && 'warning') ||
+                        (mapStatus(status) === 'Confirm' && 'warning') ||
                         (mapStatus(status) === 'Cancel' && 'error') ||
                         'default'
                     }

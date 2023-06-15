@@ -1,32 +1,29 @@
-import * as Yup from 'yup';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useSnackbar } from 'notistack';
-// next
-import { useRouter } from 'next/router';
-// form
-import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 // @mui
 import { LoadingButton } from '@mui/lab';
 import { Box, Card, Grid, Stack, Typography } from '@mui/material';
-// utils
-import { fData } from '../../../utils/formatNumber';
-// routes
-import { PATH_CES } from '../../../routes/paths';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
-import { v4 } from 'uuid'
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+// next
+import { useRouter } from 'next/router';
+import { useSnackbar } from 'notistack';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+// form
+import { useForm } from 'react-hook-form';
+import { Category, Product } from 'src/@types/@ces';
+import Image from 'src/components/Image';
+import { storage } from 'src/contexts/FirebaseContext';
+import { useCategoryList } from 'src/hooks/@ces/useCategory';
+import { v4 } from 'uuid';
+import * as Yup from 'yup';
 import {
     FormProvider,
-    RHFSelect,
-    RHFSwitch,
-    RHFTextField,
-    RHFUploadAvatar,
+    RHFSelect, RHFTextField,
+    RHFUploadAvatar
 } from '../../../components/hook-form';
-import { Category, Product } from 'src/@types/@ces';
-import { useCategoryList } from 'src/hooks/@ces/useCategory';
-import { storage } from 'src/contexts/FirebaseContext';
-import Image from 'src/components/Image';
-import { async } from '@firebase/util';
+// routes
+import { PATH_CES } from '../../../routes/paths';
+// utils
+import { fData } from '../../../utils/formatNumber';
 
 // ----------------------------------------------------------------------
 

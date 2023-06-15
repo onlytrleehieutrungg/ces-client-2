@@ -1,11 +1,6 @@
-import NextLink from 'next/link'
-import Page from 'src/components/Page'
-import Layout from 'src/layouts'
 // @mui
 import {
-  Box,
-  Button,
-  Card,
+  Box, Card,
   Container,
   FormControlLabel,
   IconButton,
@@ -14,27 +9,28 @@ import {
   TableBody,
   TableContainer,
   TablePagination,
-  Tooltip,
+  Tooltip
 } from '@mui/material'
-import { paramCase } from 'change-case'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
-import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
+import { Role } from 'src/@types/@ces'
+import { Order, Status } from 'src/@types/@ces/order'
 import Iconify from 'src/components/Iconify'
+import Page from 'src/components/Page'
 import Scrollbar from 'src/components/Scrollbar'
 import {
   TableEmptyRows,
   TableHeadCustom,
   TableNoData,
-  TableSelectedActions,
+  TableSelectedActions
 } from 'src/components/table'
+import RoleBasedGuard from 'src/guards/RoleBasedGuard'
+import { useOrder } from 'src/hooks/@ces/useOrder'
 import useTable, { emptyRows, getComparator } from 'src/hooks/useTable'
 import useTabs from 'src/hooks/useTabs'
+import Layout from 'src/layouts'
 import { PATH_CES } from 'src/routes/paths'
-import { confirmDialog } from 'src/utils/confirmDialog'
-import { Order, Status } from 'src/@types/@ces/order'
 import OrderTableRow from 'src/sections/@ces/order/OrderTableRow'
-import { useOrder } from 'src/hooks/@ces/useOrder'
 import OrderTableToolbar from 'src/sections/@ces/order/OrderTableToolbar'
 
 // ----------------------------------------------------------------------
@@ -42,7 +38,7 @@ import OrderTableToolbar from 'src/sections/@ces/order/OrderTableToolbar'
 const STATUS_OPTIONS = [
   'all',
   'New',
-  'waiting for payment',
+  'confirm',
   'waiting for ship',
   'complete',
   'cancel'
@@ -54,6 +50,8 @@ const TABLE_HEAD = [
   { id: 'address', label: 'Address', align: 'left' },
   { id: 'note', label: 'Note', align: 'left' },
   { id: 'status', label: 'Status', align: 'left' },
+  { id: '' },
+
 ]
 
 OrderPage.getLayout = function getLayout(page: React.ReactElement) {
@@ -94,7 +92,8 @@ export default function OrderPage() {
     setPage(0)
   }
 
-  const handleFilterRole = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFilterStatus = (event: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(event.target.value);
     setFilterStatus(event.target.value)
   }
 
@@ -120,112 +119,102 @@ export default function OrderPage() {
     push(PATH_CES.order.detail(id));
   };
   return (
-    <Page title="Order: List">
-      <Container>
-        {/* <HeaderBreadcrumbs
-          heading="Order List"
-          links={[{ name: 'Dashboard', href: '' }, { name: 'Order', href: '' }, { name: 'List' }]}
-          action={
-            <NextLink href={PATH_CES.order.new} passHref>
-              <Button variant="contained" startIcon={<Iconify icon={'eva:plus-fill'} />}>
-                New User
-              </Button>
-            </NextLink>
-          }
-        /> */}
+    <RoleBasedGuard hasContent roles={[Role['Supplier Admin']]}>
+      <Page title="Order: List">
+        <Container>
+          <Card>
+            <OrderTableToolbar
+              filterName={filterName}
+              filterStatus={filterStt}
+              onFilterName={handleFilterName}
+              onFilterStatus={handleFilterStatus}
+              optionsStatus={STATUS_OPTIONS}
+            />
 
-        <Card>
-          <OrderTableToolbar
-            filterName={filterName}
-            filterStatus={filterStt}
-            onFilterName={handleFilterName}
-            onFilterStatus={handleFilterRole}
-            optionsStatus={STATUS_OPTIONS}
-          />
+            <Scrollbar>
+              <TableContainer sx={{ minWidth: 800, position: 'relative' }}>
+                {selected.length > 0 && (
+                  <TableSelectedActions
+                    dense={dense}
+                    numSelected={selected.length}
+                    rowCount={tableData.length}
+                    onSelectAllRows={(checked) =>
+                      onSelectAllRows(
+                        checked,
+                        tableData.map((row) => row.id)
+                      )
+                    }
+                    actions={
+                      <Tooltip title="Delete">
+                        <IconButton color="primary" onClick={() => handleDeleteRows(selected)}>
+                          <Iconify icon={'eva:trash-2-outline'} />
+                        </IconButton>
+                      </Tooltip>
+                    }
+                  />
+                )}
 
-          <Scrollbar>
-            <TableContainer sx={{ minWidth: 800, position: 'relative' }}>
-              {selected.length > 0 && (
-                <TableSelectedActions
-                  dense={dense}
-                  numSelected={selected.length}
-                  rowCount={tableData.length}
-                  onSelectAllRows={(checked) =>
-                    onSelectAllRows(
-                      checked,
-                      tableData.map((row) => row.id)
-                    )
-                  }
-                  actions={
-                    <Tooltip title="Delete">
-                      <IconButton color="primary" onClick={() => handleDeleteRows(selected)}>
-                        <Iconify icon={'eva:trash-2-outline'} />
-                      </IconButton>
-                    </Tooltip>
-                  }
-                />
-              )}
-
-              <Table size={dense ? 'small' : 'medium'}>
-                <TableHeadCustom
-                  order={order}
-                  orderBy={orderBy}
-                  headLabel={TABLE_HEAD}
-                  rowCount={tableData.length}
-                  numSelected={selected.length}
-                  onSort={onSort}
-                  onSelectAllRows={(checked) =>
-                    onSelectAllRows(
-                      checked,
-                      tableData.map((row) => row.id)
-                    )
-                  }
-                />
-
-                <TableBody>
-                  {dataFiltered
-                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                    .map((row) => (
-                      <OrderTableRow
-                        key={row.id}
-                        row={row}
-                        selected={selected.includes(row.id)}
-                        onSelectRow={() => onSelectRow(row.id)}
-                        onViewRow={() => handleViewRow(row.id)}
-                      />
-                    ))}
-
-                  <TableEmptyRows
-                    height={denseHeight}
-                    emptyRows={emptyRows(page, rowsPerPage, tableData.length)}
+                <Table size={dense ? 'small' : 'medium'}>
+                  <TableHeadCustom
+                    order={order}
+                    orderBy={orderBy}
+                    headLabel={TABLE_HEAD}
+                    rowCount={tableData.length}
+                    numSelected={selected.length}
+                    onSort={onSort}
+                    onSelectAllRows={(checked) =>
+                      onSelectAllRows(
+                        checked,
+                        tableData.map((row) => row.id)
+                      )
+                    }
                   />
 
-                  <TableNoData isNotFound={isNotFound} />
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Scrollbar>
+                  <TableBody>
+                    {dataFiltered
+                      .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                      .map((row) => (
+                        <OrderTableRow
+                          key={row.id}
+                          row={row}
+                          selected={selected.includes(row.id)}
+                          onSelectRow={() => onSelectRow(row.id)}
+                          onViewRow={() => handleViewRow(row.id)}
+                        />
+                      ))}
 
-          <Box sx={{ position: 'relative' }}>
-            <TablePagination
-              rowsPerPageOptions={[5, 10, 25]}
-              component="div"
-              count={dataFiltered.length}
-              rowsPerPage={rowsPerPage}
-              page={page}
-              onPageChange={onChangePage}
-              onRowsPerPageChange={onChangeRowsPerPage}
-            />
+                    <TableEmptyRows
+                      height={denseHeight}
+                      emptyRows={emptyRows(page, rowsPerPage, tableData.length)}
+                    />
 
-            <FormControlLabel
-              control={<Switch checked={dense} onChange={onChangeDense} />}
-              label="Dense"
-              sx={{ px: 3, py: 1.5, top: 0, position: { md: 'absolute' } }}
-            />
-          </Box>
-        </Card>
-      </Container>
-    </Page>
+                    <TableNoData isNotFound={isNotFound} />
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Scrollbar>
+
+            <Box sx={{ position: 'relative' }}>
+              <TablePagination
+                rowsPerPageOptions={[5, 10, 25]}
+                component="div"
+                count={dataFiltered.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={onChangePage}
+                onRowsPerPageChange={onChangeRowsPerPage}
+              />
+
+              <FormControlLabel
+                control={<Switch checked={dense} onChange={onChangeDense} />}
+                label="Dense"
+                sx={{ px: 3, py: 1.5, top: 0, position: { md: 'absolute' } }}
+              />
+            </Box>
+          </Card>
+        </Container>
+      </Page>
+    </RoleBasedGuard>
   )
 }
 
@@ -262,11 +251,13 @@ function applySortFilter({
   }
   function mapStatus(status: number) {
     const rs = Object.values(Status)
-    return rs[status - 1]
+    return rs[status].toLocaleLowerCase()
   }
 
   if (filterStt !== 'all') {
-    tableData = tableData.filter((item) => mapStatus(item.status) === filterStt)
+    tableData = tableData.filter((item) => {
+      mapStatus(item.status).toString() === filterStt
+    })
   }
 
   if (filterStatus !== 'all') {

@@ -1,13 +1,13 @@
 import { Container } from '@mui/material'
 import { useRouter } from 'next/router'
 import { useSnackbar } from 'notistack'
-import { Category } from 'src/@types/@ces'
+import { Category, Role } from 'src/@types/@ces'
 import { categoryApi } from 'src/api-client/category'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
 import Page from 'src/components/Page'
+import RoleBasedGuard from 'src/guards/RoleBasedGuard'
 import Layout from 'src/layouts'
 import { PATH_CES } from 'src/routes/paths'
-import AccountNewEditForm from 'src/sections/@ces/account/AccountNewEditForm'
 import CategoryNewEditForm from 'src/sections/@ces/category/CategoryNewEditForm'
 // ----------------------------------------------------------------------
 
@@ -32,18 +32,20 @@ export default function AccountCreatePage() {
     }
   }
   return (
-    <Page title="Category: Create a new Category">
-      <Container>
-        <HeaderBreadcrumbs
-          heading="Create a new Category"
-          links={[
-            { name: 'Dashboard', href: '' },
-            { name: 'Category', href: '' },
-            { name: 'New Category' },
-          ]}
-        />
-        <CategoryNewEditForm onSubmit={handleCreateCategorySubmit} />
-      </Container>
-    </Page>
+    <RoleBasedGuard hasContent roles={[Role['Supplier Admin']]}>
+      <Page title="Category: Create a new Category">
+        <Container>
+          <HeaderBreadcrumbs
+            heading="Create a new Category"
+            links={[
+              { name: 'Dashboard', href: '' },
+              { name: 'Category', href: '' },
+              { name: 'New Category' },
+            ]}
+          />
+          <CategoryNewEditForm onSubmit={handleCreateCategorySubmit} />
+        </Container>
+      </Page>
+    </RoleBasedGuard>
   )
 }

@@ -2,16 +2,17 @@
 
 import { Container } from '@mui/material'
 import { useRouter } from 'next/router'
-import { _userList } from 'src/_mock'
+import { useSnackbar } from 'notistack'
+import { Role } from 'src/@types/@ces'
+import { Product } from 'src/@types/@ces/product'
+import { productApi } from 'src/api-client/product'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
 import Page from 'src/components/Page'
-import Layout from 'src/layouts'
-import ProductNewEditForm from 'src/sections/@ces/product/ProductNewEditForm'
+import RoleBasedGuard from 'src/guards/RoleBasedGuard'
 import { useProductDetail } from 'src/hooks/@ces/useProduct'
+import Layout from 'src/layouts'
 import { PATH_CES } from 'src/routes/paths'
-import { productApi } from 'src/api-client/product'
-import { Product } from 'src/@types/@ces/product'
-import { useSnackbar } from 'notistack'
+import ProductNewEditForm from 'src/sections/@ces/product/ProductNewEditForm'
 
 ProductEditPage.getLayout = function getLayout(page: React.ReactElement) {
   return <Layout>{page}</Layout>
@@ -35,23 +36,23 @@ export default function ProductEditPage() {
       console.error(error)
     }
   }
-
-
   return (
-    <Page title="Product: Edit Product">
-      <Container>
-        <HeaderBreadcrumbs
-          heading="Edit Product"
-          links={[
-            { name: 'Dashboard', href: '' },
-            { name: 'Product', href: '' },
-            { name: data?.data?.name },
-          ]}
-        />
-        {data && (
-          <ProductNewEditForm isEdit currentUser={data?.data} onSubmit={handleEditProductSubmit} />
-        )}
-      </Container>
-    </Page>
+    <RoleBasedGuard hasContent roles={[Role['Supplier Admin']]}>
+      <Page title="Product: Edit Product">
+        <Container>
+          <HeaderBreadcrumbs
+            heading="Edit Product"
+            links={[
+              { name: 'Dashboard', href: '' },
+              { name: 'Product', href: '' },
+              { name: data?.data?.name },
+            ]}
+          />
+          {data && (
+            <ProductNewEditForm isEdit currentUser={data?.data} onSubmit={handleEditProductSubmit} />
+          )}
+        </Container>
+      </Page>
+    </RoleBasedGuard>
   )
 }
