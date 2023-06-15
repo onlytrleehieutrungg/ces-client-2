@@ -12,7 +12,7 @@ export default function ConfirmDialog() {
   const { message, onSubmit, close } = useConfirmDialogStore()
 
   return (
-    <Dialog open={Boolean(onSubmit)} onClose={close}>
+    <Dialog open={Boolean(onSubmit)} onClose={close} fullWidth>
       <DialogTitle>Confirm this action</DialogTitle>
       <DialogContent>
         <DialogContentText id="alert-dialog-description">{message}</DialogContentText>
