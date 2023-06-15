@@ -36,7 +36,7 @@ export default function AccountTableRow({
 }: Props) {
   const theme = useTheme()
 
-  const { name, imageUrl, phone, email, status } = row
+  const { name, imageUrl, phone, email, status, companyId } = row
 
   const [openMenu, setOpenMenuActions] = useState<HTMLElement | null>(null)
 
@@ -77,6 +77,8 @@ export default function AccountTableRow({
 
       <TableCell align="left">{email}</TableCell>
 
+      <TableCell align="left">{companyId}</TableCell>
+
       <TableCell align="left">{phone}</TableCell>
 
       <TableCell align="left">
@@ -85,7 +87,7 @@ export default function AccountTableRow({
           color={status === 1 ? 'success' : status === 2 ? 'warning' : 'error'}
           sx={{ textTransform: 'capitalize' }}
         >
-          {status === 1 ? 'Active' : status === 2 ? 'Deactive' : 'Deleted'}
+          {status === 1 ? 'Active' : status === 2 ? 'In Active' : 'Deleted'}
         </Label>
       </TableCell>
 

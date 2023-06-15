@@ -1,4 +1,4 @@
-import { Stack, InputAdornment, TextField, MenuItem } from '@mui/material'
+import { InputAdornment, Stack, TextField } from '@mui/material'
 import Iconify from 'src/components/Iconify'
 // components
 
@@ -40,7 +40,7 @@ export default function ProjectTableToolbar({
           textTransform: 'capitalize',
         }}
       >
-        {optionsRole.map((option) => (
+        {optionsRole?.map((option) => (
           <MenuItem
             key={option.code}
             value={option.code}

@@ -98,11 +98,14 @@ export default function UserAccount() {
 
         <Box sx={{ mb: 5 }} />
 
-        {data &&
+        {!data ? (
+          <>Loading...</>
+        ) : (
           ACCOUNT_TABS.map((tab) => {
             const isMatched = tab.value === currentTab
             return isMatched && <Box key={tab.value}>{tab.component}</Box>
-          })}
+          })
+        )}
       </Container>
     </Page>
   )

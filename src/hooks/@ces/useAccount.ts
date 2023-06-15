@@ -15,13 +15,13 @@ export function useAccountList({ options, params = { Page: '1' } }: UseAccountPr
     {
       // revalidateOnFocus: false,
       // dedupingInterval: 10 * 1000, // 10s
-      keepPreviousData: true,
-      fallbackData: {
-        code: 0,
-        message: '',
-        metaData: null,
-        data: [],
-      },
+      // keepPreviousData: true,
+      // fallbackData: {
+      //   code: 0,
+      //   message: '',
+      //   metaData: null,
+      //   data: [],
+      // },
       ...options,
     }
   )
@@ -42,16 +42,15 @@ export function useAccountList({ options, params = { Page: '1' } }: UseAccountPr
   }
 }
 
-
 export function useAccountDetails({ id, options }: UseAccountProps) {
   const { data, error, mutate } = useSWR(['account', id], () => accountApi.getById(id!), {
-    keepPreviousData: true,
-    fallbackData: {
-      code: 0,
-      message: '',
-      metaData: null,
-      data: {},
-    },
+    // keepPreviousData: true,
+    // fallbackData: {
+    //   code: 0,
+    //   message: '',
+    //   metaData: null,
+    //   data: {},
+    // },
     ...options,
   })
 

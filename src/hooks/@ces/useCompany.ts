@@ -13,15 +13,15 @@ export function useCompanyList({ options, params = { Page: '1' } }: UseCompanyPr
     ['company-list', params],
     () => companyApi.getAll(params!),
     {
-      // revalidateOnFocus: false,
-      // dedupingInterval: 10 * 1000, // 10s
-      keepPreviousData: true,
-      fallbackData: {
-        code: 0,
-        message: '',
-        metaData: null,
-        data: [],
-      },
+      revalidateOnFocus: false,
+      dedupingInterval: 60 * 60 * 1000, // 3600s
+      // keepPreviousData: true,
+      // fallbackData: {
+      //   code: 0,
+      //   message: '',
+      //   metaData: null,
+      //   data: [],
+      // },
       ...options,
     }
   )

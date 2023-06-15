@@ -54,7 +54,9 @@ export default function AccountEditPage() {
           ]}
         />
 
-        {data && (
+        {!data ? (
+          <>Loading...</>
+        ) : (
           <AccountNewEditForm isEdit currentUser={data?.data} onSubmit={handleEditAccountSubmit} />
         )}
       </Container>

@@ -22,7 +22,7 @@ import { paramCase } from 'change-case'
 import { useRouter } from 'next/router'
 import { useSnackbar } from 'notistack'
 import { useState } from 'react'
-import { AccountData, ACCOUNT_STATUS_OPTIONS_SA } from 'src/@types/@ces'
+import { ACCOUNT_STATUS_OPTIONS_SA, AccountData } from 'src/@types/@ces'
 import { projectApi } from 'src/api-client'
 import Iconify from 'src/components/Iconify'
 import Scrollbar from 'src/components/Scrollbar'
@@ -83,7 +83,11 @@ export default function AccountTableCustom({}: Props) {
   const projectDetails = currentProject?.data
 
   // const roleOptions = user?.roleId === Role['System Admin'] ? ROLE_OPTIONS_SA : undefined
-  const roleOptions = undefined
+  const roleOptions = [
+    { code: 'all', label: 'All' },
+    { code: 'member', label: 'Member' },
+    { code: 'free', label: 'Free' },
+  ]
   const statusOptions = ACCOUNT_STATUS_OPTIONS_SA
 
   const { data } = useAccountList({})
@@ -173,6 +177,7 @@ export default function AccountTableCustom({}: Props) {
   }
 
   const dataFiltered = applySortFilter({
+    projectDetails,
     tableData: accountList,
     comparator: getComparator(order, orderBy),
     filterName,
@@ -336,7 +341,9 @@ function applySortFilter({
   filterName,
   filterStatus,
   filterRole,
+  projectDetails,
 }: {
+  projectDetails: any
   tableData: AccountData[]
   comparator: (a: any, b: any) => number
   filterName: string
@@ -364,8 +371,15 @@ function applySortFilter({
     tableData = tableData.filter((item: Record<string, any>) => item.status == filterStatus)
   }
 
+  const filterIds = projectDetails?.projectAccounts.map((obj: any) => obj.accountId)
+
   if (filterRole !== 'all') {
-    tableData = tableData.filter((item: Record<string, any>) => item.roleId == filterRole)
+    const filterFunc =
+      filterRole === 'member'
+        ? (employee: any) => filterIds.includes(employee.id)
+        : (employee: any) => !filterIds.includes(employee.id)
+
+    tableData = tableData.filter(filterFunc)
   }
 
   return tableData

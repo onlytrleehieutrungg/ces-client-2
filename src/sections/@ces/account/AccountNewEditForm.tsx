@@ -28,11 +28,10 @@ import {
   AccountData,
   AccountPayload,
   ROLE_OPTIONS_FORM_EA,
-  ROLE_OPTIONS_SA,
+  ROLE_OPTIONS_FORM_SA,
   Role,
 } from 'src/@types/@ces/account'
 import Iconify from 'src/components/Iconify'
-import { useCompanyList } from 'src/hooks/@ces'
 import useAuth from 'src/hooks/useAuth'
 import Label from '../../../components/Label'
 import {
@@ -58,6 +57,7 @@ export default function AccountNewEditForm({
   onSubmit,
 }: Props) {
   const [showPassword, setShowPassword] = useState(false)
+  const { user } = useAuth()
 
   const NewUserSchema = isEdit
     ? Yup.object().shape({
@@ -67,7 +67,7 @@ export default function AccountNewEditForm({
         phone: Yup.string().required('Phone is required'),
         status: Yup.number().required('Status is required'),
         roleId: Yup.number().required('Role is required'),
-        companyId: Yup.number().required('Company is required'),
+        // companyId: Yup.number().required('Company is required'),
         // imageUrl: Yup.string().required('Image is required'),
       })
     : Yup.object().shape({
@@ -77,10 +77,10 @@ export default function AccountNewEditForm({
         phone: Yup.string().required('Phone is required'),
         status: Yup.number().required('Status is required'),
         roleId: Yup.number().required('Role is required'),
-        companyId: Yup.number().required('Company is required'),
+        // companyId: Yup.number().required('Company is required'),
         password: Yup.string()
           .required('Password is required')
-          .min(8, 'Password must be at least 8 characters'),
+          .min(6, 'Password must be at least 6 characters'),
         // imageUrl: Yup.string().required('Image is required'),
       })
 
@@ -93,10 +93,10 @@ export default function AccountNewEditForm({
       imageUrl: currentUser?.imageUrl !== 'string' ? currentUser?.imageUrl : '',
       status: currentUser?.status,
       roleId: currentUser?.roleId,
-      companyId: currentUser?.companyId,
+      companyId: currentUser?.companyId || user?.companyId,
       password: '',
     }),
-    [currentUser]
+    [currentUser, user]
   )
 
   const methods = useForm<AccountPayload>({
@@ -144,15 +144,14 @@ export default function AccountNewEditForm({
     },
     [setValue]
   )
-  const { user } = useAuth()
 
-  const { data: companyData } = useCompanyList({})
-  const companyList = companyData.data
+  // const { data: companyData } = useCompanyList({})
+  // const companyList = companyData?.data
   const statusList = ACCOUNT_STATUS_OPTIONS_FORM
 
-  type RoleOptions = typeof ROLE_OPTIONS_SA | typeof ROLE_OPTIONS_FORM_EA
+  type RoleOptions = typeof ROLE_OPTIONS_FORM_SA | typeof ROLE_OPTIONS_FORM_EA
   const roleOptionsLookup: Partial<Record<Role, RoleOptions>> = {
-    [Role['System Admin']]: ROLE_OPTIONS_SA,
+    [Role['System Admin']]: ROLE_OPTIONS_FORM_SA,
     [Role['Enterprise Admin']]: ROLE_OPTIONS_FORM_EA,
   }
   const roleList: RoleOptions = roleOptionsLookup[user?.roleId as Role] || []
@@ -214,10 +213,10 @@ export default function AccountNewEditForm({
                 label={
                   <>
                     <Typography variant="subtitle2" sx={{ mb: 0.5 }}>
-                      Banned
+                      In Active
                     </Typography>
                     <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                      Apply disable account
+                      Apply in active account
                     </Typography>
                   </>
                 }
@@ -275,14 +274,14 @@ export default function AccountNewEditForm({
                 ))}
               </RHFSelect>
 
-              <RHFSelect name="companyId" label="Company" placeholder="Company">
+              {/* <RHFSelect name="companyId" label="Company" placeholder="Company">
                 <option value={undefined} />
                 {companyList?.map((option) => (
                   <option key={option.id} value={option.id}>
                     {option.name}
                   </option>
                 ))}
-              </RHFSelect>
+              </RHFSelect> */}
             </Box>
 
             <Stack alignItems="flex-end" sx={{ mt: 3 }}>

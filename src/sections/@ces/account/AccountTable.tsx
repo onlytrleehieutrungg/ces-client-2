@@ -47,6 +47,7 @@ import AccountTableToolbar from './AccountTableToolbar'
 const TABLE_HEAD = [
   { id: 'Name', label: 'Name', align: 'left' },
   { id: 'Email', label: 'Email', align: 'left' },
+  { id: 'companyId', label: 'CompanyId', align: 'left' },
   { id: 'Phone', label: 'Phone', align: 'left' },
   { id: 'Status', label: 'Status', align: 'left' },
   { id: '' },
@@ -122,7 +123,8 @@ export default function AccountTable({}: Props) {
   }
 
   const handleEditRow = (id: string) => {
-    push(PATH_CES.account.edit(paramCase(id)))
+    // push(PATH_CES.account.edit(paramCase(id)))
+    push(PATH_CES.account.detail(paramCase(id)))
   }
 
   const handleClickRow = (id: string) => {
