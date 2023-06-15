@@ -40,12 +40,6 @@ type Image = {
 export default function ProductNewEditForm({ isEdit = false, currentUser, onSubmit }: Props) {
     const { push } = useRouter();
     const { data, mutate } = useCategoryList({})
-
-    const [imageUpload, setimageUpload] = useState<File | null>(null);
-    const [imageUrl, setImageUrl] = useState<string>();
-
-
-
     const categories: Category[] = data?.data ?? []
     const { enqueueSnackbar } = useSnackbar();
 
@@ -55,8 +49,8 @@ export default function ProductNewEditForm({ isEdit = false, currentUser, onSubm
         quantity: Yup.number().required('Quantity is required'),
         categoryId: Yup.string().required('CategoryId is required'),
         description: Yup.string().required('Description is required'),
-        serviceDuration: Yup.string().required('ServiceDuration is required'),
-        type: Yup.string().required('Type is required'),
+        // serviceDuration: Yup.string().required('ServiceDuration is required'),
+        // type: Yup.string().required('Type is required'),
         avatarUrl: Yup.mixed().test('required', 'Avatar is required', (value) => value !== ''),
     });
 
@@ -67,8 +61,8 @@ export default function ProductNewEditForm({ isEdit = false, currentUser, onSubm
             quantity: currentUser?.quantity || 0,
             categoryId: currentUser?.categoryId || '',
             description: currentUser?.description || '',
-            serviceDuration: currentUser?.serviceDuration || '',
-            type: currentUser?.type || '',
+            // serviceDuration: currentUser?.serviceDuration || '',
+            // type: currentUser?.type || '',
             imageUrl: currentUser?.imageUrl || '',
 
         }),
@@ -187,9 +181,9 @@ export default function ProductNewEditForm({ isEdit = false, currentUser, onSubm
                                 ))}
                             </RHFSelect>
                             <RHFTextField name="description" label="Description" />
-                            <RHFTextField name="type" label="Type" />
+                            {/* <RHFTextField name="type" label="Type" /> */}
                             {/* <RHFTextField name="zipCode" label="Zip/Code" /> */}
-                            <RHFTextField name="serviceDuration" label="ServiceDuration" />
+                            {/* <RHFTextField name="serviceDuration" label="ServiceDuration" /> */}
                             {/* <RHFTextField name="role" label="Role" />  */}
                         </Box>
 
