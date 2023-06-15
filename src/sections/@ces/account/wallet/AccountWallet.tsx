@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { MouseEvent, useEffect, useState } from 'react'
 import * as Yup from 'yup'
 // @mui
 import { yupResolver } from '@hookform/resolvers/yup'
@@ -10,20 +10,23 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
-  DialogContentText,
   DialogTitle,
   Grid,
   Stack,
+  ToggleButton,
+  ToggleButtonGroup,
   Typography,
 } from '@mui/material'
+import { useSnackbar } from 'notistack'
 import { useForm } from 'react-hook-form'
 import { AccountWalletData } from 'src/@types/@ces/account'
 import { UserInvoice } from 'src/@types/user'
+import { walletApi } from 'src/api-client'
 import Image from 'src/components/Image'
 import { FormProvider, RHFTextField } from 'src/components/hook-form'
 import { AccountBillingInvoiceHistory } from 'src/sections/@dashboard/user/account'
+import { confirmDialog } from 'src/utils/confirmDialog'
 import { fCurrency } from 'src/utils/formatNumber'
-import { walletApi } from 'src/api-client'
 
 // ----------------------------------------------------------------------
 
@@ -34,10 +37,20 @@ type Props = {
 }
 
 export default function AccountWallet({ invoices, wallets, mutate }: Props) {
-  // const { enqueueSnackbar } = useSnackbar()
+  const { enqueueSnackbar } = useSnackbar()
 
   const [openWallet, setOpenWallet] = useState(false)
   const [currentWallet, setCurrentWallet] = useState<AccountWalletData>()
+  const [loading, setLoading] = useState(false)
+  const [alignment, setAlignment] = useState(0)
+
+  const handleChange = (event: MouseEvent<HTMLElement>, newAlignment: number) => {
+    if (newAlignment) {
+      setValue('balance', newAlignment)
+
+      setAlignment(newAlignment)
+    }
+  }
 
   const handleClickOpen = (wallet: AccountWalletData) => {
     setCurrentWallet(wallet)
@@ -52,12 +65,15 @@ export default function AccountWallet({ invoices, wallets, mutate }: Props) {
     balance: Yup.number().required('balance is required'),
   })
 
-  const defaultValues = useMemo(
-    () => ({
-      balance: currentWallet?.balance || 0,
-    }),
-    [currentWallet]
-  )
+  // const defaultValues = useMemo(
+  //   () => ({
+  //     balance: alignment || 0,
+  //   }),
+  //   [alignment]
+  // )
+  const defaultValues = {
+    balance: alignment || 0,
+  }
 
   const methods = useForm<any>({
     resolver: yupResolver(NewUserSchema),
@@ -65,9 +81,10 @@ export default function AccountWallet({ invoices, wallets, mutate }: Props) {
   })
 
   const {
+    setValue,
     reset,
     handleSubmit,
-    formState: { isSubmitting },
+    // formState: { isSubmitting },
   } = methods
 
   useEffect(() => {
@@ -78,16 +95,22 @@ export default function AccountWallet({ invoices, wallets, mutate }: Props) {
   }, [currentWallet])
 
   const onSubmit = async (payload: any) => {
-    try {
-      await walletApi.updateBalance(currentWallet?.id || '', Math.abs(payload?.balance), {
-        type: Math.sign(payload?.balance) === 1 ? 1 : 2,
-      })
-      mutate()
-      // enqueueSnackbar(`Update wallet ${currentWallet?.name} success!`)
-    } catch (error) {
-      // enqueueSnackbar('Update failed!')
-      console.error(error)
-    }
+    confirmDialog('', async () => {
+      try {
+        setLoading(true)
+        await walletApi.updateBalance(currentWallet?.id || '', Math.abs(payload?.balance), {
+          type: Math.sign(payload?.balance) === 1 ? 1 : 2,
+        })
+        await mutate()
+        setAlignment(0)
+        setLoading(false)
+        handleClose()
+        enqueueSnackbar(`Update wallet ${currentWallet?.name} success!`)
+      } catch (error) {
+        // enqueueSnackbar('Update failed!')
+        console.error(error)
+      }
+    })
   }
 
   return (
@@ -140,20 +163,33 @@ export default function AccountWallet({ invoices, wallets, mutate }: Props) {
         </Stack>
       </Grid>
 
-      <Dialog open={openWallet} onClose={handleClose}>
+      <Dialog open={openWallet} onClose={handleClose} fullWidth>
         <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
           <DialogTitle>Add funds</DialogTitle>
           <DialogContent>
-            <DialogContentText mt={1} mb={2}>
-              Add funds to this wallet
-            </DialogContentText>
+            <ToggleButtonGroup
+              sx={{ my: 2 }}
+              fullWidth
+              color="primary"
+              value={alignment}
+              exclusive
+              onChange={handleChange}
+              aria-label="Money"
+            >
+              <ToggleButton value={100}>100</ToggleButton>
+              <ToggleButton value={500}>500</ToggleButton>
+              <ToggleButton value={1000}>1000</ToggleButton>
+              <ToggleButton value={2000}>2000</ToggleButton>
+              <ToggleButton value={5000}>5000</ToggleButton>
+            </ToggleButtonGroup>
+
             <RHFTextField name="balance" label="Balance" type="number" />
           </DialogContent>
           <DialogActions>
             <Button onClick={handleClose} color="inherit">
               Cancel
             </Button>
-            <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
+            <LoadingButton type="submit" variant="contained" loading={loading}>
               Add
             </LoadingButton>
           </DialogActions>
