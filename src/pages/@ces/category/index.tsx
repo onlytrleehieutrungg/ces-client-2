@@ -21,6 +21,7 @@ import { categoryApi } from 'src/api-client/category'
 // import { _userList } from 'src/_mock'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
 import Iconify from 'src/components/Iconify'
+import LoadingScreen from 'src/components/LoadingScreen'
 import Page from 'src/components/Page'
 import Scrollbar from 'src/components/Scrollbar'
 import {
@@ -42,29 +43,12 @@ import { confirmDialog } from 'src/utils/confirmDialog'
 
 // ----------------------------------------------------------------------
 
-const STATUS_OPTIONS = ['all']
-
-const ROLE_OPTIONS = ['all']
-
-
-
-// const TABLE_HEAD = Object.keys(jsonData).map((key) => ({
-//   id: key.toLowerCase(),
-//   label: key.charAt(0).toUpperCase() + key.slice(1),
-//   align: 'left'
-// }));
 
 const TABLE_HEAD = [
   { id: 'name', label: 'Name', align: 'left' },
   { id: 'description', label: 'Description', align: 'left' },
   { id: '' },
-
-
 ]
-
-// ----------------------------------------------------------------------
-
-// ----------------------------------------------------------------------
 
 CategoryPage.getLayout = function getLayout(page: React.ReactElement) {
   return <Layout>{page}</Layout>
@@ -94,7 +78,7 @@ export default function CategoryPage() {
 
   const { push } = useRouter()
 
-  const { data, mutate } = useCategoryList({})
+  const { data, mutate, isLoading } = useCategoryList({})
 
   const tableData: Category[] = data?.data ?? []
   const { enqueueSnackbar } = useSnackbar()
@@ -108,6 +92,9 @@ export default function CategoryPage() {
   const handleFilterName = (filterName: string) => {
     setFilterName(filterName)
     setPage(0)
+  }
+  if (isLoading) {
+    return <LoadingScreen />
   }
 
   const handleFilterRole = (event: React.ChangeEvent<HTMLInputElement>) => {

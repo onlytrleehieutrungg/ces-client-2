@@ -6,6 +6,7 @@ import { useSnackbar } from 'notistack'
 import { Category, Role } from 'src/@types/@ces'
 import { categoryApi } from 'src/api-client/category'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
+import LoadingScreen from 'src/components/LoadingScreen'
 import Page from 'src/components/Page'
 import RoleBasedGuard from 'src/guards/RoleBasedGuard'
 import { useCategoryDetails } from 'src/hooks/@ces/useCategory'
@@ -23,9 +24,11 @@ export default function CategoryEditPage() {
   const { query, push } = useRouter()
   const { enqueueSnackbar } = useSnackbar()
   const { categoryId } = query
-  const { data } = useCategoryDetails({ id: `${categoryId}` })
+  const { data, isLoading } = useCategoryDetails({ id: `${categoryId}` })
   // const name = data?.data?.name.toString().toUpperCase()
-
+  if (isLoading) {
+    return <LoadingScreen />
+  }
   const handleEditCategorySubmit = async (payload: Category) => {
     try {
       await categoryApi.update(`${categoryId}`, payload)

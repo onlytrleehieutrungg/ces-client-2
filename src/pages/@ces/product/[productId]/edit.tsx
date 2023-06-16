@@ -7,6 +7,7 @@ import { Role } from 'src/@types/@ces'
 import { Product } from 'src/@types/@ces/product'
 import { productApi } from 'src/api-client/product'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
+import LoadingScreen from 'src/components/LoadingScreen'
 import Page from 'src/components/Page'
 import RoleBasedGuard from 'src/guards/RoleBasedGuard'
 import { useProductDetail } from 'src/hooks/@ces/useProduct'
@@ -24,7 +25,10 @@ export default function ProductEditPage() {
   const { query, push } = useRouter()
   const { enqueueSnackbar } = useSnackbar()
   const { productId } = query
-  const { data } = useProductDetail({ id: `${productId}` })
+  const { data, isLoading } = useProductDetail({ id: `${productId}` })
+  if (isLoading) {
+    return <LoadingScreen />
+  }
   const handleEditProductSubmit = async (payload: Product) => {
     try {
       await productApi.update(`${productId}`, payload)
@@ -37,7 +41,7 @@ export default function ProductEditPage() {
     }
   }
   return (
-    // <RoleBasedGuard hasContent roles={[Role['Supplier Admin']]}>
+    <RoleBasedGuard hasContent roles={[Role['Supplier Admin']]}>
       <Page title="Product: Edit Product">
         <Container>
           <HeaderBreadcrumbs
@@ -53,6 +57,6 @@ export default function ProductEditPage() {
           )}
         </Container>
       </Page>
-    // </RoleBasedGuard>
+    </RoleBasedGuard>
   )
 }

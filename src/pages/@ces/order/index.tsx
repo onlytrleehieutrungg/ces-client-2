@@ -16,6 +16,7 @@ import { useState } from 'react'
 import { Role } from 'src/@types/@ces'
 import { Order, Status } from 'src/@types/@ces/order'
 import Iconify from 'src/components/Iconify'
+import LoadingScreen from 'src/components/LoadingScreen'
 import Page from 'src/components/Page'
 import Scrollbar from 'src/components/Scrollbar'
 import {
@@ -79,8 +80,9 @@ export default function OrderPage() {
   } = useTable()
 
   const { push } = useRouter()
-  const { data, mutate } = useOrder({});
+  const { data, mutate, isLoading } = useOrder({});
   const tableData: Order[] = data?.data ?? []
+
   const [filterName, setFilterName] = useState('')
 
   const [filterStt, setFilterStatus] = useState('all')
@@ -110,7 +112,9 @@ export default function OrderPage() {
   })
 
   const denseHeight = dense ? 52 : 72
-
+  if (isLoading) {
+    return <LoadingScreen />
+  }
   const isNotFound =
     (!dataFiltered.length && !!filterName) ||
     (!dataFiltered.length && !!filterStatus) ||

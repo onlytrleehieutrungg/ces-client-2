@@ -2,7 +2,6 @@ import { yupResolver } from '@hookform/resolvers/yup';
 // @mui
 import { LoadingButton } from '@mui/lab';
 import { Box, Card, Grid, Stack, Typography } from '@mui/material';
-import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 // next
 import { useRouter } from 'next/router';
 import { useSnackbar } from 'notistack';
@@ -10,10 +9,8 @@ import { useCallback, useEffect, useMemo } from 'react';
 // form
 import { useForm } from 'react-hook-form';
 import { Category, Product } from 'src/@types/@ces';
-import { storage } from 'src/contexts/FirebaseContext';
 import { useCategoryList } from 'src/hooks/@ces/useCategory';
 import uploadImage from 'src/utils/uploadImage';
-import { v4 } from 'uuid';
 import * as Yup from 'yup';
 import {
     FormProvider,
@@ -46,7 +43,7 @@ export default function ProductNewEditForm({ isEdit = false, currentUser, onSubm
         price: Yup.number().required('Price is required'),
         quantity: Yup.number().required('Quantity is required'),
         categoryId: Yup.string().required('CategoryId is required'),
-        description: Yup.string().required('Description is required'),
+        // description: Yup.string().required('Description is required'),
         avatarUrl: Yup.mixed().test('required', 'Avatar is required', (value) => value !== ''),
     });
 
@@ -80,8 +77,9 @@ export default function ProductNewEditForm({ isEdit = false, currentUser, onSubm
         formState: { isSubmitting },
     } = methods;
 
-    const values = watch();
-
+    const values = watch("imageUrl");
+    console.log(values);
+    
 
     useEffect(() => {
         if (isEdit && currentUser) {

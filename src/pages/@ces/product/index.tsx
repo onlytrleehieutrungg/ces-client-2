@@ -23,6 +23,7 @@ import { Product } from 'src/@types/@ces/product'
 import { productApi } from 'src/api-client/product'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
 import Iconify from 'src/components/Iconify'
+import LoadingScreen from 'src/components/LoadingScreen'
 import Page from 'src/components/Page'
 import Scrollbar from 'src/components/Scrollbar'
 import {
@@ -112,7 +113,11 @@ export default function ProductPage() {
       }
     })
   }
+  if (isLoading) {
+    console.log(isLoading);
 
+    return <LoadingScreen />
+  }
   const handleDeleteRows = (selected: string[]) => {
     const deleteRows = tableData.filter((row) => !selected.includes(row.id))
     setSelected([])
@@ -140,111 +145,111 @@ export default function ProductPage() {
     (!dataFiltered.length && !!filterRole) ||
     (!dataFiltered.length && !!filterStatus)
   return (
-    // <RoleBasedGuard hasContent roles={[Role['Supplier Admin']]}>
-    <Page title="Product: List">
-      <Container>
-        <HeaderBreadcrumbs
-          heading="Product List"
-          links={[
-            { name: 'Dashboard', href: '' },
-            { name: 'Product', href: '' },
-            { name: 'List' },
-          ]}
-          action={
-            <NextLink href={PATH_CES.product.new} passHref>
-              <Button variant="contained" startIcon={<Iconify icon={'eva:plus-fill'} />}>
-                New Product
-              </Button>
-            </NextLink>
-          }
-        />
-        <Card>
-          <ProductTableToolbar filterName={filterName} onFilterName={handleFilterName} />
+    <RoleBasedGuard hasContent roles={[Role['Supplier Admin']]}>
+      <Page title="Product: List">
+        <Container>
+          <HeaderBreadcrumbs
+            heading="Product List"
+            links={[
+              { name: 'Dashboard', href: '' },
+              { name: 'Product', href: '' },
+              { name: 'List' },
+            ]}
+            action={
+              <NextLink href={PATH_CES.product.new} passHref>
+                <Button variant="contained" startIcon={<Iconify icon={'eva:plus-fill'} />}>
+                  New Product
+                </Button>
+              </NextLink>
+            }
+          />
+          <Card>
+            <ProductTableToolbar filterName={filterName} onFilterName={handleFilterName} />
 
-          <Scrollbar>
-            <TableContainer sx={{ minWidth: 800, position: 'relative' }}>
-              {selected.length > 0 && (
-                <TableSelectedActions
-                  dense={dense}
-                  numSelected={selected.length}
-                  rowCount={tableData.length}
-                  onSelectAllRows={(checked) =>
-                    onSelectAllRows(
-                      checked,
-                      tableData.map((row) => `${row.id}`)
-                    )
-                  }
-                  actions={
-                    <Tooltip title="Delete">
-                      <IconButton color="primary" onClick={() => handleDeleteRows(selected)}>
-                        <Iconify icon={'eva:trash-2-outline'} />
-                      </IconButton>
-                    </Tooltip>
-                  }
-                />
-              )}
-
-              <Table size={dense ? 'small' : 'medium'}>
-                <TableHeadCustom
-                  order={order}
-                  orderBy={orderBy}
-                  headLabel={TABLE_HEAD}
-                  rowCount={tableData.length}
-                  numSelected={selected.length}
-                  onSort={onSort}
-                  onSelectAllRows={(checked) =>
-                    onSelectAllRows(
-                      checked,
-                      tableData.map((row) => `${row.id}`)
-                    )
-                  }
-                />
-                <TableBody>
-                  {dataFiltered
-                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                    .map((row) => (
-                      <ProductTableRow
-                        key={`${row.id}`}
-                        row={row}
-                        selected={selected.includes(`${row.id}`)}
-                        onSelectRow={() => onSelectRow(`${row.id}`)}
-                        onDeleteRow={() => handleDeleteRow(`${row.id}`)}
-                        onEditRow={() => handleEditRow(row.id)}
-                      />
-                    ))}
-
-                  <TableEmptyRows
-                    height={denseHeight}
-                    emptyRows={emptyRows(page, rowsPerPage, tableData.length)}
+            <Scrollbar>
+              <TableContainer sx={{ minWidth: 800, position: 'relative' }}>
+                {selected.length > 0 && (
+                  <TableSelectedActions
+                    dense={dense}
+                    numSelected={selected.length}
+                    rowCount={tableData.length}
+                    onSelectAllRows={(checked) =>
+                      onSelectAllRows(
+                        checked,
+                        tableData.map((row) => `${row.id}`)
+                      )
+                    }
+                    actions={
+                      <Tooltip title="Delete">
+                        <IconButton color="primary" onClick={() => handleDeleteRows(selected)}>
+                          <Iconify icon={'eva:trash-2-outline'} />
+                        </IconButton>
+                      </Tooltip>
+                    }
                   />
+                )}
 
-                  <TableNoData isNotFound={isNotFound} />
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Scrollbar>
+                <Table size={dense ? 'small' : 'medium'}>
+                  <TableHeadCustom
+                    order={order}
+                    orderBy={orderBy}
+                    headLabel={TABLE_HEAD}
+                    rowCount={tableData.length}
+                    numSelected={selected.length}
+                    onSort={onSort}
+                    onSelectAllRows={(checked) =>
+                      onSelectAllRows(
+                        checked,
+                        tableData.map((row) => `${row.id}`)
+                      )
+                    }
+                  />
+                  <TableBody>
+                    {dataFiltered
+                      .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                      .map((row) => (
+                        <ProductTableRow
+                          key={`${row.id}`}
+                          row={row}
+                          selected={selected.includes(`${row.id}`)}
+                          onSelectRow={() => onSelectRow(`${row.id}`)}
+                          onDeleteRow={() => handleDeleteRow(`${row.id}`)}
+                          onEditRow={() => handleEditRow(row.id)}
+                        />
+                      ))}
 
-          <Box sx={{ position: 'relative' }}>
-            <TablePagination
-              rowsPerPageOptions={[5, 10, 25]}
-              component="div"
-              count={dataFiltered.length}
-              rowsPerPage={rowsPerPage}
-              page={page}
-              onPageChange={onChangePage}
-              onRowsPerPageChange={onChangeRowsPerPage}
-            />
+                    <TableEmptyRows
+                      height={denseHeight}
+                      emptyRows={emptyRows(page, rowsPerPage, tableData.length)}
+                    />
 
-            <FormControlLabel
-              control={<Switch checked={dense} onChange={onChangeDense} />}
-              label="Dense"
-              sx={{ px: 3, py: 1.5, top: 0, position: { md: 'absolute' } }}
-            />
-          </Box>
-        </Card>
-      </Container>
-    </Page>
-    // </RoleBasedGuard >
+                    <TableNoData isNotFound={isNotFound} />
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Scrollbar>
+
+            <Box sx={{ position: 'relative' }}>
+              <TablePagination
+                rowsPerPageOptions={[5, 10, 25]}
+                component="div"
+                count={dataFiltered.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={onChangePage}
+                onRowsPerPageChange={onChangeRowsPerPage}
+              />
+
+              <FormControlLabel
+                control={<Switch checked={dense} onChange={onChangeDense} />}
+                label="Dense"
+                sx={{ px: 3, py: 1.5, top: 0, position: { md: 'absolute' } }}
+              />
+            </Box>
+          </Card>
+        </Container>
+      </Page>
+    </RoleBasedGuard >
   )
 }
 

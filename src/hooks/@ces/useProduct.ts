@@ -44,20 +44,25 @@ export function useProduct({ params = { Page: '1' }, options }: UseProductProps)
 }
 
 export function useProductDetail({ id, options }: UseProductProps) {
-  const { data, error, mutate } = useSWR(['product-detail', id], () => productApi.getById(id!), {
-    keepPreviousData: true,
-    fallbackData: {
-      code: 0,
-      message: '',
-      metaData: null,
-      data: {},
-    },
-    ...options,
-  })
+  const { data, error, mutate, isLoading } = useSWR(
+    ['product-detail', id],
+    () => productApi.getById(id!),
+    {
+      keepPreviousData: true,
+      fallbackData: {
+        code: 0,
+        message: '',
+        metaData: null,
+        data: {},
+      },
+      ...options,
+    }
+  )
 
   return {
     data,
     error,
     mutate,
+    isLoading
   }
 }

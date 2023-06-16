@@ -9,7 +9,7 @@ type UseCategoryProps = {
 }
 
 export function useCategoryList({ options, params = { Page: '1' } }: UseCategoryProps) {
-  const { data, error, mutate } = useSWR(
+  const { data, error, mutate, isLoading } = useSWR(
     ['category-list', params],
     () => categoryApi.getAll(params!),
     {
@@ -27,12 +27,13 @@ export function useCategoryList({ options, params = { Page: '1' } }: UseCategory
   return {
     data,
     error,
+    isLoading,
     mutate,
   }
 }
 
 export function useCategoryDetails({ id, options }: UseCategoryProps) {
-  const { data, error, mutate } = useSWR(['categoryId', id], () => categoryApi.getById(id!), {
+  const { data, error, mutate,isLoading } = useSWR(['categoryId', id], () => categoryApi.getById(id!), {
     keepPreviousData: true,
     fallbackData: {
       code: 0,
@@ -46,6 +47,7 @@ export function useCategoryDetails({ id, options }: UseCategoryProps) {
   return {
     data,
     error,
+    isLoading,
     mutate,
   }
 }

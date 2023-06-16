@@ -1,7 +1,7 @@
 import { m } from 'framer-motion';
 // @mui
 import { alpha, styled } from '@mui/material/styles';
-import { Box } from '@mui/material';
+import { Box, CircularProgress } from '@mui/material';
 //
 import Logo from './Logo';
 
@@ -37,7 +37,8 @@ export default function LoadingScreen() {
           repeat: Infinity,
         }}
       >
-        <Logo disabledLink sx={{ width: 64, height: 64 }} />
+        {/* <Logo disabledLink sx={{ width: 64, height: 64 }} /> */}
+        <CircularProgress />
       </m.div>
 
       <Box

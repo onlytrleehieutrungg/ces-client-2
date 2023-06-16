@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 import { useSnackbar } from 'notistack';
 import { Role } from 'src/@types/@ces';
 import { orderApi } from 'src/api-client/order';
+import LoadingScreen from 'src/components/LoadingScreen';
 import RoleBasedGuard from 'src/guards/RoleBasedGuard';
 // sections
 import { useOrderDetail } from 'src/hooks/@ces/useOrder';
@@ -33,7 +34,7 @@ export default function InvoiceDetails() {
 
   const { query, push } = useRouter()
   const { orderId } = query
-  const { data, mutate } = useOrderDetail({ id: `${orderId}` })
+  const { data, mutate, isLoading } = useOrderDetail({ id: `${orderId}` })
   const handleEditOrderSubmit = async (id: string, status: number) => {
     try {
       await orderApi.update(id, status)
@@ -44,6 +45,9 @@ export default function InvoiceDetails() {
       enqueueSnackbar('Update failed!')
       console.error(error)
     }
+  }
+  if (isLoading) {
+    return <LoadingScreen />
   }
 
   return (
