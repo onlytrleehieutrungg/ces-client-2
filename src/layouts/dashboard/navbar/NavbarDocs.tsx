@@ -27,12 +27,14 @@ export default function NavbarDocs() {
           {translate('docs.hi')}, {user?.name}
         </Typography>
         <Typography variant="body2" sx={{ color: 'text.secondary', whiteSpace: 'pre-line' }}>
-          {translate('docs.description')}
+          {/* {translate('docs.description')} */}
+          Need help
         </Typography>
       </div>
 
       <Button href={PATH_DOCS} target="_blank" rel="noopener" variant="contained">
-        {translate('docs.documentation')}
+        {/* {translate('docs.documentation')} */}
+        Contact here
       </Button>
     </Stack>
   )
