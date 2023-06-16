@@ -1,5 +1,5 @@
 // routes
-import { PATH_CES, PATH_DASHBOARD, PATH_SYS } from '../../../routes/paths'
+import { PATH_CES, PATH_DASHBOARD } from '../../../routes/paths'
 // components
 import Label from '../../../components/Label'
 import Iconify from '../../../components/Iconify'
@@ -49,15 +49,11 @@ const navConfig = [
       },
 
       { title: 'order', path: PATH_CES.order.root, icon: ICONS.invoice, roles: [Role['Supplier Admin']], },
-      { title: 'product', path: PATH_CES.product.root, icon: ICONS.ecommerce, roles: [Role['Supplier Admin']], },
+      { title: 'product', path: PATH_CES.product.root, icon: ICONS.ecommerce },
       { title: 'category', path: PATH_CES.category.root, icon: ICONS.menuItem, roles: [Role['Supplier Admin']], },
     ],
   },
-  {
-    subheader: 'CES-SYSTEMADMIN',
-
-    items: [{ title: 'TEST AHTHOR', path: PATH_SYS.root, icon: ICONS.user }],
-  },
+ 
   // GENERAL
   // ----------------------------------------------------------------------
   {

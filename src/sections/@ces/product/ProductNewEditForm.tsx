@@ -6,13 +6,13 @@ import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 // next
 import { useRouter } from 'next/router';
 import { useSnackbar } from 'notistack';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 // form
 import { useForm } from 'react-hook-form';
 import { Category, Product } from 'src/@types/@ces';
-import Image from 'src/components/Image';
 import { storage } from 'src/contexts/FirebaseContext';
 import { useCategoryList } from 'src/hooks/@ces/useCategory';
+import uploadImage from 'src/utils/uploadImage';
 import { v4 } from 'uuid';
 import * as Yup from 'yup';
 import {
@@ -34,12 +34,10 @@ type Props = {
     onSubmit?: (payload: Product) => void
 
 };
-type Image = {
-    name: string
-}
+
 export default function ProductNewEditForm({ isEdit = false, currentUser, onSubmit }: Props) {
     const { push } = useRouter();
-    const { data, mutate } = useCategoryList({})
+    const { data } = useCategoryList({})
     const categories: Category[] = data?.data ?? []
     const { enqueueSnackbar } = useSnackbar();
 
@@ -49,8 +47,6 @@ export default function ProductNewEditForm({ isEdit = false, currentUser, onSubm
         quantity: Yup.number().required('Quantity is required'),
         categoryId: Yup.string().required('CategoryId is required'),
         description: Yup.string().required('Description is required'),
-        // serviceDuration: Yup.string().required('ServiceDuration is required'),
-        // type: Yup.string().required('Type is required'),
         avatarUrl: Yup.mixed().test('required', 'Avatar is required', (value) => value !== ''),
     });
 
@@ -61,8 +57,6 @@ export default function ProductNewEditForm({ isEdit = false, currentUser, onSubm
             quantity: currentUser?.quantity || 0,
             categoryId: currentUser?.categoryId || '',
             description: currentUser?.description || '',
-            // serviceDuration: currentUser?.serviceDuration || '',
-            // type: currentUser?.type || '',
             imageUrl: currentUser?.imageUrl || '',
 
         }),
@@ -110,23 +104,14 @@ export default function ProductNewEditForm({ isEdit = false, currentUser, onSubm
             console.error(error);
         }
     };
-
-
-
+    //------------------------IMAGE UPLOAD------------------------
     const handleDrop = useCallback(
         async (acceptedFiles) => {
-            const file = acceptedFiles[0];
-            const imageRef = ref(storage, `image/${file?.name + v4()}`);
-            if (file) {
-                await uploadBytes(imageRef, file!).then((snapshot) => {
-                    getDownloadURL(snapshot.ref).then(url => {
-                        setValue('imageUrl', url.toString())
-                    });
-                })
-            }
+            uploadImage({ acceptedFiles, setValue })
         },
         [setValue]
     );
+    //------------------------IMAGE UPLOAD------------------------
 
     return (
         <FormProvider methods={methods} onSubmit={handleSubmit(handleFormSubmit)}>

@@ -37,7 +37,7 @@ export default function ProductEditPage() {
     }
   }
   return (
-    <RoleBasedGuard hasContent roles={[Role['Supplier Admin']]}>
+    // <RoleBasedGuard hasContent roles={[Role['Supplier Admin']]}>
       <Page title="Product: Edit Product">
         <Container>
           <HeaderBreadcrumbs
@@ -53,6 +53,6 @@ export default function ProductEditPage() {
           )}
         </Container>
       </Page>
-    </RoleBasedGuard>
+    // </RoleBasedGuard>
   )
 }

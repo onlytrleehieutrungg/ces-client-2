@@ -9,18 +9,22 @@ type UseProductProps = {
   id?: string
 }
 export function useProduct({ params = { Page: '1' }, options }: UseProductProps) {
-  const { data, error, mutate } = useSWR(['/product', params], () => productApi.getAll(params!), {
-    // revalidateOnFocus: false,
-    // dedupingInterval: 10 * 1000, // 10s
-    keepPreviousData: true,
-    fallbackData: {
-      code: 0,
-      message: '',
-      metaData: null,
-      data: [],
-    },
-    ...options,
-  })
+  const { data, error, mutate, isLoading } = useSWR(
+    ['/product', params],
+    () => productApi.getAll(params!),
+    {
+      // revalidateOnFocus: false,
+      // dedupingInterval: 10 * 1000, // 10s
+      keepPreviousData: true,
+      fallbackData: {
+        code: 0,
+        message: '',
+        metaData: null,
+        data: [],
+      },
+      ...options,
+    }
+  )
   // const fetcher: Fetcher<Product[]> = () => productApi.getAll()
   // async function createProduct(payload: Product) {
   //   await productApi.create(payload)
@@ -33,6 +37,7 @@ export function useProduct({ params = { Page: '1' }, options }: UseProductProps)
     data,
     error,
     mutate,
+    isLoading,
     // createProduct,
     // updateProduct,
   }
