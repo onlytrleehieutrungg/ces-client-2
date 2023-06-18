@@ -8,8 +8,8 @@ type UseProductProps = {
   options?: SWRConfiguration
   id?: string
 }
-export function useProduct({ params = { Page: '1' }, options }: UseProductProps) {
-  const { data, error, mutate, isLoading } = useSWR(
+export function useProduct({ params, options }: UseProductProps) {
+  const { data, error, mutate, isLoading, isValidating } = useSWR(
     ['/product', params],
     () => productApi.getAll(params!),
     {
@@ -36,6 +36,7 @@ export function useProduct({ params = { Page: '1' }, options }: UseProductProps)
   return {
     data,
     error,
+    isValidating,
     mutate,
     isLoading,
     // createProduct,
@@ -63,6 +64,6 @@ export function useProductDetail({ id, options }: UseProductProps) {
     data,
     error,
     mutate,
-    isLoading
+    isLoading,
   }
 }

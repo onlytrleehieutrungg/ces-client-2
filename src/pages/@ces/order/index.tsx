@@ -80,7 +80,7 @@ export default function OrderPage() {
   } = useTable()
 
   const { push } = useRouter()
-  const { data, mutate, isLoading } = useOrder({});
+  const { data, mutate, isLoading, isValidating } = useOrder({});
   const tableData: Order[] = data?.data ?? []
 
   const [filterName, setFilterName] = useState('')
@@ -134,7 +134,6 @@ export default function OrderPage() {
               onFilterStatus={handleFilterStatus}
               optionsStatus={STATUS_OPTIONS}
             />
-
             <Scrollbar>
               <TableContainer sx={{ minWidth: 800, position: 'relative' }}>
                 {selected.length > 0 && (
