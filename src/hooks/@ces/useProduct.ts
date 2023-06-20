@@ -13,8 +13,9 @@ export function useProduct({ params, options }: UseProductProps) {
     ['/product', params],
     () => productApi.getAll(params!),
     {
-      // revalidateOnFocus: false,
-      // dedupingInterval: 10 * 1000, // 10s
+      refreshInterval: 0,
+      revalidateOnFocus: false,
+      dedupingInterval: 10 * 1000, // 10s
       keepPreviousData: true,
       fallbackData: {
         code: 0,
@@ -25,6 +26,7 @@ export function useProduct({ params, options }: UseProductProps) {
       ...options,
     }
   )
+
   // const fetcher: Fetcher<Product[]> = () => productApi.getAll()
   // async function createProduct(payload: Product) {
   //   await productApi.create(payload)
