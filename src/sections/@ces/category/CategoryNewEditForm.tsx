@@ -34,7 +34,6 @@ export default function UserNewEditForm({ isEdit = false, currentUser, onSubmit 
 
     const NewUserSchema = Yup.object().shape({
         name: Yup.string().required('Name is required'),
-        description: Yup.string().required('Description is required'),
     });
 
     const defaultValues = useMemo(

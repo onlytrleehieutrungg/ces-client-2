@@ -2,19 +2,24 @@
 import {
   Box, Card,
   Container,
+  Divider,
   FormControlLabel,
   IconButton,
   Switch,
+  Tab,
   Table,
   TableBody,
   TableContainer,
   TablePagination,
+  Tabs,
   Tooltip
 } from '@mui/material'
+import { Item } from 'framer-motion/types/components/Reorder/Item'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
 import { Role } from 'src/@types/@ces'
 import { Order, Status } from 'src/@types/@ces/order'
+import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
 import Iconify from 'src/components/Iconify'
 import LoadingScreen from 'src/components/LoadingScreen'
 import Page from 'src/components/Page'
@@ -38,11 +43,17 @@ import OrderTableToolbar from 'src/sections/@ces/order/OrderTableToolbar'
 
 const STATUS_OPTIONS = [
   'all',
-  'New',
+  'new',
   'confirm',
   'waiting for ship',
   'complete',
   'cancel'
+]
+
+
+const ROLE_OPTIONS = [
+  'supplier',
+  'shipper'
 ]
 
 const TABLE_HEAD = [
@@ -85,7 +96,7 @@ export default function OrderPage() {
 
   const [filterName, setFilterName] = useState('')
 
-  const [filterStt, setFilterStatus] = useState('all')
+  const [filterStt, setFilterStatus] = useState('supplier')
 
   const { currentTab: filterStatus, onChangeTab: onChangeFilterStatus } = useTabs('all')
 
@@ -93,6 +104,7 @@ export default function OrderPage() {
     setFilterName(filterName)
     setPage(0)
   }
+  console.log(filterStatus);
 
   const handleFilterStatus = (event: React.ChangeEvent<HTMLInputElement>) => {
     console.log(event.target.value);
@@ -122,17 +134,40 @@ export default function OrderPage() {
   const handleViewRow = (id: string) => {
     push(PATH_CES.order.detail(id));
   };
+
   return (
     <RoleBasedGuard hasContent roles={[Role['Supplier Admin']]}>
       <Page title="Order: List">
         <Container>
+          <HeaderBreadcrumbs
+            heading="Order List"
+            links={[
+              { name: 'Dashboard', href: '' },
+              { name: 'Order', href: '' },
+              { name: 'List' },
+            ]}
+          />
           <Card>
+            <Tabs
+              allowScrollButtonsMobile
+              variant="scrollable"
+              scrollButtons="auto"
+              value={filterStatus}
+              onChange={onChangeFilterStatus}
+              sx={{ px: 2, bgcolor: 'background.neutral' }}
+            >
+              {STATUS_OPTIONS.map((tab) => (
+                <Tab disableRipple key={tab} label={tab} value={tab} />
+              ))}
+            </Tabs>
+
+            <Divider />
             <OrderTableToolbar
               filterName={filterName}
               filterStatus={filterStt}
               onFilterName={handleFilterName}
               onFilterStatus={handleFilterStatus}
-              optionsStatus={STATUS_OPTIONS}
+              optionsStatus={ROLE_OPTIONS}
             />
 
             <Scrollbar>
@@ -238,7 +273,10 @@ function applySortFilter({
   filterStt: string
 }) {
   const stabilizedThis = tableData.map((el, index) => [el, index] as const)
-
+  function mapStatus(status: number) {
+    const rs = Object.values(Status)
+    return rs[status].toLocaleLowerCase()
+  }
   stabilizedThis.sort((a, b) => {
     const order = comparator(a[0], b[0])
     if (order !== 0) return order
@@ -253,19 +291,18 @@ function applySortFilter({
         item?.id.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
     )
   }
-  function mapStatus(status: number) {
-    const rs = Object.values(Status)
-    return rs[status].toLocaleLowerCase()
-  }
 
-  if (filterStt !== 'all') {
-    tableData = tableData.filter((item) => {
-      mapStatus(item.status).toString() === filterStt
+
+  if (filterStt !== 'supplier') {
+    tableData = tableData.filter((item: Record<string, any>) => {
+      item.status === filterStt
     })
   }
 
   if (filterStatus !== 'all') {
-    tableData = tableData.filter((item: Record<string, any>) => item.role === filterStatus)
+    tableData = tableData.filter((item: Record<string, any>) => mapStatus(item.status) === filterStatus)
+    console.log(tableData);
+
   }
 
   return tableData
