@@ -65,7 +65,7 @@ export default function ProductCreatePage() {
 
       resetFileInput()
       setFile(undefined)
-      push(PATH_CES.account.root)
+      push(PATH_CES.product.root)
     } catch (error) {
       console.error(error)
       enqueueSnackbar('Import failed!')
