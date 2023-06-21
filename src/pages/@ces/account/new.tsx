@@ -79,7 +79,7 @@ export default function AccountCreatePage() {
       const formData = new FormData()
 
       formData.append('file', file!)
-      await axiosClient.post('/excel/account/import', formData, {
+      await axiosClient.post('/excel/product/import', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       })
       setLoading(false)
