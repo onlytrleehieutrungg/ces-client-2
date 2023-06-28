@@ -44,6 +44,12 @@ export const PATH_CES = {
     edit: (id: string) => path(ROOTS_CES, `/account/${id}/edit`),
     detail: (id: string) => path(ROOTS_CES, `/account/${id}`),
   },
+  company: {
+    root: path(ROOTS_CES, '/company'),
+    new: path(ROOTS_CES, '/company/new'),
+    edit: (id: string) => path(ROOTS_CES, `/company/${id}/edit`),
+    detail: (id: string) => path(ROOTS_CES, `/company/${id}`),
+  },
   project: {
     root: path(ROOTS_CES, '/project'),
     new: path(ROOTS_CES, '/project/new'),
@@ -67,7 +73,6 @@ export const PATH_CES = {
     edit: (id: string) => path(ROOTS_CES, `/category/${id}/edit`),
   },
 }
-
 
 export const PATH_DASHBOARD = {
   root: ROOTS_DASHBOARD,

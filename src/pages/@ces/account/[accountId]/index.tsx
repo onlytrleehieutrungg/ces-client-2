@@ -32,16 +32,16 @@ export default function UserAccount() {
 
   const { enqueueSnackbar } = useSnackbar()
 
-  const { query } = useRouter()
+  const { query, push } = useRouter()
   const { accountId } = query
 
   const { data, mutate } = useAccountDetails({ id: `${accountId}` })
-
+  console.log(data?.data)
   const handleEditAccountSubmit = async (payload: AccountPayload) => {
     try {
       await accountApi.update(`${accountId}`, payload)
-      // await update(data?.data.id, payload)
 
+      push(PATH_CES.account.root)
       enqueueSnackbar('Update success!')
     } catch (error) {
       enqueueSnackbar('Update failed!')
@@ -61,7 +61,7 @@ export default function UserAccount() {
       value: 'wallet',
       icon: <Iconify icon={'ic:round-receipt'} width={20} height={20} />,
       component: (
-        <AccountWallet wallets={data?.data?.wallets} invoices={_userInvoices} mutate={mutate} />
+        <AccountWallet wallet={data?.data?.wallet} invoices={_userInvoices} mutate={mutate} />
       ),
     },
   ]

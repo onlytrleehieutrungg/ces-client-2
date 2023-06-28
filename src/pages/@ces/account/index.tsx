@@ -37,7 +37,7 @@ export default function AccountPage() {
 
         <AccountTable />
       </Container>
-    </Page >
+    </Page>
   )
 }
 
