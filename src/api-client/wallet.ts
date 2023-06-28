@@ -1,3 +1,4 @@
+import { UpdateWalletBalancePayLoad } from 'src/@types/@ces'
 import axiosClient from './axiosClient'
 
 export const walletApi = {
@@ -20,5 +21,9 @@ export const walletApi = {
   },
   updateBalance(id: string, balance: any, params: any) {
     return axiosClient.put(`/wallet/${id}/${balance}`, null, { params })
+  },
+
+  updateBalanceV2(payload: UpdateWalletBalancePayLoad) {
+    return axiosClient.put(`/wallet`, payload)
   },
 }

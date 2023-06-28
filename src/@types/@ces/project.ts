@@ -7,9 +7,9 @@ export type ProjectData = {
   status: number
   imageUrl: string
   companyId: number
-  projectAccounts: {
+  groupAccount: {
     id: string
-    projectId: string
+    groupId: string
     accountId: string
     account: {
       id: string
@@ -25,7 +25,7 @@ export type ProjectData = {
       companyId: number
       wallets: any
     }
-    project: null
+    group: null
   }[]
 }
 
@@ -37,7 +37,7 @@ export type ProjectPayload = {
 }
 
 export type AddProjectMemberPayload = {
-  projectId: string
+  groupId: string
   accountId: string[]
 }
 
