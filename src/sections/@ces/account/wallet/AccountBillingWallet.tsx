@@ -13,7 +13,7 @@ import {
 } from '@mui/material'
 // @types
 // components
-import { AccountWalletData } from 'src/@types/@ces/account'
+import { WalletData } from 'src/@types/@ces/account'
 import Iconify from '../../../../components/Iconify'
 import Image from '../../../../components/Image'
 import { fCurrency } from 'src/utils/formatNumber'
@@ -21,7 +21,7 @@ import { fCurrency } from 'src/utils/formatNumber'
 // ----------------------------------------------------------------------
 
 type Props = {
-  wallets: AccountWalletData[]
+  wallets: WalletData[]
   isOpen: boolean
   onOpen: VoidFunction
   onCancel: VoidFunction

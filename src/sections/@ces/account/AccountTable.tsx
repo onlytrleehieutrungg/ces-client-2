@@ -87,8 +87,15 @@ export default function AccountTable({}: Props) {
 
   const { enqueueSnackbar } = useSnackbar()
 
-  const { data, mutate } = useAccountList({ params: { Page: '1' } })
-  const accountList = data?.data ?? []
+  const { data, mutate } = useAccountList({
+    params: { Page: '1' },
+    // options: {
+    //   revalidateOnFocus: false,
+    //   revalidateOnMount: false,
+    //   dedupingInterval: 60 * 60 * 1000,
+    // },
+  })
+  const accountList = data?.data || []
 
   const [filterName, setFilterName] = useState('')
 
@@ -103,6 +110,7 @@ export default function AccountTable({}: Props) {
 
   const handleFilterRole = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFilterRole(event.target.value)
+    setPage(0)
   }
 
   const handleDeleteRow = (id: string) => {
@@ -110,9 +118,14 @@ export default function AccountTable({}: Props) {
       try {
         await accountApi.delete(id)
         mutate()
+        // mutate(accountApi.delete(id), {
+        //   optimisticData: [],
+        // })
+
         enqueueSnackbar('Delete successful')
       } catch (error) {
-        enqueueSnackbar('Delete failed')
+        enqueueSnackbar('Delete failed', { variant: 'error' })
+
         console.error(error)
       }
     })
@@ -145,6 +158,7 @@ export default function AccountTable({}: Props) {
     (!dataFiltered.length && !!filterName) ||
     (!dataFiltered.length && !!filterRole) ||
     (!dataFiltered.length && !!filterStatus)
+
   return (
     <Card>
       <Tabs

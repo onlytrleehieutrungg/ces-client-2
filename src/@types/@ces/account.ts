@@ -1,3 +1,5 @@
+import { WalletData } from './wallet'
+
 export type AccountData = {
   id: string
   name: string
@@ -10,7 +12,7 @@ export type AccountData = {
   companyId: number
   updatedAt: string
   createdAt: string
-  wallets?: AccountWalletData[]
+  wallet?: WalletData
 }
 
 export type AccountPayload = {
@@ -25,19 +27,11 @@ export type AccountPayload = {
   status?: number
 }
 
-export type AccountWalletData = {
-  id: string
-  name: string
-  type: number
-  balance: number
-  accountId: string
-}
-
 export enum Role {
-  'System Admin',
-  'Supplier Admin',
-  'Enterprise Admin',
-  'Employee',
+  'System Admin' = 1,
+  'Supplier Admin' = 2,
+  'Enterprise Admin' = 3,
+  'Employee' = 4,
 }
 
 const filterRoleOptions = (filterFn: (value: Role) => boolean) =>

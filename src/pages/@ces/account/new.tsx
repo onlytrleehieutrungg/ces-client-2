@@ -31,7 +31,7 @@ export default function AccountCreatePage() {
 
   const handleCreateAccountSubmit = async (payload: AccountPayload) => {
     try {
-      if (payload.roleId === 2) {
+      if (payload.roleId === Role['Enterprise Admin']) {
         const res = await companyApi.create({
           name: payload.name,
           address: payload.address,
@@ -42,13 +42,12 @@ export default function AccountCreatePage() {
         })
         payload.companyId = res?.data.id
       }
-      console.log(payload)
       await accountApi.create(payload)
 
       enqueueSnackbar('Create success!')
       // push(PATH_CES.account.root)
     } catch (error) {
-      enqueueSnackbar('Create failed!')
+      enqueueSnackbar('Create failed!', {})
       console.error(error)
     }
   }

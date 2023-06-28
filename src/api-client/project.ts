@@ -9,30 +9,30 @@ import axiosClient from './axiosClient'
 
 export const projectApi = {
   getAll(params: Partial<Params>): Promise<BaseResponse<ProjectData[]>> {
-    return axiosClient.get(`/project`, { params })
+    return axiosClient.get(`/group`, { params })
   },
 
   getById(id: string): Promise<BaseResponse<ProjectData>> {
-    return axiosClient.get(`/project/${id}`)
+    return axiosClient.get(`/group/${id}`)
   },
 
   create(payload: ProjectPayload) {
-    return axiosClient.post('/project', payload)
+    return axiosClient.post('/group', payload)
   },
 
   delete(id: string) {
-    return axiosClient.delete(`/project/${id}`)
+    return axiosClient.delete(`/group/${id}`)
   },
 
   update(id: string, payload: ProjectPayload) {
-    return axiosClient.put(`/project/${id}`, payload)
+    return axiosClient.put(`/group/${id}`, payload)
   },
 
   addMember(payload: AddProjectMemberPayload) {
-    return axiosClient.post(`/project/members`, payload)
+    return axiosClient.post(`/group/members`, payload)
   },
 
   removeMember(payload: AddProjectMemberPayload) {
-    return axiosClient.delete(`/project/members/remove`, { data: payload })
+    return axiosClient.delete(`/group/members/remove`, { data: payload })
   },
 }

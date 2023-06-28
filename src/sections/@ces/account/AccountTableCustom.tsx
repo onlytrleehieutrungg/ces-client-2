@@ -64,7 +64,7 @@ export default function AccountTableCustom({}: Props) {
     setPage,
     //
     selected,
-    // setSelected,
+    setSelected,
     onSelectRow,
     onSelectAllRows,
     //
@@ -112,7 +112,7 @@ export default function AccountTableCustom({}: Props) {
     confirmDialog('Do you really want to remove this account from group ?', async () => {
       try {
         await projectApi.removeMember({
-          projectId: `${projectId}`,
+          groupId: `${projectId}`,
           accountId: [id],
         })
         mutateProject()
@@ -127,11 +127,11 @@ export default function AccountTableCustom({}: Props) {
   const handleAddRows = async (selected: string[]) => {
     try {
       await projectApi.addMember({
-        projectId: `${projectId}`,
+        groupId: `${projectId}`,
         accountId: [...selected],
       })
       mutateProject()
-
+      setSelected([])
       enqueueSnackbar('Add successful')
     } catch (error) {
       console.error(error)
@@ -141,11 +141,11 @@ export default function AccountTableCustom({}: Props) {
     confirmDialog('Do you really want to remove all account from group ?', async () => {
       try {
         await projectApi.removeMember({
-          projectId: `${projectId}`,
+          groupId: `${projectId}`,
           accountId: [...selected],
         })
         mutateProject()
-
+        setSelected([])
         enqueueSnackbar('Remove successful')
       } catch (error) {
         console.error(error)
@@ -165,7 +165,7 @@ export default function AccountTableCustom({}: Props) {
   const handleAddMemberRow = async (id: string) => {
     try {
       await projectApi.addMember({
-        projectId: `${projectId}`,
+        groupId: `${projectId}`,
         accountId: [id],
       })
       mutateProject()
@@ -279,9 +279,8 @@ export default function AccountTableCustom({}: Props) {
               {dataFiltered
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => {
-                  const isMember = projectDetails?.projectAccounts?.some(
-                    (e) => e.accountId == row.id
-                  )
+                  // console.log(projectDetails?.groupAccounts)
+                  const isMember = projectDetails?.groupAccount?.some((e) => e.accountId == row.id)
 
                   return (
                     <AccountTableRowCustom
@@ -371,7 +370,7 @@ function applySortFilter({
     tableData = tableData.filter((item: Record<string, any>) => item.status == filterStatus)
   }
 
-  const filterIds = projectDetails?.projectAccounts.map((obj: any) => obj.accountId)
+  const filterIds = projectDetails?.groupAccounts?.map((obj: any) => obj.accountId)
 
   if (filterRole !== 'all') {
     const filterFunc =

@@ -149,8 +149,6 @@ export default function AccountNewEditForm({
     [setValue]
   )
 
-  // const { data: companyData } = useCompanyList({})
-  // const companyList = companyData?.data
   const statusList = ACCOUNT_STATUS_OPTIONS_FORM
 
   type RoleOptions = typeof ROLE_OPTIONS_FORM_SA | typeof ROLE_OPTIONS_FORM_EA
@@ -277,15 +275,6 @@ export default function AccountNewEditForm({
                   </option>
                 ))}
               </RHFSelect>
-
-              {/* <RHFSelect name="companyId" label="Company" placeholder="Company">
-                <option value={undefined} />
-                {companyList?.map((option) => (
-                  <option key={option.id} value={option.id}>
-                    {option.name}
-                  </option>
-                ))}
-              </RHFSelect> */}
             </Box>
 
             <Stack alignItems="flex-end" sx={{ mt: 3 }}>

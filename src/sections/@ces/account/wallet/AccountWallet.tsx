@@ -19,7 +19,7 @@ import {
 } from '@mui/material'
 import { useSnackbar } from 'notistack'
 import { useForm } from 'react-hook-form'
-import { AccountWalletData } from 'src/@types/@ces/account'
+import { WalletData } from 'src/@types/@ces'
 import { UserInvoice } from 'src/@types/user'
 import { walletApi } from 'src/api-client'
 import Image from 'src/components/Image'
@@ -33,14 +33,14 @@ import { fCurrency } from 'src/utils/formatNumber'
 type Props = {
   mutate?: any
   invoices: UserInvoice[]
-  wallets?: AccountWalletData[]
+  wallet?: WalletData
 }
 
-export default function AccountWallet({ invoices, wallets, mutate }: Props) {
+export default function AccountWallet({ invoices, wallet, mutate }: Props) {
   const { enqueueSnackbar } = useSnackbar()
 
   const [openWallet, setOpenWallet] = useState(false)
-  const [currentWallet, setCurrentWallet] = useState<AccountWalletData>()
+  const [currentWallet, setCurrentWallet] = useState<WalletData>()
   const [loading, setLoading] = useState(false)
   const [alignment, setAlignment] = useState(0)
 
@@ -52,7 +52,7 @@ export default function AccountWallet({ invoices, wallets, mutate }: Props) {
     }
   }
 
-  const handleClickOpen = (wallet: AccountWalletData) => {
+  const handleClickOpen = (wallet: WalletData) => {
     setCurrentWallet(wallet)
     setOpenWallet(true)
   }
@@ -117,20 +117,10 @@ export default function AccountWallet({ invoices, wallets, mutate }: Props) {
     <Grid container spacing={5}>
       <Grid item xs={12} md={8}>
         <Stack spacing={3}>
-          {wallets?.map((wallet) => (
+          {wallet && (
             <Card key={wallet.id} sx={{ p: 3 }}>
               <Stack direction={'row'} alignItems={'center'} spacing={1} mb={3}>
-                <Image
-                  alt="icon"
-                  src={
-                    wallet.type === 1
-                      ? '/assets/icons/ic_food_wallet.png'
-                      : wallet.type === 2
-                      ? '/assets/icons/ic_stationery_wallet.png'
-                      : '/assets/icons/ic_wallet.png'
-                  }
-                  sx={{ maxWidth: 36 }}
-                />
+                <Image alt="icon" src={'/assets/icons/ic_wallet.png'} sx={{ maxWidth: 36 }} />
                 <Typography
                   variant="overline"
                   sx={{ mb: 3, display: 'block', color: 'text.secondary' }}
@@ -152,7 +142,7 @@ export default function AccountWallet({ invoices, wallets, mutate }: Props) {
                 </Button>
               </Box>
             </Card>
-          ))}
+          )}
 
           {/* <AccountBillingWallet
             wallets={wallets}
