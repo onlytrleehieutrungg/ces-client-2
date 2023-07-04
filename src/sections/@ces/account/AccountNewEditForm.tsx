@@ -90,17 +90,20 @@ export default function AccountNewEditForm({
       email: currentUser?.email || '',
       address: currentUser?.address || '',
       phone: currentUser?.phone || '',
-      imageUrl: currentUser?.imageUrl !== 'string' ? currentUser?.imageUrl : '',
+      imageUrl: currentUser?.imageUrl !== 'string' ? currentUser?.imageUrl : null,
       status: currentUser?.status,
       role: currentUser?.role,
-      companyId: currentUser?.companyId
-        ? currentUser.companyId
-        : user?.role === Role['System Admin']
-        ? null
-        : user?.companyId,
       password: '',
+      companyId: null,
+      company: null,
+
+      // companyId: currentUser?.companyId
+      //   ? currentUser.companyId
+      //   : user?.role === Role['System Admin']
+      //   ? null
+      //   : user?.companyId,
     }),
-    [currentUser, user]
+    [currentUser]
   )
 
   const methods = useForm<AccountPayload>({

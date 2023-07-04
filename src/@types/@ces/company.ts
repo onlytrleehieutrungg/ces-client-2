@@ -14,7 +14,7 @@ export type CompanyPayload = {
   name: string
   address: string
   status: number
-  imageUrl: string
+  imageUrl?: string | null
   contactPerson: string
   phone: string
 }

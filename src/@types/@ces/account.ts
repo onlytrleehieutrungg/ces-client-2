@@ -12,7 +12,7 @@ export type AccountData = {
   companyId: number
   updatedAt: string
   createdAt: string
-  wallet?: WalletData
+  wallets?: WalletData[]
 }
 
 export type AccountPayload = {
@@ -20,11 +20,11 @@ export type AccountPayload = {
   email: string
   address: string
   phone: string
-  imageUrl: string
+  imageUrl?: string | null
   password: string
   role: number
   companyId?: number | null
-  status?: number
+  status: number
 }
 
 export enum Role {
@@ -32,6 +32,18 @@ export enum Role {
   'Supplier Admin' = 2,
   'Enterprise Admin' = 3,
   'Employee' = 4,
+}
+
+export function roleNumberToString(value: number): string | undefined {
+  const enumKeys = Object.keys(Role).filter((key) => isNaN(Number(key))) as (keyof typeof Role)[]
+  const enumValues = enumKeys.map((key) => Role[key])
+
+  const index = enumValues.indexOf(value)
+  if (index !== -1) {
+    return enumKeys[index]
+  }
+
+  return undefined
 }
 
 const filterRoleOptions = (filterFn: (value: Role) => boolean) =>

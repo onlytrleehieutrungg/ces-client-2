@@ -36,7 +36,7 @@ export default function UserAccount() {
   const { accountId } = query
 
   const { data, mutate } = useAccountDetails({ id: `${accountId}` })
-  console.log(data?.data)
+
   const handleEditAccountSubmit = async (payload: AccountPayload) => {
     try {
       await accountApi.update(`${accountId}`, payload)
@@ -61,7 +61,7 @@ export default function UserAccount() {
       value: 'wallet',
       icon: <Iconify icon={'ic:round-receipt'} width={20} height={20} />,
       component: (
-        <AccountWallet wallet={data?.data?.wallet} invoices={_userInvoices} mutate={mutate} />
+        <AccountWallet wallets={data?.data?.wallets} invoices={_userInvoices} mutate={mutate} />
       ),
     },
   ]

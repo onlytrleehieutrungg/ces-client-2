@@ -33,10 +33,10 @@ import { fCurrency } from 'src/utils/formatNumber'
 type Props = {
   mutate?: any
   invoices: UserInvoice[]
-  wallet?: WalletData
+  wallets?: WalletData[]
 }
 
-export default function AccountWallet({ invoices, wallet, mutate }: Props) {
+export default function AccountWallet({ invoices, wallets, mutate }: Props) {
   const { enqueueSnackbar } = useSnackbar()
 
   const [openWallet, setOpenWallet] = useState(false)
@@ -117,32 +117,33 @@ export default function AccountWallet({ invoices, wallet, mutate }: Props) {
     <Grid container spacing={5}>
       <Grid item xs={12} md={8}>
         <Stack spacing={3}>
-          {wallet && (
-            <Card key={wallet.id} sx={{ p: 3 }}>
-              <Stack direction={'row'} alignItems={'center'} spacing={1} mb={3}>
-                <Image alt="icon" src={'/assets/icons/ic_wallet.png'} sx={{ maxWidth: 36 }} />
-                <Typography
-                  variant="overline"
-                  sx={{ mb: 3, display: 'block', color: 'text.secondary' }}
+          {wallets &&
+            wallets.map((wallet) => (
+              <Card key={wallet.id} sx={{ p: 3 }}>
+                <Stack direction={'row'} alignItems={'center'} spacing={1} mb={3}>
+                  <Image alt="icon" src={'/assets/icons/ic_wallet.png'} sx={{ maxWidth: 36 }} />
+                  <Typography
+                    variant="overline"
+                    sx={{ mb: 3, display: 'block', color: 'text.secondary' }}
+                  >
+                    {wallet.name}
+                  </Typography>
+                </Stack>
+                <Typography variant="h5">{fCurrency(wallet.balance)}</Typography>
+                <Box
+                  sx={{
+                    mt: { xs: 2, sm: 0 },
+                    position: { sm: 'absolute' },
+                    top: { sm: 24 },
+                    right: { sm: 24 },
+                  }}
                 >
-                  {wallet.name}
-                </Typography>
-              </Stack>
-              <Typography variant="h5">{fCurrency(wallet.balance)}</Typography>
-              <Box
-                sx={{
-                  mt: { xs: 2, sm: 0 },
-                  position: { sm: 'absolute' },
-                  top: { sm: 24 },
-                  right: { sm: 24 },
-                }}
-              >
-                <Button size="small" variant="outlined" onClick={() => handleClickOpen(wallet)}>
-                  Add fund
-                </Button>
-              </Box>
-            </Card>
-          )}
+                  <Button size="small" variant="outlined" onClick={() => handleClickOpen(wallet)}>
+                    Add fund
+                  </Button>
+                </Box>
+              </Card>
+            ))}
 
           {/* <AccountBillingWallet
             wallets={wallets}
