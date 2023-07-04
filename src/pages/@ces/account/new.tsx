@@ -31,7 +31,7 @@ export default function AccountCreatePage() {
 
   const handleCreateAccountSubmit = async (payload: AccountPayload) => {
     try {
-      if (payload.roleId === Role['Enterprise Admin']) {
+      if (payload.role === Role['Enterprise Admin']) {
         const res = await companyApi.create({
           name: payload.name,
           address: payload.address,
@@ -105,7 +105,7 @@ export default function AccountCreatePage() {
             { name: 'New Account' },
           ]}
           action={
-            user?.roleId === Role['Enterprise Admin'] && (
+            user?.role === Role['Enterprise Admin'] && (
               <Button
                 variant="outlined"
                 onClick={() =>
@@ -118,7 +118,7 @@ export default function AccountCreatePage() {
           }
         />
 
-        {user?.roleId === Role['Enterprise Admin'] && (
+        {user?.role === Role['Enterprise Admin'] && (
           <Stack direction={'row'} spacing={1} mb={4}>
             <LoadingButton
               loading={loading}

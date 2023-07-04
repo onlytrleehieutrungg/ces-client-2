@@ -66,7 +66,7 @@ export default function AccountNewEditForm({
         address: Yup.string().required('Address is required'),
         phone: Yup.string().required('Phone is required'),
         status: Yup.number().required('Status is required'),
-        roleId: Yup.number().required('Role is required'),
+        role: Yup.number().required('Role is required'),
         // companyId: Yup.number().required('Company is required'),
         // imageUrl: Yup.string().required('Image is required'),
       })
@@ -76,7 +76,7 @@ export default function AccountNewEditForm({
         address: Yup.string().required('Address is required'),
         phone: Yup.string().required('Phone is required'),
         status: Yup.number().required('Status is required'),
-        roleId: Yup.number().required('Role is required'),
+        role: Yup.number().required('Role is required'),
         // companyId: Yup.number().required('Company is required'),
         password: Yup.string()
           .required('Password is required')
@@ -92,10 +92,10 @@ export default function AccountNewEditForm({
       phone: currentUser?.phone || '',
       imageUrl: currentUser?.imageUrl !== 'string' ? currentUser?.imageUrl : '',
       status: currentUser?.status,
-      roleId: currentUser?.roleId,
+      role: currentUser?.role,
       companyId: currentUser?.companyId
         ? currentUser.companyId
-        : user?.roleId === Role['System Admin']
+        : user?.role === Role['System Admin']
         ? null
         : user?.companyId,
       password: '',
@@ -156,7 +156,7 @@ export default function AccountNewEditForm({
     [Role['System Admin']]: ROLE_OPTIONS_FORM_SA,
     [Role['Enterprise Admin']]: ROLE_OPTIONS_FORM_EA,
   }
-  const roleList: RoleOptions = roleOptionsLookup[user?.roleId as Role] || []
+  const roleList: RoleOptions = roleOptionsLookup[user?.role as Role] || []
 
   return (
     <FormProvider methods={methods} onSubmit={handleSubmit(handleFormSubmit)}>
@@ -267,7 +267,7 @@ export default function AccountNewEditForm({
                 ))}
               </RHFSelect>
 
-              <RHFSelect name="roleId" label="Role" placeholder="Role">
+              <RHFSelect name="role" label="Role" placeholder="Role">
                 <option value={undefined} />
                 {roleList?.map((option) => (
                   <option key={option.code} value={option.code}>

@@ -1,45 +1,44 @@
-import { useState, ReactNode, useEffect } from 'react';
+import { useState, ReactNode, useEffect } from 'react'
 // next
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/router'
 // hooks
-import useAuth from '../hooks/useAuth';
-import Login from '../pages/auth/login';
+import useAuth from '../hooks/useAuth'
+import Login from '../pages/auth/login'
 // components
-import LoadingScreen from '../components/LoadingScreen';
+import LoadingScreen from '../components/LoadingScreen'
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  children: ReactNode;
-};
+  children: ReactNode
+}
 
 export default function AuthGuard({ children }: Props) {
-  const { isAuthenticated, isInitialized, user } = useAuth();
+  const { isAuthenticated, isInitialized } = useAuth()
 
-  const { pathname, push } = useRouter();
+  const { pathname, push } = useRouter()
 
-  const [requestedLocation, setRequestedLocation] = useState<string | null>(null);
-  
+  const [requestedLocation, setRequestedLocation] = useState<string | null>(null)
 
   useEffect(() => {
     if (requestedLocation && pathname !== requestedLocation) {
-      push(requestedLocation);
+      push(requestedLocation)
     }
     if (isAuthenticated) {
-      setRequestedLocation(null);
+      setRequestedLocation(null)
     }
-  }, [isAuthenticated, pathname, push, requestedLocation]);
+  }, [isAuthenticated, pathname, push, requestedLocation])
 
   if (!isInitialized) {
-    return <LoadingScreen />;
+    return <LoadingScreen />
   }
 
   if (!isAuthenticated) {
     if (pathname !== requestedLocation) {
-      setRequestedLocation(pathname);
+      setRequestedLocation(pathname)
     }
-    return <Login />;
+    return <Login />
   }
 
-  return <>{children}</>;
+  return <>{children}</>
 }

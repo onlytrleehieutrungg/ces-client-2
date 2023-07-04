@@ -52,7 +52,7 @@ export default function ProjectDetails() {
     {
       value: 'general',
       icon: <Iconify icon={'ic:round-account-box'} width={20} height={20} />,
-      component: data && (
+      component: (
         <ProjectNewEditForm isEdit currentUser={data?.data} onSubmit={handleEditProjectSubmit} />
       ),
     },
@@ -96,10 +96,14 @@ export default function ProjectDetails() {
 
           <Box sx={{ mb: 5 }} />
 
-          {ACCOUNT_TABS.map((tab) => {
-            const isMatched = tab.value === currentTab
-            return isMatched && <Box key={tab.value}>{tab.component}</Box>
-          })}
+          {!data ? (
+            <>Loading...</>
+          ) : (
+            ACCOUNT_TABS.map((tab) => {
+              const isMatched = tab.value === currentTab
+              return isMatched && <Box key={tab.value}>{tab.component}</Box>
+            })
+          )}
         </Container>
       </Page>
     </RoleBasedGuard>

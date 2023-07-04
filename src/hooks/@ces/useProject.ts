@@ -15,13 +15,13 @@ export function useProjectList({ params = { Page: '1' }, options }: UseProjectPr
     {
       // revalidateOnFocus: false,
       // dedupingInterval: 10 * 1000, // 10s
-      keepPreviousData: true,
-      fallbackData: {
-        code: 0,
-        message: '',
-        metaData: null,
-        data: [],
-      },
+      // keepPreviousData: true,
+      // fallbackData: {
+      //   code: 0,
+      //   message: '',
+      //   metaData: null,
+      //   data: [],
+      // },
       ...options,
     }
   )
@@ -52,13 +52,13 @@ export function useProjectList({ params = { Page: '1' }, options }: UseProjectPr
 
 export function useProjectDetails({ id, options }: UseProjectProps) {
   const { data, error, mutate } = useSWR(['project', id], () => projectApi.getById(id!), {
-    keepPreviousData: true,
-    fallbackData: {
-      code: 0,
-      message: '',
-      metaData: null,
-      data: {},
-    },
+    // keepPreviousData: true,
+    // fallbackData: {
+    //   code: 0,
+    //   message: '',
+    //   metaData: null,
+    //   data: {},
+    // },
     ...options,
   })
 

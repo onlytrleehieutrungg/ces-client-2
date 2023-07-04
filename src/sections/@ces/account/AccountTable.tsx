@@ -82,7 +82,7 @@ export default function AccountTable({}: Props) {
 
   const { user } = useAuth()
 
-  const roleOptions = user?.roleId === Role['System Admin'] ? ROLE_OPTIONS_SA : ROLE_OPTIONS_EA
+  const roleOptions = user?.role === Role['System Admin'] ? ROLE_OPTIONS_SA : ROLE_OPTIONS_EA
   const statusOptions = ACCOUNT_STATUS_OPTIONS_SA
 
   const { enqueueSnackbar } = useSnackbar()
@@ -318,7 +318,7 @@ function applySortFilter({
   }
 
   if (filterRole !== 'all') {
-    tableData = tableData.filter((item: Record<string, any>) => item.roleId == filterRole)
+    tableData = tableData.filter((item: Record<string, any>) => item.role == filterRole)
   }
 
   return tableData

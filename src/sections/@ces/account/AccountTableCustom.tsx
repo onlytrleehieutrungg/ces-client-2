@@ -279,8 +279,11 @@ export default function AccountTableCustom({}: Props) {
               {dataFiltered
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => {
-                  // console.log(projectDetails?.groupAccounts)
-                  const isMember = projectDetails?.groupAccount?.some((e) => e.accountId == row.id)
+                  console.log(row.id)
+                  console.log(projectDetails?.employeeGroupMappings)
+                  const isMember = projectDetails?.employeeGroupMappings?.some(
+                    (e) => e.employee.accountId == row.id
+                  )
 
                   return (
                     <AccountTableRowCustom

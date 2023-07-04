@@ -7,26 +7,60 @@ export type ProjectData = {
   status: number
   imageUrl: string
   companyId: number
-  groupAccount: {
+  employeeGroupMappings: {
     id: string
+    employeeId: string
     groupId: string
-    accountId: string
-    account: {
+    createdAt: string
+    updatedAt: string
+    employee: {
+      id: string
+      companyId: 2
+      accountId: string
+      status: 1
+      createdAt: string
+      updatedAt: string
+      account: any
+      company: any
+      employeeGroupMappings: any[]
+      orders: any[]
+    }
+    group: {
       id: string
       name: string
-      email: string
-      address: string
-      phone: string
-      updatedAt: string
-      createdAt: string
-      imageUrl: string
       status: number
-      roleId: number
+      imageUrl: string
+      description: string
+      createdAt: string
+      updatedAt: string
+      createdBy: string
+      updatedBy: any
       companyId: number
-      wallets: any
+      company: any
+      employeeGroupMappings: any[]
     }
-    group: null
   }[]
+
+  // groupAccount: {
+  //   id: string
+  //   groupId: string
+  //   accountId: string
+  //   account: {
+  //     id: string
+  //     name: string
+  //     email: string
+  //     address: string
+  //     phone: string
+  //     updatedAt: string
+  //     createdAt: string
+  //     imageUrl: string
+  //     status: number
+  //     roleId: number
+  //     companyId: number
+  //     wallets: any
+  //   }
+  //   group: null
+  // }[]
 }
 
 export type ProjectPayload = {

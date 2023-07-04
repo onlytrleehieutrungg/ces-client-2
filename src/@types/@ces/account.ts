@@ -8,7 +8,7 @@ export type AccountData = {
   phone: string
   imageUrl: string
   status: number
-  roleId: number
+  role: number
   companyId: number
   updatedAt: string
   createdAt: string
@@ -22,7 +22,7 @@ export type AccountPayload = {
   phone: string
   imageUrl: string
   password: string
-  roleId: number
+  role: number
   companyId?: number | null
   status?: number
 }
