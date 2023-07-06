@@ -21,7 +21,7 @@ import { toNumber } from 'lodash'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
 import { Debt } from 'src/@types/@ces'
-import { DebtStatus } from 'src/@types/@ces/debt'
+import { ReceiptStatus } from 'src/@types/@ces/debt'
 //
 import { Order, Status } from 'src/@types/@ces/order'
 import { fCurrency } from 'src/utils/formatNumber'
@@ -54,7 +54,7 @@ export default function DebtDetails({ debt }: Props) {
   if (!debt) {
     return null
   }
-  const rs = Object.values(DebtStatus)
+  const rs = Object.values(ReceiptStatus)
 
   const { id, name, total, status, infoPayment, company, createdAt, updatedAt } = debt
 

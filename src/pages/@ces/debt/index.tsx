@@ -17,9 +17,8 @@ import {
 } from '@mui/material'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
-import { Debt, Role } from 'src/@types/@ces'
-import { DebtStatus } from 'src/@types/@ces/debt'
-import { Status } from 'src/@types/@ces/order'
+import { Role } from 'src/@types/@ces'
+import { Debt, ReceiptStatus } from 'src/@types/@ces/debt'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
 import Iconify from 'src/components/Iconify'
 import LoadingScreen from 'src/components/LoadingScreen'
@@ -258,7 +257,7 @@ function applySortFilter({
 }) {
   const stabilizedThis = tableData.map((el, index) => [el, index] as const)
   function mapStatus(status: number) {
-    const rs = Object.values(DebtStatus)
+    const rs = Object.values(ReceiptStatus)
     return rs[status].toLocaleLowerCase()
   }
   stabilizedThis.sort((a, b) => {

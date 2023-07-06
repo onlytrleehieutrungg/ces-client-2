@@ -26,7 +26,7 @@ export type Company = {
   expiredDate: string
 }
 
-export enum DebtStatus {
+export enum ReceiptStatus {
   NEW = 'New',
   PAID = "Paid"
 }
