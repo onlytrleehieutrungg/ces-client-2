@@ -67,8 +67,6 @@ export default function AccountNewEditForm({
         phone: Yup.string().required('Phone is required'),
         status: Yup.number().required('Status is required'),
         role: Yup.number().required('Role is required'),
-        // companyId: Yup.number().required('Company is required'),
-        // imageUrl: Yup.string().required('Image is required'),
       })
     : Yup.object().shape({
         name: Yup.string().required('Name is required'),
@@ -77,31 +75,43 @@ export default function AccountNewEditForm({
         phone: Yup.string().required('Phone is required'),
         status: Yup.number().required('Status is required'),
         role: Yup.number().required('Role is required'),
-        // companyId: Yup.number().required('Company is required'),
         password: Yup.string()
           .required('Password is required')
           .min(6, 'Password must be at least 6 characters'),
-        // imageUrl: Yup.string().required('Image is required'),
+        company: Yup.object().when('role', {
+          is: Role['Enterprise Admin'],
+          then: Yup.object().shape({
+            name: Yup.string().required('Company Name is required'),
+            expiredDate: Yup.string().required('Expired Date is required'),
+            limits: Yup.number().required('Limit is required'),
+          }),
+        }),
       })
 
-  const defaultValues = useMemo(
+  const defaultValues: AccountPayload = useMemo(
     () => ({
       name: currentUser?.name || '',
       email: currentUser?.email || '',
       address: currentUser?.address || '',
       phone: currentUser?.phone || '',
-      imageUrl: currentUser?.imageUrl !== 'string' ? currentUser?.imageUrl : null,
+      imageUrl:
+        currentUser?.imageUrl === 'string'
+          ? null
+          : currentUser?.imageUrl
+          ? currentUser?.imageUrl
+          : null,
       status: currentUser?.status,
       role: currentUser?.role,
       password: '',
       companyId: null,
       company: null,
-
-      // companyId: currentUser?.companyId
-      //   ? currentUser.companyId
-      //   : user?.role === Role['System Admin']
-      //   ? null
-      //   : user?.companyId,
+      // company: {
+      //   address: '',
+      //   expiredDate: '',
+      //   imageUrl: '',
+      //   limits: 0,
+      //   name: '',
+      // },
     }),
     [currentUser]
   )
@@ -121,6 +131,7 @@ export default function AccountNewEditForm({
   } = methods
 
   const values = watch()
+  const watchShowCompany = watch('role')
 
   useEffect(() => {
     if (isEdit && currentUser) {
@@ -133,7 +144,18 @@ export default function AccountNewEditForm({
   }, [isEdit, currentUser])
 
   const handleFormSubmit = async (payload: AccountPayload) => {
-    await onSubmit?.(payload)
+    if (payload.role === Role['Enterprise Admin']) {
+      payload = {
+        ...payload,
+        company: {
+          ...payload.company,
+          imageUrl: payload.imageUrl,
+          address: payload.address,
+        },
+      }
+    }
+    console.log(payload)
+    // await onSubmit?.(payload)
   }
 
   const handleDrop = useCallback(
@@ -278,6 +300,19 @@ export default function AccountNewEditForm({
                   </option>
                 ))}
               </RHFSelect>
+              <Box />
+              {watchShowCompany == Role['Enterprise Admin'] && !isEdit && (
+                <>
+                  <RHFTextField name="company.name" label="Company Name" />
+                  <RHFTextField
+                    name="company.expiredDate"
+                    label="Company Expired Date"
+                    type="date"
+                  />
+                  {/* <RHFDatePicker name="company.expiredDate" label="Company Expired Date" /> */}
+                  <RHFTextField name="company.limits" label="Limit" type="number" />
+                </>
+              )}
             </Box>
 
             <Stack alignItems="flex-end" sx={{ mt: 3 }}>

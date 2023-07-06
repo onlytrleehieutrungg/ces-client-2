@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 import { useSnackbar } from 'notistack'
 import { ChangeEvent, useRef, useState } from 'react'
 import { AccountPayload, Role } from 'src/@types/@ces'
-import { accountApi, companyApi } from 'src/api-client'
+import { accountApi } from 'src/api-client'
 import axiosClient from 'src/api-client/axiosClient'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
 import Page from 'src/components/Page'
@@ -31,17 +31,6 @@ export default function AccountCreatePage() {
 
   const handleCreateAccountSubmit = async (payload: AccountPayload) => {
     try {
-      if (payload.role === Role['Enterprise Admin']) {
-        const res = await companyApi.create({
-          name: payload.name,
-          address: payload.address,
-          contactPerson: '',
-          imageUrl: payload.imageUrl,
-          phone: payload.phone,
-          status: 1,
-        })
-        payload.companyId = res?.data.id
-      }
       await accountApi.create(payload)
 
       enqueueSnackbar('Create success!')

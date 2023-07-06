@@ -18,13 +18,20 @@ export type AccountData = {
 export type AccountPayload = {
   name: string
   email: string
-  address: string
-  phone: string
-  imageUrl?: string | null
   password: string
-  role: number
+  phone: string
+  address: string
+  imageUrl: string | null
+  role?: number
   companyId?: number | null
-  status: number
+  company: {
+    name?: string
+    address?: string
+    imageUrl?: string | null
+    limits?: number
+    expiredDate?: string
+  } | null
+  status?: number
 }
 
 export enum Role {
