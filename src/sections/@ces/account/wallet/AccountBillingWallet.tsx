@@ -13,10 +13,10 @@ import {
 } from '@mui/material'
 // @types
 // components
-import { WalletData } from 'src/@types/@ces/account'
 import Iconify from '../../../../components/Iconify'
 import Image from '../../../../components/Image'
 import { fCurrency } from 'src/utils/formatNumber'
+import { WalletData } from 'src/@types/@ces'
 
 // ----------------------------------------------------------------------
 
