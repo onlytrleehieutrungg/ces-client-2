@@ -7,8 +7,10 @@ import { Role } from 'src/@types/@ces';
 import { orderApi } from 'src/api-client/order';
 import LoadingScreen from 'src/components/LoadingScreen';
 import RoleBasedGuard from 'src/guards/RoleBasedGuard';
+import { useDebtDetail } from 'src/hooks/@ces/useDebt';
 // sections
 import { useOrderDetail } from 'src/hooks/@ces/useOrder';
+import DebtDetails from 'src/sections/@ces/debt/detail';
 import OrderDetails from 'src/sections/@ces/order/details';
 import HeaderBreadcrumbs from '../../../../components/HeaderBreadcrumbs';
 // components
@@ -22,51 +24,41 @@ import { PATH_CES, PATH_DASHBOARD } from '../../../../routes/paths';
 
 // ----------------------------------------------------------------------
 
-InvoiceDetails.getLayout = function getLayout(page: React.ReactElement) {
+DebtDetail.getLayout = function getLayout(page: React.ReactElement) {
   return <Layout>{page}</Layout>;
 };
 
 // ----------------------------------------------------------------------
 
-export default function InvoiceDetails() {
+export default function DebtDetail() {
   const { themeStretch } = useSettings();
   const { enqueueSnackbar } = useSnackbar()
 
   const { query, push } = useRouter()
-  const { orderId } = query
-  const { data, mutate, isLoading } = useOrderDetail({ id: `${orderId}` })
-  const handleEditOrderSubmit = async (id: string, status: number) => {
-    try {
-      await orderApi.update(id, status)
-      mutate()
-      enqueueSnackbar('Update success!')
-      push(PATH_CES.order.root)
-    } catch (error) {
-      enqueueSnackbar('Update failed!')
-      console.error(error)
-    }
-  }
+  const { debtId } = query
+  const { data, mutate, isLoading } = useDebtDetail({ id: `${debtId}` })
+ 
   if (isLoading) {
     return <LoadingScreen />
   }
 
   return (
-    <RoleBasedGuard hasContent roles={[Role['Supplier Admin']]}>
-      <Page title="Order: View">
+    <RoleBasedGuard hasContent roles={[Role['System Admin']]}>
+      <Page title="Debt: View">
         <Container maxWidth={themeStretch ? false : 'lg'}>
           <HeaderBreadcrumbs
-            heading="Order Details"
+            heading="Debt Details"
             links={[
-              { name: 'Dashboard', href: PATH_DASHBOARD.root },
+              { name: 'Dashboard', href: PATH_CES.debt.root },
               {
-                name: 'Order',
-                href: PATH_CES.order.root,
+                name: 'Debt',
+                href: PATH_CES.debt.root,
               },
-              { name: `${orderId}` || '' },
+              { name: `${debtId}` || '' },
             ]}
           />
 
-          <OrderDetails order={data?.data} handleEditOrderSubmit={handleEditOrderSubmit} />
+          <DebtDetails debt={data?.data} />
         </Container>
       </Page>
     </RoleBasedGuard>

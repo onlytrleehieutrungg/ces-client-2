@@ -48,6 +48,7 @@ import { PATH_CES } from 'src/routes/paths'
 import AccountTableToolbar from 'src/sections/@ces/account/AccountTableToolbar'
 import CompanyTableRow from 'src/sections/@ces/company/CompanyTableRow'
 import { confirmDialog } from 'src/utils/confirmDialog'
+import { debtApi } from 'src/api-client/debt'
 
 // ----------------------------------------------------------------------
 
@@ -94,12 +95,12 @@ export default function CompanyPage() {
 
   const { user } = useAuth()
 
-  const roleOptions = user?.roleId === Role['System Admin'] ? ROLE_OPTIONS_SA : ROLE_OPTIONS_EA
+  const roleOptions = user?.role === Role['System Admin'] ? ROLE_OPTIONS_SA : ROLE_OPTIONS_EA
   const statusOptions = ACCOUNT_STATUS_OPTIONS_SA
 
   const { enqueueSnackbar } = useSnackbar()
 
-  const { data } = useCompanyList({
+  const { data, mutate } = useCompanyList({
     params: { Page: '1' },
     // options: {
     //   revalidateOnFocus: false,
@@ -138,6 +139,23 @@ export default function CompanyPage() {
       } catch (error) {
         enqueueSnackbar('Delete failed', { variant: 'error' })
 
+        console.error(error)
+      }
+    })
+  }
+
+  const handleDueRow = (id: string) => {
+    confirmDialog('Do you really want to create debt this account ?', async () => {
+      try {
+        const rs = await debtApi.create(id)
+        if (rs.data) {
+          push(PATH_CES.debt.detail(rs?.data?.id))
+          enqueueSnackbar('Create successful')
+        } else {
+          enqueueSnackbar('This company has no debt', { variant: 'warning' })
+        }
+      } catch (error) {
+        enqueueSnackbar('Create failed', { variant: 'error' })
         console.error(error)
       }
     })
@@ -268,6 +286,7 @@ export default function CompanyPage() {
                         onDeleteRow={() => handleDeleteRow(`${row.id}`)}
                         onEditRow={() => handleEditRow(`${row.id}`)}
                         onClickRow={() => handleClickRow(`${row.id}`)}
+                        onDueRow={() => handleDueRow(row.id)}
                       />
                     ))}
 

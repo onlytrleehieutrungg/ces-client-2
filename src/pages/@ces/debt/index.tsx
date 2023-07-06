@@ -1,6 +1,7 @@
 // @mui
 import {
-  Box, Card,
+  Box,
+  Card,
   Container,
   Divider,
   FormControlLabel,
@@ -12,13 +13,13 @@ import {
   TableContainer,
   TablePagination,
   Tabs,
-  Tooltip
+  Tooltip,
 } from '@mui/material'
-import { Item } from 'framer-motion/types/components/Reorder/Item'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
-import { Role } from 'src/@types/@ces'
-import { Order, Status } from 'src/@types/@ces/order'
+import { Debt, Role } from 'src/@types/@ces'
+import { DebtStatus } from 'src/@types/@ces/debt'
+import { Status } from 'src/@types/@ces/order'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
 import Iconify from 'src/components/Iconify'
 import LoadingScreen from 'src/components/LoadingScreen'
@@ -28,42 +29,29 @@ import {
   TableEmptyRows,
   TableHeadCustom,
   TableNoData,
-  TableSelectedActions
+  TableSelectedActions,
 } from 'src/components/table'
 import RoleBasedGuard from 'src/guards/RoleBasedGuard'
-import { useOrder } from 'src/hooks/@ces/useOrder'
+import { useDebt } from 'src/hooks/@ces/useDebt'
 import useTable, { emptyRows, getComparator } from 'src/hooks/useTable'
 import useTabs from 'src/hooks/useTabs'
 import Layout from 'src/layouts'
 import { PATH_CES } from 'src/routes/paths'
-import OrderTableRow from 'src/sections/@ces/order/OrderTableRow'
-import OrderTableToolbar from 'src/sections/@ces/order/OrderTableToolbar'
+import DebtTableRow from 'src/sections/@ces/debt/DebtTableRow'
+import DebtTableToolbar from 'src/sections/@ces/debt/DebtTableToolbar'
 
 // ----------------------------------------------------------------------
 
-const STATUS_OPTIONS = [
-  'all',
-  'new',
-  'confirm',
-  'waiting for ship',
-  'complete',
-  'cancel'
-]
+const STATUS_OPTIONS = ['all', 'new', 'paid']
 
-
-const ROLE_OPTIONS = [
-  'supplier',
-  'shipper'
-]
+const ROLE_OPTIONS = ['supplier', 'shipper']
 
 const TABLE_HEAD = [
-  { id: 'id', label: 'Id', align: 'left' },
+  { id: 'comapany?.name', label: 'Company ', align: 'left' },
   { id: 'total', label: 'Total', align: 'left' },
-  { id: 'address', label: 'Address', align: 'left' },
-  { id: 'note', label: 'Note', align: 'left' },
+  { id: 'name', label: 'Note', align: 'left' },
   { id: 'status', label: 'Status', align: 'left' },
   { id: '' },
-
 ]
 
 OrderPage.getLayout = function getLayout(page: React.ReactElement) {
@@ -91,8 +79,8 @@ export default function OrderPage() {
   } = useTable()
 
   const { push } = useRouter()
-  const { data, mutate, isLoading } = useOrder({});
-  const tableData: Order[] = data?.data ?? []
+  const { data, mutate, isLoading } = useDebt({})
+  const tableData: Debt[] = data?.data ?? []
 
   const [filterName, setFilterName] = useState('')
 
@@ -104,10 +92,9 @@ export default function OrderPage() {
     setFilterName(filterName)
     setPage(0)
   }
-  console.log(filterStatus);
+  console.log(filterStatus)
 
   const handleFilterStatus = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(event.target.value);
     setFilterStatus(event.target.value)
   }
 
@@ -132,20 +119,16 @@ export default function OrderPage() {
     (!dataFiltered.length && !!filterStatus) ||
     (!dataFiltered.length && !!filterStt)
   const handleViewRow = (id: string) => {
-    push(PATH_CES.order.detail(id));
-  };
+    push(PATH_CES.debt.detail(id))
+  }
 
   return (
-    <RoleBasedGuard hasContent roles={[Role['Supplier Admin']]}>
-      <Page title="Order: List">
+    <RoleBasedGuard hasContent roles={[Role['System Admin']]}>
+      <Page title="Debt: List">
         <Container>
           <HeaderBreadcrumbs
-            heading="Order List"
-            links={[
-              { name: 'Dashboard', href: '' },
-              { name: 'Order', href: '' },
-              { name: 'List' },
-            ]}
+            heading="Debt List"
+            links={[{ name: 'Dashboard', href: '' }, { name: 'Debt', href: '' }, { name: 'List' }]}
           />
           <Card>
             <Tabs
@@ -162,7 +145,7 @@ export default function OrderPage() {
             </Tabs>
 
             <Divider />
-            <OrderTableToolbar
+            <DebtTableToolbar
               filterName={filterName}
               filterStatus={filterStt}
               onFilterName={handleFilterName}
@@ -213,12 +196,13 @@ export default function OrderPage() {
                     {dataFiltered
                       .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                       .map((row) => (
-                        <OrderTableRow
+                        <DebtTableRow
                           key={row.id}
                           row={row}
                           selected={selected.includes(row.id)}
                           onSelectRow={() => onSelectRow(row.id)}
                           onViewRow={() => handleViewRow(row.id)}
+                          onDeleteRow={() => handleViewRow(row.id)}
                         />
                       ))}
 
@@ -266,7 +250,7 @@ function applySortFilter({
   filterStt,
   filterStatus,
 }: {
-  tableData: Order[]
+  tableData: Debt[]
   comparator: (a: any, b: any) => number
   filterName: string
   filterStatus: string
@@ -274,7 +258,7 @@ function applySortFilter({
 }) {
   const stabilizedThis = tableData.map((el, index) => [el, index] as const)
   function mapStatus(status: number) {
-    const rs = Object.values(Status)
+    const rs = Object.values(DebtStatus)
     return rs[status].toLocaleLowerCase()
   }
   stabilizedThis.sort((a, b) => {
@@ -288,10 +272,9 @@ function applySortFilter({
   if (filterName) {
     tableData = tableData.filter(
       (item: Record<string, any>) =>
-        item?.id.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
+        item?.company.name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
     )
   }
-
 
   if (filterStt !== 'supplier') {
     tableData = tableData.filter((item: Record<string, any>) => {
@@ -300,9 +283,9 @@ function applySortFilter({
   }
 
   if (filterStatus !== 'all') {
-    tableData = tableData.filter((item: Record<string, any>) => mapStatus(item.status) === filterStatus)
-    // console.log(tableData);
-
+    tableData = tableData.filter(
+      (item: Record<string, any>) => mapStatus(item.status) === filterStatus
+    )
   }
 
   return tableData
