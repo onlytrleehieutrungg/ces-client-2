@@ -17,6 +17,7 @@ type Props = {
   onEditRow: VoidFunction
   onSelectRow: VoidFunction
   onDeleteRow: VoidFunction
+  onDueRow: VoidFunction
   onClickRow?: VoidFunction
 }
 
@@ -26,6 +27,7 @@ export default function CompanyTableRow({
   onEditRow,
   onSelectRow,
   onDeleteRow,
+  onDueRow,
   onClickRow,
 }: Props) {
   const theme = useTheme()
@@ -111,6 +113,15 @@ export default function CompanyTableRow({
               >
                 <Iconify icon={'eva:edit-fill'} />
                 Edit
+              </MenuItem>
+              <MenuItem
+                onClick={() => {
+                  onDueRow()
+                  handleCloseMenu()
+                }}
+              >
+                <Iconify icon={'la:file-invoice-dollar'} />
+                Dues
               </MenuItem>
             </>
           }

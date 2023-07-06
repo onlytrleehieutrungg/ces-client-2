@@ -52,7 +52,7 @@ export default function OrderDetails({ order, handleEditOrderSubmit }: Props) {
     note,
     code,
     debtStatus,
-    account,
+    employee,
     orderDetails
   } = order;
 
@@ -143,10 +143,10 @@ export default function OrderDetails({ order, handleEditOrderSubmit }: Props) {
             <Typography paragraph variant="overline" sx={{ color: 'text.disabled' }}>
               Customer Information
             </Typography>
-            <Typography variant="body2">Name: {account?.name}</Typography>
-            <Typography variant="body2">Address: {account?.address}</Typography>
-            <Typography variant="body2">Email: {account?.email}</Typography>
-            <Typography variant="body2">Phone: {account?.phone}</Typography>
+            <Typography variant="body2">Name: {employee?.account.name}</Typography>
+            <Typography variant="body2">Address: {employee?.account.address}</Typography>
+            <Typography variant="body2">Email: {employee?.account.email}</Typography>
+            <Typography variant="body2">Phone: {employee?.account.phone}</Typography>
           </Grid>
 
           <Grid item xs={12} sm={6} sx={{ mb: 5 }}>

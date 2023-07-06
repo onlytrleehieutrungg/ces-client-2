@@ -22,7 +22,7 @@ export default function AccountCreatePage() {
   const { push } = useRouter()
   const handleCreateCategorySubmit = async (payload: Category) => {
     try {
-      await categoryApi.create(payload)
+      await categoryApi.create(payload).then()
       // await create(payload)
       enqueueSnackbar('Create success!')
       push(PATH_CES.category.root)

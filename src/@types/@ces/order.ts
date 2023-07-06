@@ -11,10 +11,13 @@ export type Order = {
   note: string
   code: string
   debtStatus: number
-  account: AccountData
+  employee: Employee
   orderDetails: OrderDetail[]
 }
 
+export type Employee = {
+  account: AccountData
+}
 export type OrderDetail = {
   price: number
   quantity: number

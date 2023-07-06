@@ -1,5 +1,5 @@
 export type CompanyData = {
-  id: number
+  id: string
   name: string
   address: string
   status: number
