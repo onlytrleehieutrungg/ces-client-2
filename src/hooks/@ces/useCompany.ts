@@ -14,7 +14,7 @@ export function useCompanyList({ options, params = { Page: '1' } }: UseCompanyPr
     () => companyApi.getAll(params!),
     {
       revalidateOnFocus: false,
-      dedupingInterval: 60 * 60 * 1000, // 3600s
+      dedupingInterval: 60 * 60 * 1000, // 3600s = 1h
       // keepPreviousData: true,
       // fallbackData: {
       //   code: 0,

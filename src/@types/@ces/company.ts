@@ -3,11 +3,15 @@ export type CompanyData = {
   name: string
   address: string
   status: number
-  updatedAt: string
-  createdAt: string
   imageUrl: string
   contactPerson: string
-  phone: string
+  limits: number
+  used: number
+  expiredDate: string
+  createdAt: string
+  updatedAt: string
+  createdBy: string
+  updatedBy: string
 }
 
 export type CompanyPayload = {

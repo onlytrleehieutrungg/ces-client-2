@@ -68,7 +68,8 @@ export default function AccountNewEditForm({
         status: Yup.number().required('Status is required'),
         role: Yup.number().required('Role is required'),
       })
-    : Yup.object().shape({
+    : user?.role == Role['System Admin']
+    ? Yup.object().shape({
         name: Yup.string().required('Name is required'),
         email: Yup.string().required('Email is required').email('Email must be a valid email'),
         address: Yup.string().required('Address is required'),
@@ -86,6 +87,14 @@ export default function AccountNewEditForm({
             limits: Yup.number().required('Limit is required'),
           }),
         }),
+      })
+    : Yup.object().shape({
+        name: Yup.string().required('Name is required'),
+        email: Yup.string().required('Email is required').email(),
+        address: Yup.string().required('Address is required'),
+        phone: Yup.string().required('Phone is required'),
+        status: Yup.number().required('Status is required'),
+        role: Yup.number().required('Role is required'),
       })
 
   const defaultValues: AccountPayload = useMemo(

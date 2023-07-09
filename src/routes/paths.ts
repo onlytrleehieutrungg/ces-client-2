@@ -54,6 +54,12 @@ export const PATH_CES = {
     root: path(ROOTS_CES, '/debt'),
     detail: (id: string) => path(ROOTS_CES, `/debt/${id}`),
   },
+  benefit: {
+    root: path(ROOTS_CES, '/benefit'),
+    new: path(ROOTS_CES, '/benefit/new'),
+    edit: (id: string) => path(ROOTS_CES, `/benefit/${id}/edit`),
+    detail: (id: string) => path(ROOTS_CES, `/benefit/${id}`),
+  },
   project: {
     root: path(ROOTS_CES, '/project'),
     new: path(ROOTS_CES, '/project/new'),
