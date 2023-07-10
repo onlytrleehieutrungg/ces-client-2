@@ -17,8 +17,7 @@ export type CompanyData = {
 export type CompanyPayload = {
   name: string
   address: string
-  status: number
   imageUrl?: string | null
-  contactPerson: string
-  phone: string
+  limits: number
+  expiredDate: string
 }

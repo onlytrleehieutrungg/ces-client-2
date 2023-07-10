@@ -61,9 +61,10 @@ CompanyPage.getLayout = function getLayout(page: React.ReactElement) {
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'Name', label: 'Name', align: 'left' },
-  { id: 'Phone', label: 'Phone', align: 'left' },
-  { id: 'Status', label: 'Status', align: 'left' },
+  { id: 'name', label: 'Name', align: 'left' },
+  { id: 'limits', label: 'Limit', align: 'left' },
+  { id: 'used', label: 'Used', align: 'left' },
+  { id: 'expiredDate', label: 'ExpiredDate', align: 'left' },
   { id: '' },
 ]
 

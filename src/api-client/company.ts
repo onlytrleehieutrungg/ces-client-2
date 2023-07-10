@@ -8,9 +8,7 @@ export const companyApi = {
   // getById(id: string): Promise<BaseResponse<CompanyData>> {
   //   return axiosClient.get(`/company/${id}`)
   // },
-  create(payload: CompanyPayload) {
-    return axiosClient.post('/company', payload)
-  },
+  create: async (payload: CompanyPayload) => await axiosClient.post('/company', payload),
   // delete(id: string) {
   //   return axiosClient.delete(`/company/${id}`)
   // },
