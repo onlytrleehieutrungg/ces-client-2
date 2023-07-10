@@ -32,7 +32,7 @@ export default function CompanyTableRow({
 }: Props) {
   const theme = useTheme()
 
-  const { name, imageUrl, phone, status } = row
+  const { name, imageUrl, limits, used, expiredDate } = row
 
   const [openMenu, setOpenMenuActions] = useState<HTMLElement | null>(null)
 
@@ -71,9 +71,11 @@ export default function CompanyTableRow({
         </Typography>
       </TableCell>
 
-      <TableCell align="left">{phone}</TableCell>
+      <TableCell align="left">{used}</TableCell>
+      <TableCell align="left">{limits}</TableCell>
+      <TableCell align="left">{expiredDate}</TableCell>
 
-      <TableCell align="left">
+      {/* <TableCell align="left">
         <Label
           variant={theme.palette.mode === 'light' ? 'ghost' : 'filled'}
           color={status === 1 ? 'success' : status === 2 ? 'warning' : 'error'}
@@ -81,7 +83,7 @@ export default function CompanyTableRow({
         >
           {status === 1 ? 'Active' : status === 2 ? 'In Active' : 'Deleted'}
         </Label>
-      </TableCell>
+      </TableCell> */}
 
       <TableCell
         align="right"

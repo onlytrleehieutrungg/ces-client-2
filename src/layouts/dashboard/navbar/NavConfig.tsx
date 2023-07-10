@@ -52,6 +52,12 @@ const navConfig = [
         roles: [Role['System Admin']],
       },
       {
+        title: 'eaDebt',
+        path: PATH_CES.eaDebt.root,
+        icon: ICONS.invoice,
+        roles: [Role['Enterprise Admin']],
+      },
+      {
         title: 'project',
         path: PATH_CES.project.root,
         icon: ICONS.project,
