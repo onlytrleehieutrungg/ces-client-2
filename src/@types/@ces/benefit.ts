@@ -1,7 +1,7 @@
 import { CompanyData } from './company'
 
 export type BenefitData = {
-  id: number
+  id: string
   name: string
   description: string
   type: number

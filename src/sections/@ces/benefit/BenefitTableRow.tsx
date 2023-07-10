@@ -6,6 +6,7 @@ import { BenefitData } from 'src/@types/@ces'
 import Iconify from 'src/components/Iconify'
 import Label from 'src/components/Label'
 import { TableMoreMenu } from 'src/components/table'
+import { fCurrency } from 'src/utils/formatNumber'
 
 // ----------------------------------------------------------------------
 
@@ -67,7 +68,7 @@ export default function BenefitTableRow({
         </Typography>
       </TableCell> */}
       <TableCell align="left">{name}</TableCell>
-      <TableCell align="left">{unitPrice}</TableCell>
+      <TableCell align="left">{fCurrency(unitPrice)}</TableCell>
 
       <TableCell align="left">
         <Label
@@ -91,7 +92,7 @@ export default function BenefitTableRow({
           onClose={handleCloseMenu}
           actions={
             <>
-              <MenuItem
+              {/* <MenuItem
                 onClick={() => {
                   onDeleteRow()
                   handleCloseMenu()
@@ -100,7 +101,7 @@ export default function BenefitTableRow({
               >
                 <Iconify icon={'eva:trash-2-outline'} />
                 Delete
-              </MenuItem>
+              </MenuItem> */}
               <MenuItem
                 onClick={() => {
                   onEditRow()

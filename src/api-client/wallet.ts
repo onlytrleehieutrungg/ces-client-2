@@ -24,6 +24,6 @@ export const walletApi = {
   },
 
   updateBalanceV2(payload: UpdateWalletBalancePayLoad) {
-    return axiosClient.put(`/wallet`, payload)
+    return axiosClient.put(`/wallet/balance`, payload)
   },
 }

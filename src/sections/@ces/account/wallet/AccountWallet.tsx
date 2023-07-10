@@ -13,20 +13,21 @@ import {
   DialogTitle,
   Grid,
   Stack,
-  ToggleButton,
-  ToggleButtonGroup,
   Typography,
 } from '@mui/material'
 import { useSnackbar } from 'notistack'
 import { useForm } from 'react-hook-form'
-import { WalletData } from 'src/@types/@ces'
+import { UpdateWalletBalancePayLoad, WalletData } from 'src/@types/@ces'
 import { UserInvoice } from 'src/@types/user'
 import { walletApi } from 'src/api-client'
 import Image from 'src/components/Image'
-import { FormProvider, RHFTextField } from 'src/components/hook-form'
+import { FormProvider, RHFSelect, RHFTextField } from 'src/components/hook-form'
+import { useBenefitList } from 'src/hooks/@ces'
 import { AccountBillingInvoiceHistory } from 'src/sections/@dashboard/user/account'
 import { confirmDialog } from 'src/utils/confirmDialog'
 import { fCurrency } from 'src/utils/formatNumber'
+import { TextField } from '@mui/material'
+import useAuth from 'src/hooks/useAuth'
 
 // ----------------------------------------------------------------------
 
@@ -44,6 +45,8 @@ export default function AccountWallet({ invoices, wallets, mutate }: Props) {
   const [loading, setLoading] = useState(false)
   const [alignment, setAlignment] = useState(0)
 
+  const { data: benefitList } = useBenefitList({})
+  const { fetchUser } = useAuth()
   const handleChange = (event: MouseEvent<HTMLElement>, newAlignment: number) => {
     if (newAlignment) {
       setValue('balance', newAlignment)
@@ -62,7 +65,8 @@ export default function AccountWallet({ invoices, wallets, mutate }: Props) {
   }
 
   const NewUserSchema = Yup.object().shape({
-    balance: Yup.number().required('balance is required'),
+    // balance: Yup.number().required('balance is required'),
+    benefitId: Yup.string().required('Benefit is required'),
   })
 
   // const defaultValues = useMemo(
@@ -75,7 +79,7 @@ export default function AccountWallet({ invoices, wallets, mutate }: Props) {
     balance: alignment || 0,
   }
 
-  const methods = useForm<any>({
+  const methods = useForm<UpdateWalletBalancePayLoad>({
     resolver: yupResolver(NewUserSchema),
     defaultValues,
   })
@@ -83,6 +87,7 @@ export default function AccountWallet({ invoices, wallets, mutate }: Props) {
   const {
     setValue,
     reset,
+    watch,
     handleSubmit,
     // formState: { isSubmitting },
   } = methods
@@ -94,21 +99,29 @@ export default function AccountWallet({ invoices, wallets, mutate }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentWallet])
 
-  const onSubmit = async (payload: any) => {
+  const onSubmit = async (payload: UpdateWalletBalancePayLoad) => {
     confirmDialog('', async () => {
       try {
         setLoading(true)
-        await walletApi.updateBalance(currentWallet?.id || '', Math.abs(payload?.balance), {
-          type: Math.sign(payload?.balance) === 1 ? 1 : 2,
+
+        await walletApi.updateBalanceV2({
+          benefitId: payload.benefitId,
+          id: currentWallet?.id || '',
+          type: 1,
+          balance: 0,
         })
+
+        fetchUser()
         await mutate()
+
+        enqueueSnackbar(`Update wallet ${currentWallet?.name} success!`)
+      } catch (error) {
+        enqueueSnackbar('Update failed!', { color: 'red' })
+        console.error(error)
+      } finally {
         setAlignment(0)
         setLoading(false)
         handleClose()
-        enqueueSnackbar(`Update wallet ${currentWallet?.name} success!`)
-      } catch (error) {
-        // enqueueSnackbar('Update failed!')
-        console.error(error)
       }
     })
   }
@@ -158,7 +171,15 @@ export default function AccountWallet({ invoices, wallets, mutate }: Props) {
         <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
           <DialogTitle>Add funds</DialogTitle>
           <DialogContent>
-            <ToggleButtonGroup
+            <RHFSelect sx={{ my: 2 }} name="benefitId" label="Benefit" placeholder="Benefit">
+              <option value={undefined} />
+              {benefitList?.data?.map((option) => (
+                <option key={option.id} value={option.id}>
+                  {option.name}
+                </option>
+              ))}
+            </RHFSelect>
+            {/* <ToggleButtonGroup
               sx={{ my: 2 }}
               fullWidth
               color="primary"
@@ -172,9 +193,27 @@ export default function AccountWallet({ invoices, wallets, mutate }: Props) {
               <ToggleButton value={1000}>1000</ToggleButton>
               <ToggleButton value={2000}>2000</ToggleButton>
               <ToggleButton value={5000}>5000</ToggleButton>
-            </ToggleButtonGroup>
+            </ToggleButtonGroup> */}
 
-            <RHFTextField name="balance" label="Balance" type="number" />
+            <TextField
+              fullWidth
+              disabled
+              value={
+                benefitList?.data?.find((x) => x.id === watch('benefitId'))?.unitPrice !== undefined
+                  ? fCurrency(
+                      benefitList?.data?.find((x) => x.id === watch('benefitId'))?.unitPrice || 0
+                    )
+                  : fCurrency(0)
+              }
+            />
+            {/* <RHFTextField
+              name="balance"
+              // label="Balance"
+              type="number"
+              disabled
+            >
+
+            </RHFTextField> */}
           </DialogContent>
           <DialogActions>
             <Button onClick={handleClose} color="inherit">

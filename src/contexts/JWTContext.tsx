@@ -15,12 +15,16 @@ enum Types {
   Login = 'LOGIN',
   Logout = 'LOGOUT',
   Register = 'REGISTER',
+  Fetch = 'FETCH',
 }
 
 type JWTAuthPayload = {
   [Types.Initial]: {
     isAuthenticated: boolean
     user: AccountData | null
+  }
+  [Types.Fetch]: {
+    account: AccountData | null
   }
   [Types.Login]: {
     account: AccountData | null
@@ -59,7 +63,12 @@ const JWTReducer = (state: AuthState, action: JWTActions) => {
         isAuthenticated: false,
         user: null,
       }
-
+    case 'FETCH':
+      return {
+        ...state,
+        isAuthenticated: true,
+        user: action.payload.account,
+      }
     case 'REGISTER':
       return {
         ...state,
@@ -140,11 +149,12 @@ function AuthProvider({ children }: AuthProviderProps) {
         password,
       })
 
-      const { account, token } = response.data
+      const { token } = response.data
 
       setSession(token?.accessToken)
       // setSession(refreshToken);
-
+      const account = await authApi.getMe()
+      console.log(account)
       dispatch({
         type: Types.Login,
         payload: { account },
@@ -176,6 +186,14 @@ function AuthProvider({ children }: AuthProviderProps) {
     dispatch({ type: Types.Logout })
   }
 
+  const fetchUser = async () => {
+    const account = await authApi.getMe()
+    dispatch({
+      type: Types.Fetch,
+      payload: { account },
+    })
+  }
+
   return (
     <AuthContext.Provider
       value={{
@@ -184,6 +202,7 @@ function AuthProvider({ children }: AuthProviderProps) {
         login,
         logout,
         register,
+        fetchUser,
       }}
     >
       {children}

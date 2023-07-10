@@ -1,15 +1,16 @@
 // next
 import NextLink from 'next/link'
 // @mui
-import { styled } from '@mui/material/styles'
 import { Box, Link, Typography } from '@mui/material'
+import { styled } from '@mui/material/styles'
 // hooks
 import useAuth from '../../../hooks/useAuth'
 // routes
 import { PATH_DASHBOARD } from '../../../routes/paths'
 // components
+import { Role, WalletData } from 'src/@types/@ces'
+import { fNumber } from 'src/utils/formatNumber'
 import MyAvatar from '../../../components/MyAvatar'
-import { Role } from 'src/@types/@ces'
 
 // ----------------------------------------------------------------------
 
@@ -62,9 +63,16 @@ export default function NavbarAccount({ isCollapse }: Props) {
               {user?.name}
             </Typography>
             {user && (
-              <Typography variant="body2" noWrap sx={{ color: 'text.secondary' }}>
-                {Role[user.role]}
-              </Typography>
+              <>
+                <Typography variant="body2" noWrap sx={{ color: 'text.secondary' }}>
+                  {Role[user.role]}
+                </Typography>
+                {user.wallets?.map((x: WalletData) => (
+                  <Typography key={x.id} variant="body2" noWrap sx={{ color: 'text.secondary' }}>
+                    {fNumber(x.balance)}
+                  </Typography>
+                ))}
+              </>
             )}
           </Box>
         </RootStyle>

@@ -13,6 +13,7 @@ export function useBenefitList({ options, params = { Page: '1' } }: UseBenefitPr
     ['benefit-list', params],
     () => benefitApi.getAll(params!),
     {
+      dedupingInterval: 60 * 1000 * 60,
       // dedupingInterval: 10 * 1000, // 10s
       // keepPreviousData: true,
       // fallbackData: {

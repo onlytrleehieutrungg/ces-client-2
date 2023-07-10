@@ -1,9 +1,9 @@
 export type UpdateWalletBalancePayLoad = {
   id: string
-  benefitId: number
-  balance: number
-  type: number
-  orderId: string
+  benefitId: string
+  balance?: number
+  type?: number
+  orderId?: string
 }
 
 export type WalletData = {

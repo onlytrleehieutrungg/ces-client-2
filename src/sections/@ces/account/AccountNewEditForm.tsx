@@ -164,7 +164,7 @@ export default function AccountNewEditForm({
       }
     }
     console.log(payload)
-    // await onSubmit?.(payload)
+    await onSubmit?.(payload)
   }
 
   const handleDrop = useCallback(
