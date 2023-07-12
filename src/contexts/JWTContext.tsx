@@ -154,7 +154,7 @@ function AuthProvider({ children }: AuthProviderProps) {
       setSession(token?.accessToken)
       // setSession(refreshToken);
       const account = await authApi.getMe()
-      console.log(account)
+
       dispatch({
         type: Types.Login,
         payload: { account },

@@ -61,7 +61,7 @@ export default function UserAccount() {
       value: 'wallet',
       icon: <Iconify icon={'ic:round-receipt'} width={20} height={20} />,
       component: (
-        <AccountWallet wallets={data?.data?.wallets} invoices={_userInvoices} mutate={mutate} />
+        <AccountWallet currentUser={data?.data} invoices={_userInvoices} mutate={mutate} />
       ),
     },
   ]

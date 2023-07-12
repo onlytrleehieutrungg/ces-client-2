@@ -5,16 +5,15 @@ import * as Yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Controller, useForm } from 'react-hook-form'
 // @mui
-import { LoadingButton } from '@mui/lab'
+import { DatePicker, LoadingButton } from '@mui/lab'
 import {
   Box,
   Card,
-  FormControlLabel,
   Grid,
   IconButton,
   InputAdornment,
   Stack,
-  Switch,
+  TextField,
   Typography,
 } from '@mui/material'
 // utils
@@ -33,6 +32,7 @@ import {
 } from 'src/@types/@ces/account'
 import Iconify from 'src/components/Iconify'
 import useAuth from 'src/hooks/useAuth'
+import { fDateParam, fDateVN } from 'src/utils/formatTime'
 import Label from '../../../components/Label'
 import {
   FormProvider,
@@ -153,17 +153,24 @@ export default function AccountNewEditForm({
   }, [isEdit, currentUser])
 
   const handleFormSubmit = async (payload: AccountPayload) => {
-    if (payload.role === Role['Enterprise Admin']) {
+    if (
+      payload.role === Role['Enterprise Admin'] &&
+      payload.company &&
+      payload.company.expiredDate
+    ) {
       payload = {
         ...payload,
         company: {
           ...payload.company,
+          expiredDate: fDateParam(payload.company.expiredDate),
           imageUrl: payload.imageUrl,
           address: payload.address,
         },
       }
     }
-    await onSubmit?.(payload)
+
+    console.log(payload)
+    // await onSubmit?.(payload)
   }
 
   const handleDrop = useCallback(
@@ -229,7 +236,7 @@ export default function AccountNewEditForm({
               />
             </Box>
 
-            {isEdit && (
+            {/* {isEdit && (
               <FormControlLabel
                 labelPlacement="start"
                 control={
@@ -257,7 +264,7 @@ export default function AccountNewEditForm({
                 }
                 sx={{ mx: 0, mb: 3, width: 1, justifyContent: 'space-between' }}
               />
-            )}
+            )} */}
           </Card>
         </Grid>
 
@@ -272,7 +279,7 @@ export default function AccountNewEditForm({
               }}
             >
               <RHFTextField name="name" label="Name" />
-              <RHFTextField name="email" label="Email Address" />
+              <RHFTextField name="email" label="Email Address" disabled={isEdit} />
               {!isEdit && !isDetail && (
                 <RHFTextField
                   name="password"
@@ -300,7 +307,7 @@ export default function AccountNewEditForm({
                 ))}
               </RHFSelect>
 
-              <RHFSelect name="role" label="Role" placeholder="Role">
+              <RHFSelect name="role" label="Role" placeholder="Role" disabled={isEdit}>
                 <option value={undefined} />
                 {roleList?.map((option) => (
                   <option key={option.code} value={option.code}>
@@ -312,12 +319,36 @@ export default function AccountNewEditForm({
               {watchShowCompany == Role['Enterprise Admin'] && !isEdit && (
                 <>
                   <RHFTextField name="company.name" label="Company Name" />
-                  <RHFTextField
+                  <Controller
+                    name="company.expiredDate"
+                    control={control}
+                    render={({ field, fieldState: { error } }) => (
+                      <DatePicker
+                        disablePast
+                        inputFormat="dd/MM/yyyy"
+                        label="Expired date"
+                        value={field.value}
+                        onChange={(newValue) => {
+                          if (newValue) field.onChange(fDateVN(newValue))
+                          field.onChange(newValue)
+                        }}
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            fullWidth
+                            error={!!error}
+                            helperText={error?.message}
+                          />
+                        )}
+                      />
+                    )}
+                  />
+                  {/* <RHFTextField
                     name="company.expiredDate"
                     label="Company Expired Date"
                     type="date"
-                  />
-                  {/* <RHFDatePicker name="company.expiredDate" label="Company Expired Date" /> */}
+                  /> */}
+
                   <RHFTextField name="company.limits" label="Limit" type="number" />
                 </>
               )}

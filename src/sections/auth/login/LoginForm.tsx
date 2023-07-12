@@ -1,72 +1,70 @@
-import { useState } from 'react';
-import * as Yup from 'yup';
+import { useState } from 'react'
+import * as Yup from 'yup'
 // next
 // form
-import { yupResolver } from '@hookform/resolvers/yup';
-import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup'
+import { useForm } from 'react-hook-form'
 // @mui
-import { LoadingButton } from '@mui/lab';
-import { Alert, IconButton, InputAdornment, Stack } from '@mui/material';
+import { LoadingButton } from '@mui/lab'
+import { Alert, IconButton, InputAdornment, Stack } from '@mui/material'
 // routes
 // hooks
-import useAuth from '../../../hooks/useAuth';
-import useIsMountedRef from '../../../hooks/useIsMountedRef';
+import useAuth from '../../../hooks/useAuth'
+import useIsMountedRef from '../../../hooks/useIsMountedRef'
 // components
-import Iconify from '../../../components/Iconify';
-import { FormProvider, RHFCheckbox, RHFTextField } from '../../../components/hook-form';
+import Iconify from '../../../components/Iconify'
+import { FormProvider, RHFCheckbox, RHFTextField } from '../../../components/hook-form'
 
 // ----------------------------------------------------------------------
 
 type FormValuesProps = {
-  email: string;
-  password: string;
-  remember: boolean;
-  afterSubmit?: string;
-};
+  email: string
+  password: string
+  remember: boolean
+  afterSubmit?: string
+}
 
 export default function LoginForm() {
-  const { login } = useAuth();
+  const { login } = useAuth()
 
-  const isMountedRef = useIsMountedRef();
+  const isMountedRef = useIsMountedRef()
 
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false)
 
   const LoginSchema = Yup.object().shape({
-    // email: Yup.string().email('Email must be a valid email address').required('Email is required'),
+    email: Yup.string().email('Email must be a valid email address').required('Email is required'),
     password: Yup.string().required('Password is required'),
-  });
+  })
 
   const defaultValues = {
-    email: 'test@gmail.com',
-    password: 'test',
+    email: '123@gmail.com',
+    password: '123456',
     remember: true,
-  };
+  }
 
   const methods = useForm<FormValuesProps>({
     resolver: yupResolver(LoginSchema),
     defaultValues,
-  });
+  })
 
   const {
     reset,
     setError,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = methods;
+  } = methods
 
   const onSubmit = async (data: FormValuesProps) => {
     try {
-      await login(data.email, data.password);
+      await login(data.email, data.password)
     } catch (error) {
-      console.error(error);
-
-      reset();
+      reset()
 
       if (isMountedRef.current) {
-        setError('afterSubmit', { ...error, message: error.message });
+        setError('afterSubmit', { ...error, message: error.response.data.Message })
       }
     }
-  };
+  }
 
   return (
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
@@ -108,5 +106,5 @@ export default function LoginForm() {
         Login
       </LoadingButton>
     </FormProvider>
-  );
+  )
 }

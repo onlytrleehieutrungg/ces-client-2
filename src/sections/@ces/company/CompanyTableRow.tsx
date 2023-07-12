@@ -5,7 +5,6 @@ import { useTheme } from '@mui/material/styles'
 import { CompanyData } from 'src/@types/@ces'
 import Avatar from 'src/components/Avatar'
 import Iconify from 'src/components/Iconify'
-import Label from 'src/components/Label'
 import { TableMoreMenu } from 'src/components/table'
 import createAvatar from 'src/utils/createAvatar'
 
@@ -71,8 +70,8 @@ export default function CompanyTableRow({
         </Typography>
       </TableCell>
 
-      <TableCell align="left">{used}</TableCell>
       <TableCell align="left">{limits}</TableCell>
+      <TableCell align="left">{used}</TableCell>
       <TableCell align="left">{expiredDate}</TableCell>
 
       {/* <TableCell align="left">

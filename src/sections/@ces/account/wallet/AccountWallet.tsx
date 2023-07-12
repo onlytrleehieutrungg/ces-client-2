@@ -18,25 +18,26 @@ import {
 } from '@mui/material'
 import { useSnackbar } from 'notistack'
 import { useForm } from 'react-hook-form'
-import { UpdateWalletBalancePayLoad, WalletData } from 'src/@types/@ces'
+import { AccountData, Role, UpdateWalletBalancePayLoad, WalletData } from 'src/@types/@ces'
 import { UserInvoice } from 'src/@types/user'
 import { walletApi } from 'src/api-client'
 import Image from 'src/components/Image'
 import { FormProvider, RHFSelect } from 'src/components/hook-form'
 import { useBenefitList } from 'src/hooks/@ces'
+import useAuth from 'src/hooks/useAuth'
 import { AccountBillingInvoiceHistory } from 'src/sections/@dashboard/user/account'
 import { confirmDialog } from 'src/utils/confirmDialog'
-import { fCurrency } from 'src/utils/formatNumber'
+import { fCurrency, fNumber } from 'src/utils/formatNumber'
 
 // ----------------------------------------------------------------------
 
 type Props = {
   mutate?: any
   invoices: UserInvoice[]
-  wallets?: WalletData[]
+  currentUser?: AccountData
 }
 
-export default function AccountWallet({ invoices, wallets, mutate }: Props) {
+export default function AccountWallet({ invoices, currentUser, mutate }: Props) {
   const { enqueueSnackbar } = useSnackbar()
 
   const [openWallet, setOpenWallet] = useState(false)
@@ -44,7 +45,9 @@ export default function AccountWallet({ invoices, wallets, mutate }: Props) {
   const [loading, setLoading] = useState(false)
   // const [alignment, setAlignment] = useState(0)
 
+  const { user } = useAuth()
   const { data: benefitList } = useBenefitList({})
+
   // const { fetchUser } = useAuth()
   // const handleChange = (event: MouseEvent<HTMLElement>, newAlignment: number) => {
   //   if (newAlignment) {
@@ -129,8 +132,8 @@ export default function AccountWallet({ invoices, wallets, mutate }: Props) {
     <Grid container spacing={5}>
       <Grid item xs={12} md={8}>
         <Stack spacing={3}>
-          {wallets &&
-            wallets.map((wallet) => (
+          {currentUser?.wallets &&
+            currentUser?.wallets.map((wallet) => (
               <Card key={wallet.id} sx={{ p: 3 }}>
                 <Stack direction={'row'} alignItems={'center'} spacing={1} mb={3}>
                   <Image alt="icon" src={'/assets/icons/ic_wallet.png'} sx={{ maxWidth: 36 }} />
@@ -141,19 +144,40 @@ export default function AccountWallet({ invoices, wallets, mutate }: Props) {
                     {wallet.name}
                   </Typography>
                 </Stack>
-                <Typography variant="h5">{fCurrency(wallet.balance)}</Typography>
-                <Box
-                  sx={{
-                    mt: { xs: 2, sm: 0 },
-                    position: { sm: 'absolute' },
-                    top: { sm: 24 },
-                    right: { sm: 24 },
-                  }}
-                >
-                  <Button size="small" variant="outlined" onClick={() => handleClickOpen(wallet)}>
-                    Add fund
-                  </Button>
-                </Box>
+
+                {user?.role === Role['Enterprise Admin'] ? (
+                  <>
+                    <Typography variant="h6" flex={1}>
+                      {fNumber(wallet.balance)} đ
+                    </Typography>
+                    <Box
+                      sx={{
+                        mt: { xs: 2, sm: 0 },
+                        position: { sm: 'absolute' },
+                        top: { sm: 24 },
+                        right: { sm: 24 },
+                      }}
+                    >
+                      <Button
+                        size="small"
+                        variant="outlined"
+                        onClick={() => handleClickOpen(wallet)}
+                      >
+                        Add fund
+                      </Button>
+                    </Box>
+                  </>
+                ) : (
+                  <Stack direction={'row'} alignItems={'center'}>
+                    <Typography variant="h6" flex={1}>
+                      {fNumber(wallet.balance)} / {fNumber(wallet.limits)} đ
+                    </Typography>
+                    <Stack direction={'row'} spacing={1} flex={1}>
+                      <Typography variant="h6">Used:</Typography>
+                      <Typography variant="h6">{fNumber(wallet.used)} đ</Typography>
+                    </Stack>
+                  </Stack>
+                )}
               </Card>
             ))}
         </Stack>

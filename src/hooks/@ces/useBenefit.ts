@@ -1,6 +1,7 @@
-import { Params } from 'src/@types/@ces'
+import { Params, Role } from 'src/@types/@ces'
 import { benefitApi } from 'src/api-client'
 import useSWR, { SWRConfiguration } from 'swr'
+import useAuth from '../useAuth'
 
 type UseBenefitProps = {
   params?: Partial<Params>
@@ -9,9 +10,10 @@ type UseBenefitProps = {
 }
 
 export function useBenefitList({ options, params = { Page: '1' } }: UseBenefitProps) {
+  const { user } = useAuth()
   const { data, error, mutate } = useSWR(
     ['benefit-list', params],
-    () => benefitApi.getAll(params!),
+    () => (user?.role === Role['Enterprise Admin'] ? benefitApi.getAll(params!) : null),
     {
       dedupingInterval: 60 * 1000 * 60,
       // dedupingInterval: 10 * 1000, // 10s

@@ -9,15 +9,26 @@ import useAuth from '../../../hooks/useAuth'
 import { PATH_DASHBOARD } from '../../../routes/paths'
 // components
 import { Role, WalletData } from 'src/@types/@ces'
+import { useMe } from 'src/hooks/@ces'
 import { fNumber } from 'src/utils/formatNumber'
 import MyAvatar from '../../../components/MyAvatar'
-import { useMe } from 'src/hooks/@ces'
 
 // ----------------------------------------------------------------------
 
 const RootStyle = styled('div')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
+  // padding: theme.spacing(2, 2.5),
+  // borderRadius: Number(theme.shape.borderRadius) * 1.5,
+  // backgroundColor: theme.palette.grey[500_12],
+  // transition: theme.transitions.create('opacity', {
+  //   duration: theme.transitions.duration.shorter,
+  // }),
+}))
+
+const RootStyle2 = styled('div')(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'column',
   padding: theme.spacing(2, 2.5),
   borderRadius: Number(theme.shape.borderRadius) * 1.5,
   backgroundColor: theme.palette.grey[500_12],
@@ -38,56 +49,83 @@ export default function NavbarAccount({ isCollapse }: Props) {
   return (
     <NextLink href={PATH_DASHBOARD.user.account} passHref>
       <Link underline="none" color="inherit">
-        <RootStyle
+        <RootStyle2
           sx={{
             ...(isCollapse && {
               bgcolor: 'transparent',
             }),
           }}
         >
-          <MyAvatar />
-
-          <Box
+          <RootStyle
             sx={{
-              ml: 2,
-              transition: (theme) =>
-                theme.transitions.create('width', {
-                  duration: theme.transitions.duration.shorter,
-                }),
               ...(isCollapse && {
-                ml: 0,
-                width: 0,
+                bgcolor: 'transparent',
               }),
             }}
           >
-            <Typography variant="subtitle2" noWrap>
-              {user?.name}
-            </Typography>
-            {user && (
-              <>
-                <Typography variant="body2" noWrap sx={{ color: 'text.secondary' }}>
-                  {Role[user.role]}
-                </Typography>
+            <MyAvatar />
 
-                <Divider sx={{ my: 1 }} />
+            <Box
+              sx={{
+                ml: 2,
+                transition: (theme) =>
+                  theme.transitions.create('width', {
+                    duration: theme.transitions.duration.shorter,
+                  }),
+                ...(isCollapse && {
+                  ml: 0,
+                  width: 0,
+                }),
+              }}
+            >
+              {user && (
+                <>
+                  <Typography variant="subtitle2" noWrap>
+                    {user.name}
+                  </Typography>
+                  <Typography variant="body2" noWrap sx={{ color: 'text.secondary' }}>
+                    {Role[user.role]}
+                  </Typography>
+                </>
+              )}
+            </Box>
+          </RootStyle>
+          {data?.wallets?.length !== 0 && (
+            <Box
+              sx={{
+                transition: (theme) =>
+                  theme.transitions.create('width', {
+                    duration: theme.transitions.duration.shorter,
+                  }),
+                ...(isCollapse && {
+                  ml: 0,
+                  width: 0,
+                  height: 0,
+                }),
+              }}
+            >
+              <Divider sx={{ my: 1 }} />
 
-                {data?.wallets?.map((x: WalletData) => (
-                  <>
-                    <Typography key={x.id} variant="body2" noWrap sx={{ color: 'text.secondary' }}>
-                      Balance: {fNumber(x.balance)}
+              {data?.wallets?.map((x: WalletData) => (
+                <>
+                  <Typography key={x.id} variant="body2" noWrap sx={{ color: 'text.secondary' }}>
+                    <Typography variant="body2" noWrap sx={{ color: 'text.primary' }}>
+                      Balance:
                     </Typography>
-                    <Typography key={x.id} variant="body2" noWrap sx={{ color: 'text.secondary' }}>
-                      Limits: {fNumber(x.limits)}
+                    {fNumber(x.balance)} / {fNumber(x.limits)} đ
+                  </Typography>
+
+                  <Typography key={x.id} variant="body2" noWrap sx={{ color: 'text.secondary' }}>
+                    <Typography variant="body2" noWrap sx={{ color: 'text.primary' }}>
+                      Used:
                     </Typography>
-                    <Typography key={x.id} variant="body2" noWrap sx={{ color: 'text.secondary' }}>
-                      Used: {fNumber(x.used)}
-                    </Typography>
-                  </>
-                ))}
-              </>
-            )}
-          </Box>
-        </RootStyle>
+                    {fNumber(x.used)} đ
+                  </Typography>
+                </>
+              ))}
+            </Box>
+          )}
+        </RootStyle2>
       </Link>
     </NextLink>
   )

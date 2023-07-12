@@ -7,6 +7,16 @@ export function fDate(date: Date | string | number) {
   else return 'Nah'
 }
 
+export function fDateVN(date: Date | string | number) {
+  if (date) return format(new Date(date), 'dd/MM/yyyy')
+  else return 'Nah'
+}
+
+export function fDateParam(date: Date | string | number) {
+  if (date) return format(new Date(date), 'yyyy-MM-dd')
+  else return 'Nah'
+}
+
 export function fDateTime(date: Date | string | number) {
   return format(new Date(date), 'dd MMM yyyy p')
 }
