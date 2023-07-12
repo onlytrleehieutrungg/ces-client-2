@@ -1,4 +1,4 @@
-import { MouseEvent, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import * as Yup from 'yup'
 // @mui
 import { yupResolver } from '@hookform/resolvers/yup'
@@ -13,6 +13,7 @@ import {
   DialogTitle,
   Grid,
   Stack,
+  TextField,
   Typography,
 } from '@mui/material'
 import { useSnackbar } from 'notistack'
@@ -21,13 +22,11 @@ import { UpdateWalletBalancePayLoad, WalletData } from 'src/@types/@ces'
 import { UserInvoice } from 'src/@types/user'
 import { walletApi } from 'src/api-client'
 import Image from 'src/components/Image'
-import { FormProvider, RHFSelect, RHFTextField } from 'src/components/hook-form'
+import { FormProvider, RHFSelect } from 'src/components/hook-form'
 import { useBenefitList } from 'src/hooks/@ces'
 import { AccountBillingInvoiceHistory } from 'src/sections/@dashboard/user/account'
 import { confirmDialog } from 'src/utils/confirmDialog'
 import { fCurrency } from 'src/utils/formatNumber'
-import { TextField } from '@mui/material'
-import useAuth from 'src/hooks/useAuth'
 
 // ----------------------------------------------------------------------
 
@@ -43,17 +42,17 @@ export default function AccountWallet({ invoices, wallets, mutate }: Props) {
   const [openWallet, setOpenWallet] = useState(false)
   const [currentWallet, setCurrentWallet] = useState<WalletData>()
   const [loading, setLoading] = useState(false)
-  const [alignment, setAlignment] = useState(0)
+  // const [alignment, setAlignment] = useState(0)
 
   const { data: benefitList } = useBenefitList({})
-  const { fetchUser } = useAuth()
-  const handleChange = (event: MouseEvent<HTMLElement>, newAlignment: number) => {
-    if (newAlignment) {
-      setValue('balance', newAlignment)
+  // const { fetchUser } = useAuth()
+  // const handleChange = (event: MouseEvent<HTMLElement>, newAlignment: number) => {
+  //   if (newAlignment) {
+  //     setValue('balance', newAlignment)
 
-      setAlignment(newAlignment)
-    }
-  }
+  //     setAlignment(newAlignment)
+  //   }
+  // }
 
   const handleClickOpen = (wallet: WalletData) => {
     setCurrentWallet(wallet)
@@ -76,7 +75,7 @@ export default function AccountWallet({ invoices, wallets, mutate }: Props) {
   //   [alignment]
   // )
   const defaultValues = {
-    balance: alignment || 0,
+    balance: 0,
   }
 
   const methods = useForm<UpdateWalletBalancePayLoad>({
@@ -85,7 +84,7 @@ export default function AccountWallet({ invoices, wallets, mutate }: Props) {
   })
 
   const {
-    setValue,
+    // setValue,
     reset,
     watch,
     handleSubmit,
@@ -111,15 +110,15 @@ export default function AccountWallet({ invoices, wallets, mutate }: Props) {
           balance: 0,
         })
 
-        fetchUser()
+        // fetchUser()
         await mutate()
 
         enqueueSnackbar(`Update wallet ${currentWallet?.name} success!`)
       } catch (error) {
-        enqueueSnackbar('Update failed!', { color: 'red' })
+        enqueueSnackbar('Update failed!', { variant: 'error' })
         console.error(error)
       } finally {
-        setAlignment(0)
+        // setAlignment(0)
         setLoading(false)
         handleClose()
       }
@@ -157,13 +156,6 @@ export default function AccountWallet({ invoices, wallets, mutate }: Props) {
                 </Box>
               </Card>
             ))}
-
-          {/* <AccountBillingWallet
-            wallets={wallets}
-            isOpen={open}
-            onOpen={() => setOpen(!open)}
-            onCancel={() => setOpen(false)}
-          /> */}
         </Stack>
       </Grid>
 
@@ -206,14 +198,6 @@ export default function AccountWallet({ invoices, wallets, mutate }: Props) {
                   : fCurrency(0)
               }
             />
-            {/* <RHFTextField
-              name="balance"
-              // label="Balance"
-              type="number"
-              disabled
-            >
-
-            </RHFTextField> */}
           </DialogContent>
           <DialogActions>
             <Button onClick={handleClose} color="inherit">

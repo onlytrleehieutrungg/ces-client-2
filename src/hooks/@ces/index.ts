@@ -5,4 +5,5 @@ export * from './useCompany'
 export * from './useOrder'
 export * from './useProduct'
 export * from './useProject'
+export * from './useMe'
 

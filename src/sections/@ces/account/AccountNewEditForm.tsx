@@ -163,7 +163,6 @@ export default function AccountNewEditForm({
         },
       }
     }
-    console.log(payload)
     await onSubmit?.(payload)
   }
 

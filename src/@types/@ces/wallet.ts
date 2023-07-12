@@ -10,7 +10,8 @@ export type WalletData = {
   id: string
   name: string
   status: number
-  type: number
+  used: number
+  limits: number
   balance: number
   createdAt: string
   updatedAt?: string

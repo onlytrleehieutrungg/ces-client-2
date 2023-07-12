@@ -10,6 +10,15 @@ const withTM = require('next-transpile-modules')([
 ])
 
 module.exports = withTM({
+  async redirects() {
+    return [
+      {
+        source: '/',
+        destination: '/dashboard/app',
+        permanent: true,
+      },
+    ]
+  },
   swcMinify: false,
   trailingSlash: true,
   env: {

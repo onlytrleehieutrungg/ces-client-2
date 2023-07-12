@@ -1,7 +1,7 @@
 // next
 import NextLink from 'next/link'
 // @mui
-import { Box, Link, Typography } from '@mui/material'
+import { Box, Divider, Link, Typography } from '@mui/material'
 import { styled } from '@mui/material/styles'
 // hooks
 import useAuth from '../../../hooks/useAuth'
@@ -11,6 +11,7 @@ import { PATH_DASHBOARD } from '../../../routes/paths'
 import { Role, WalletData } from 'src/@types/@ces'
 import { fNumber } from 'src/utils/formatNumber'
 import MyAvatar from '../../../components/MyAvatar'
+import { useMe } from 'src/hooks/@ces'
 
 // ----------------------------------------------------------------------
 
@@ -33,7 +34,7 @@ type Props = {
 
 export default function NavbarAccount({ isCollapse }: Props) {
   const { user } = useAuth()
-
+  const { data } = useMe({})
   return (
     <NextLink href={PATH_DASHBOARD.user.account} passHref>
       <Link underline="none" color="inherit">
@@ -67,10 +68,21 @@ export default function NavbarAccount({ isCollapse }: Props) {
                 <Typography variant="body2" noWrap sx={{ color: 'text.secondary' }}>
                   {Role[user.role]}
                 </Typography>
-                {user.wallets?.map((x: WalletData) => (
-                  <Typography key={x.id} variant="body2" noWrap sx={{ color: 'text.secondary' }}>
-                    {fNumber(x.balance)}
-                  </Typography>
+
+                <Divider sx={{ my: 1 }} />
+
+                {data?.wallets?.map((x: WalletData) => (
+                  <>
+                    <Typography key={x.id} variant="body2" noWrap sx={{ color: 'text.secondary' }}>
+                      Balance: {fNumber(x.balance)}
+                    </Typography>
+                    <Typography key={x.id} variant="body2" noWrap sx={{ color: 'text.secondary' }}>
+                      Limits: {fNumber(x.limits)}
+                    </Typography>
+                    <Typography key={x.id} variant="body2" noWrap sx={{ color: 'text.secondary' }}>
+                      Used: {fNumber(x.used)}
+                    </Typography>
+                  </>
                 ))}
               </>
             )}
