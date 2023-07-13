@@ -1,11 +1,8 @@
 import { Container } from '@mui/material'
 import { useRouter } from 'next/router'
 import { useSnackbar } from 'notistack'
-import { ChangeEvent, useRef, useState } from 'react'
-import { CompanyPayload, Product, Role } from 'src/@types/@ces'
+import { CompanyPayload, Role } from 'src/@types/@ces'
 import { companyApi } from 'src/api-client'
-import axiosClient from 'src/api-client/axiosClient'
-import { productApi } from 'src/api-client/product'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
 import Page from 'src/components/Page'
 import RoleBasedGuard from 'src/guards/RoleBasedGuard'
@@ -33,7 +30,6 @@ export default function CompanyCreatePage() {
       console.error(error)
     }
   }
-  const inputRef = useRef<HTMLInputElement>(null)
 
   return (
     <RoleBasedGuard hasContent roles={[Role['System Admin']]}>

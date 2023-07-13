@@ -403,7 +403,7 @@ function AccountDetails({ handleClose, id }: AccountDetailsProps) {
       <DialogTitle>Employee Details</DialogTitle>
 
       <DialogContent>
-        {account ? <AccountNewEditForm isDetail currentUser={account} /> : <div>Loading...</div>}
+        {account ? <AccountNewEditForm isEdit currentUser={account} /> : <div>Loading...</div>}
       </DialogContent>
 
       <DialogActions>
