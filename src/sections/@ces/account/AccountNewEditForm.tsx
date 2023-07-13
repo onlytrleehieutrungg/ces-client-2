@@ -44,18 +44,12 @@ import {
 // ----------------------------------------------------------------------
 
 type Props = {
-  isDetail?: boolean
   isEdit?: boolean
   currentUser?: AccountData
   onSubmit?: (payload: AccountPayload) => void
 }
 
-export default function AccountNewEditForm({
-  isEdit = false,
-  isDetail = false,
-  currentUser,
-  onSubmit,
-}: Props) {
+export default function AccountNewEditForm({ isEdit = false, currentUser, onSubmit }: Props) {
   const [showPassword, setShowPassword] = useState(false)
   const { user } = useAuth()
 
@@ -169,8 +163,7 @@ export default function AccountNewEditForm({
       }
     }
 
-    console.log(payload)
-    // await onSubmit?.(payload)
+    await onSubmit?.(payload)
   }
 
   const handleDrop = useCallback(
@@ -280,7 +273,7 @@ export default function AccountNewEditForm({
             >
               <RHFTextField name="name" label="Name" />
               <RHFTextField name="email" label="Email Address" disabled={isEdit} />
-              {!isEdit && !isDetail && (
+              {!isEdit && (
                 <RHFTextField
                   name="password"
                   label="Password"
@@ -355,11 +348,9 @@ export default function AccountNewEditForm({
             </Box>
 
             <Stack alignItems="flex-end" sx={{ mt: 3 }}>
-              {!isDetail && (
-                <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-                  {!isEdit ? 'Create User' : 'Save Changes'}
-                </LoadingButton>
-              )}
+              <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
+                {!isEdit ? 'Create User' : 'Save Changes'}
+              </LoadingButton>
             </Stack>
           </Card>
         </Grid>

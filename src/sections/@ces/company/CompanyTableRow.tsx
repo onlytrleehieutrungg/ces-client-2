@@ -1,7 +1,6 @@
 import { useState } from 'react'
 // @mui
 import { Checkbox, MenuItem, TableCell, TableRow, Typography } from '@mui/material'
-import { useTheme } from '@mui/material/styles'
 import { CompanyData } from 'src/@types/@ces'
 import Avatar from 'src/components/Avatar'
 import Iconify from 'src/components/Iconify'
@@ -29,7 +28,7 @@ export default function CompanyTableRow({
   onDueRow,
   onClickRow,
 }: Props) {
-  const theme = useTheme()
+  // const theme = useTheme()
 
   const { name, imageUrl, limits, used, expiredDate } = row
 

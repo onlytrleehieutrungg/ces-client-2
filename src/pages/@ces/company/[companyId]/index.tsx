@@ -3,30 +3,27 @@ import { capitalCase } from 'change-case'
 import { Box, Container, Tab, Tabs } from '@mui/material'
 import { useRouter } from 'next/router'
 import { useSnackbar } from 'notistack'
-import { AccountPayload } from 'src/@types/@ces'
-import { _userInvoices } from 'src/_mock'
+import { CompanyPayload } from 'src/@types/@ces'
+import { companyApi } from 'src/api-client'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
 import Iconify from 'src/components/Iconify'
 import Page from 'src/components/Page'
-import { useAccountDetails } from 'src/hooks/@ces'
+import { useCompanyDetails } from 'src/hooks/@ces'
 import useSettings from 'src/hooks/useSettings'
 import useTabs from 'src/hooks/useTabs'
 import Layout from 'src/layouts'
 import { PATH_CES } from 'src/routes/paths'
-import AccountNewEditForm from 'src/sections/@ces/account/AccountNewEditForm'
-import AccountWallet from 'src/sections/@ces/account/wallet/AccountWallet'
-import { accountApi } from 'src/api-client'
-import AccountChangePasswordForm from 'src/sections/@ces/account/AccountChangePasswordForm'
+import CompanyNewEditForm from 'src/sections/@ces/company/CompanyNewEditForm'
 
 // ----------------------------------------------------------------------
 
-UserAccount.getLayout = function getLayout(page: React.ReactElement) {
+CompanyDetails.getLayout = function getLayout(page: React.ReactElement) {
   return <Layout>{page}</Layout>
 }
 
 // ----------------------------------------------------------------------
 
-export default function UserAccount() {
+export default function CompanyDetails() {
   const { themeStretch } = useSettings()
 
   const { currentTab, onChangeTab } = useTabs('general')
@@ -34,28 +31,18 @@ export default function UserAccount() {
   const { enqueueSnackbar } = useSnackbar()
 
   const { query, push } = useRouter()
-  const { accountId } = query
+  const { companyId } = query
 
-  const { data, mutate } = useAccountDetails({ id: `${accountId}` })
+  const { data, mutate } = useCompanyDetails({ id: `${companyId}` })
 
-  const handleEditAccountSubmit = async (payload: AccountPayload) => {
+  const handleEditCompanySubmit = async (payload: CompanyPayload) => {
     try {
-      await accountApi.update(`${accountId}`, payload)
+      await companyApi.update(`${companyId}`, payload)
       mutate()
-      push(PATH_CES.account.detail(`${accountId}`))
       enqueueSnackbar('Update success!')
+      push(PATH_CES.company.root)
     } catch (error) {
-      enqueueSnackbar('Update failed!')
-      console.error(error)
-    }
-  }
-
-  const handleChangePasswordSubmit = async (payload: any) => {
-    try {
-      // push(PATH_CES.account.detail(`${accountId}`))
-      enqueueSnackbar('Update success!')
-    } catch (error) {
-      enqueueSnackbar('Update failed!')
+      enqueueSnackbar('Update failed!', { variant: 'error' })
       console.error(error)
     }
   }
@@ -65,32 +52,20 @@ export default function UserAccount() {
       value: 'general',
       icon: <Iconify icon={'ic:round-account-box'} width={20} height={20} />,
       component: (
-        <AccountNewEditForm isEdit currentUser={data?.data} onSubmit={handleEditAccountSubmit} />
+        <CompanyNewEditForm isEdit currentUser={data?.data} onSubmit={handleEditCompanySubmit} />
       ),
-    },
-    {
-      value: 'wallet',
-      icon: <Iconify icon={'ic:round-receipt'} width={20} height={20} />,
-      component: (
-        <AccountWallet currentUser={data?.data} invoices={_userInvoices} mutate={mutate} />
-      ),
-    },
-    {
-      value: 'change password',
-      icon: <Iconify icon={'ic:round-vpn-key'} width={20} height={20} />,
-      component: <AccountChangePasswordForm onSubmit={handleChangePasswordSubmit} />,
     },
   ]
 
   return (
-    <Page title="User: Account Settings">
+    <Page title="Company Settings">
       <Container maxWidth={themeStretch ? false : 'lg'}>
         <HeaderBreadcrumbs
-          heading="Account"
+          heading="Company"
           links={[
             { name: 'Dashboard', href: PATH_CES.root },
-            { name: 'Account', href: PATH_CES.account.root },
-            { name: 'Account Details' },
+            { name: 'Company', href: PATH_CES.account.root },
+            { name: 'Company Details' },
           ]}
         />
 

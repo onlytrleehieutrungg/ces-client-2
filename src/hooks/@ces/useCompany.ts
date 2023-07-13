@@ -30,7 +30,24 @@ export function useCompanyList({ options, params = { Page: '1' } }: UseCompanyPr
     data,
     error,
     mutate,
-    // create,
-    // update,
+  }
+}
+
+export function useCompanyDetails({ id, options }: UseCompanyProps) {
+  const { data, error, mutate } = useSWR(['companyId', id], () => companyApi.getById(id!), {
+    // keepPreviousData: true,
+    // fallbackData: {
+    //   code: 0,
+    //   message: '',
+    //   metaData: null,
+    //   data: {},
+    // },
+    ...options,
+  })
+
+  return {
+    data,
+    error,
+    mutate,
   }
 }

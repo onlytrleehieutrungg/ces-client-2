@@ -101,7 +101,7 @@ export default function CompanyPage() {
 
   const { enqueueSnackbar } = useSnackbar()
 
-  const { data, mutate } = useCompanyList({
+  const { data } = useCompanyList({
     params: { Page: '1' },
     // options: {
     //   revalidateOnFocus: false,
@@ -167,7 +167,7 @@ export default function CompanyPage() {
   }
 
   const handleEditRow = (id: string) => {
-    push(PATH_CES.company.detail(paramCase(id)))
+    push(PATH_CES.company.edit(paramCase(id)))
   }
 
   const handleClickRow = (id: string) => {

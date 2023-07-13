@@ -1,19 +1,18 @@
 // ----------------------------------------------------------------------
 
 import { Container } from '@mui/material'
+import { capitalCase } from 'change-case'
 import { useRouter } from 'next/router'
 import { useSnackbar } from 'notistack'
-import { Role } from 'src/@types/@ces'
-import { Product } from 'src/@types/@ces/product'
-import { productApi } from 'src/api-client/product'
+import { CompanyPayload, Role } from 'src/@types/@ces'
+import { companyApi } from 'src/api-client'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
-import LoadingScreen from 'src/components/LoadingScreen'
 import Page from 'src/components/Page'
 import RoleBasedGuard from 'src/guards/RoleBasedGuard'
-import { useProductDetail } from 'src/hooks/@ces/useProduct'
+import { useCompanyDetails } from 'src/hooks/@ces'
 import Layout from 'src/layouts'
 import { PATH_CES } from 'src/routes/paths'
-import ProductNewEditForm from 'src/sections/@ces/product/ProductNewEditForm'
+import CompanyNewEditForm from 'src/sections/@ces/company/CompanyNewEditForm'
 
 ProductEditPage.getLayout = function getLayout(page: React.ReactElement) {
   return <Layout>{page}</Layout>
@@ -24,36 +23,40 @@ ProductEditPage.getLayout = function getLayout(page: React.ReactElement) {
 export default function ProductEditPage() {
   const { query, push } = useRouter()
   const { enqueueSnackbar } = useSnackbar()
-  const { productId } = query
-  const { data, isLoading } = useProductDetail({ id: `${productId}` })
-  if (isLoading) {
-    return <LoadingScreen />
-  }
-  const handleEditProductSubmit = async (payload: Product) => {
+  const { companyId } = query
+  const { data, mutate } = useCompanyDetails({ id: `${companyId}` })
+
+  const handleEditCompanySubmit = async (payload: CompanyPayload) => {
     try {
-      await productApi.update(`${productId}`, payload)
-      // await update(data?.data.id, payload)
+      await companyApi.update(`${companyId}`, payload)
+      mutate()
       enqueueSnackbar('Update success!')
-      push(PATH_CES.product.root)
+      push(PATH_CES.company.root)
     } catch (error) {
-      enqueueSnackbar('Update failed!')
+      enqueueSnackbar('Update failed!', { variant: 'error' })
       console.error(error)
     }
   }
   return (
     <RoleBasedGuard hasContent roles={[Role['System Admin']]}>
-      <Page title="Product: Edit Product">
+      <Page title="Company: Edit Company">
         <Container>
           <HeaderBreadcrumbs
-            heading="Edit Product"
+            heading="Edit Company"
             links={[
               { name: 'Dashboard', href: '' },
-              { name: 'Product', href: '' },
-              { name: data?.data?.name },
+              { name: 'Company', href: '' },
+              { name: capitalCase(companyId as string) },
             ]}
           />
-          {data && (
-            <ProductNewEditForm isEdit currentUser={data?.data} onSubmit={handleEditProductSubmit} />
+          {!data ? (
+            <>Loading...</>
+          ) : (
+            <CompanyNewEditForm
+              isEdit
+              currentUser={data?.data}
+              onSubmit={handleEditCompanySubmit}
+            />
           )}
         </Container>
       </Page>

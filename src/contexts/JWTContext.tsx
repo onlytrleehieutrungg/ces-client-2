@@ -7,6 +7,7 @@ import { authApi } from 'src/api-client'
 import axiosClient from 'src/api-client/axiosClient'
 import { ActionMap, AuthState, JWTContextType } from '../@types/auth'
 import { AccountData } from 'src/@types/@ces'
+import { useSWRConfig } from 'swr'
 
 // ----------------------------------------------------------------------
 
@@ -91,6 +92,7 @@ type AuthProviderProps = {
 
 function AuthProvider({ children }: AuthProviderProps) {
   const [state, dispatch] = useReducer(JWTReducer, initialState)
+  const { mutate } = useSWRConfig()
 
   useEffect(() => {
     const initialize = async () => {
@@ -182,6 +184,11 @@ function AuthProvider({ children }: AuthProviderProps) {
   }
 
   const logout = async () => {
+    mutate(
+      (key) => true, // which cache keys are updated
+      undefined, // update cache data to `undefined`
+      { revalidate: false } // do not revalidate
+    )
     setSession(null)
     dispatch({ type: Types.Logout })
   }

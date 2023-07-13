@@ -28,12 +28,12 @@ export default function AccountEditPage() {
   const { query, push } = useRouter()
   const { accountId } = query
 
-  const { data } = useAccountDetails({ id: `${accountId}` })
+  const { data, mutate } = useAccountDetails({ id: `${accountId}` })
 
   const handleEditAccountSubmit = async (payload: AccountPayload) => {
     try {
       await accountApi.update(`${accountId}`, payload)
-      // await update(data?.data.id, payload)
+      mutate()
       enqueueSnackbar('Update success!')
       push(PATH_CES.account.root)
     } catch (error) {

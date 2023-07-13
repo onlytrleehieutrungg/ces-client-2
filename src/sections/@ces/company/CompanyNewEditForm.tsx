@@ -3,9 +3,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { DatePicker, LoadingButton } from '@mui/lab'
 import { Box, Card, Grid, Stack, TextField, Typography } from '@mui/material'
 // next
-import { useRouter } from 'next/router'
-import { useSnackbar } from 'notistack'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo } from 'react'
 // form
 import { Controller, useForm } from 'react-hook-form'
 import { CompanyPayload } from 'src/@types/@ces'
@@ -13,7 +11,6 @@ import uploadCompanyImage from 'src/utils/uploadCompanyImage'
 import * as Yup from 'yup'
 import { FormProvider, RHFTextField, RHFUploadAvatar } from '../../../components/hook-form'
 // routes
-import { PATH_CES } from '../../../routes/paths'
 // utils
 import { fData } from '../../../utils/formatNumber'
 
@@ -26,16 +23,12 @@ type Props = {
 }
 
 export default function CompanyNewEditForm({ isEdit = false, currentUser, onSubmit }: Props) {
-  const { push } = useRouter()
-  const { enqueueSnackbar } = useSnackbar()
-  const [expiredDate, setExpiredDate] = useState<any>()
-
   const NewUserSchema = Yup.object().shape({
     name: Yup.string().required('Name is required'),
     address: Yup.string().required('Address is required'),
-    expiredDate: Yup.string().required('ExpriedDate is required'),
+    expiredDate: Yup.string().required('ExpiredDate is required'),
     limits: Yup.number().required('Limits is required'),
-    imageUrl: Yup.mixed().test('required', 'Avatar is required', (value) => value !== ''),
+    // imageUrl: Yup.mixed().test('required', 'Avatar is required', (value) => value !== ''),
   })
 
   const defaultValues = useMemo(
@@ -77,16 +70,8 @@ export default function CompanyNewEditForm({ isEdit = false, currentUser, onSubm
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isEdit, currentUser])
 
-  const handleFormSubmit = async (data: CompanyPayload) => {
-    try {
-      // await new Promise((resolve) => setTimeout(resolve, 500));
-      // reset();
-      await onSubmit?.(data)
-      enqueueSnackbar(!isEdit ? 'Create success!' : 'Update success!')
-      push(PATH_CES.company.root)
-    } catch (error) {
-      console.error(error)
-    }
+  const handleFormSubmit = async (payload: CompanyPayload) => {
+    await onSubmit?.(payload)
   }
   //------------------------IMAGE UPLOAD------------------------
   const handleDrop = useCallback(
@@ -138,9 +123,9 @@ export default function CompanyNewEditForm({ isEdit = false, currentUser, onSubm
                 gridTemplateColumns: { xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)' },
               }}
             >
-              <RHFTextField name="name" label="Tên công ty" />
-              <RHFTextField name="address" label="Địa chỉ" />
-              <RHFTextField name="limits" label="Hạn mức" />
+              <RHFTextField name="name" label="Company Name" />
+              <RHFTextField name="address" label="Company Address" />
+              <RHFTextField name="limits" label="Limit" />
 
               <Controller
                 name="expiredDate"
