@@ -19,6 +19,7 @@ export default function ProductTableToolbar({ filterName, onFilterName }: Props)
       sx={{ py: 2.5, px: 3 }}
     >
       <TextField
+      fullWidth
         value={filterName}
         onChange={(event) => onFilterName(event.target.value)}
         placeholder="Search product..."

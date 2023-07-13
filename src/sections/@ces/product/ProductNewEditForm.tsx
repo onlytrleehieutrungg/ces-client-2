@@ -13,10 +13,10 @@ import { useCategoryList } from 'src/hooks/@ces/useCategory'
 import uploadImage from 'src/utils/uploadImage'
 import * as Yup from 'yup'
 import {
-    FormProvider,
-    RHFSelect,
-    RHFTextField,
-    RHFUploadAvatar
+  FormProvider,
+  RHFSelect,
+  RHFTextField,
+  RHFUploadAvatar,
 } from '../../../components/hook-form'
 // routes
 import { PATH_CES } from '../../../routes/paths'
@@ -87,15 +87,7 @@ export default function ProductNewEditForm({ isEdit = false, currentUser, onSubm
   }, [isEdit, currentUser])
 
   const handleFormSubmit = async (data: ProductPayload) => {
-    try {
-      // await new Promise((resolve) => setTimeout(resolve, 500));
-      // reset();
-      await onSubmit?.(data)
-      enqueueSnackbar(!isEdit ? 'Create success!' : 'Update success!')
-      push(PATH_CES.product.root)
-    } catch (error) {
-      console.error(error)
-    }
+    await onSubmit?.(data)
   }
   //------------------------IMAGE UPLOAD------------------------
   const handleDrop = useCallback(
@@ -151,7 +143,7 @@ export default function ProductNewEditForm({ isEdit = false, currentUser, onSubm
               <RHFTextField name="price" label="Giá sản phẩm" />
               <RHFTextField name="quantity" label="Số lượng" />
               <RHFSelect name="categoryId" label="category" placeholder="category">
-                <option value="" />
+                <option value={undefined} />
                 {categories.map((option) => (
                   <option key={option.id} value={option.id}>
                     {option.name}
@@ -159,10 +151,6 @@ export default function ProductNewEditForm({ isEdit = false, currentUser, onSubm
                 ))}
               </RHFSelect>
               <RHFTextField name="description" label="Description" />
-              {/* <RHFTextField name="type" label="Type" /> */}
-              {/* <RHFTextField name="zipCode" label="Zip/Code" /> */}
-              {/* <RHFTextField name="serviceDuration" label="ServiceDuration" /> */}
-              {/* <RHFTextField name="role" label="Role" />  */}
             </Box>
 
             <Stack alignItems="flex-end" sx={{ mt: 3 }}>

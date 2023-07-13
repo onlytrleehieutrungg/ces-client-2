@@ -86,7 +86,7 @@ export default function Login() {
             )}
           </HeaderStyle> */}
 
-          {mdUp && (
+          {/* {mdUp && (
             <SectionStyle>
               <Typography variant="h3" sx={{ px: 5, mt: 4, mb: 5 }}>
                 Hi, Welcome Back
@@ -94,32 +94,32 @@ export default function Login() {
               <Image
                 visibleByDefault
                 disabledEffect
-                src="/assets/shtp.png"
+                src="/assets/logo-no-bg.png"
                 alt="login"
               />
             </SectionStyle>
-          )}
+          )} */}
 
           <Container maxWidth="sm">
             <ContentStyle>
               <Stack direction="row" alignItems="center" sx={{ mb: 5 }}>
                 <Box sx={{ flexGrow: 1 }}>
                   <Typography variant="h4" gutterBottom>
-                    Đăng nhập vào hệ thống
+                    Đăng nhập vào hệ thống CES
                   </Typography>
-                  {/* <Typography sx={{ color: 'text.secondary' }}>
+                  <Typography sx={{ color: 'text.secondary' }}>
                     Enter your details below.
-                  </Typography> */}
+                  </Typography>
                 </Box>
 
                 <Tooltip title={capitalCase(method)} placement="right">
                   <>
-                    <Image
+                    {/* <Image
                       disabledEffect
                       alt={method}
                       src={`https://minimal-assets-api-dev.vercel.app/assets/icons/auth/ic_${method}.png`}
                       sx={{ width: 32, height: 32 }}
-                    />
+                    /> */}
                   </>
                 </Tooltip>
               </Stack>

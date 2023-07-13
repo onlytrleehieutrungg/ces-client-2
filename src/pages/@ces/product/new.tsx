@@ -47,22 +47,18 @@ export default function ProductCreatePage() {
   }
   const inputRef = useRef<HTMLInputElement>(null)
   const resetFileInput = () => {
-    // resetting the input value
     if (inputRef.current) inputRef.current.value = ''
   }
   const handleSubmitUploadExcel = async () => {
     try {
       setLoading(true)
       const formData = new FormData()
-
       formData.append('file', file!)
       await axiosClient.post('/excel/product/import', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       })
       setLoading(false)
-
       enqueueSnackbar('Import success!')
-
       resetFileInput()
       setFile(undefined)
       push(PATH_CES.product.root)

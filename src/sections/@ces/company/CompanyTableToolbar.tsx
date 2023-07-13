@@ -1,16 +1,16 @@
 // @mui
-import { IconButton, InputAdornment, Stack, TextField, Tooltip } from '@mui/material';
-import Iconify from 'src/components/Iconify';
+import { IconButton, InputAdornment, Stack, TextField, Tooltip } from '@mui/material'
+import Iconify from 'src/components/Iconify'
 // components
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  filterName: string;
-  onFilterName: (value: string) => void;
-};
+  filterName: string
+  onFilterName: (value: string) => void
+}
 
-export default function CategoryTableToolbar({ filterName, onFilterName }: Props) {
+export default function CompanyTableToolbar({ filterName, onFilterName }: Props) {
   return (
     <Stack
       direction="row"
@@ -19,10 +19,10 @@ export default function CategoryTableToolbar({ filterName, onFilterName }: Props
       sx={{ py: 2.5, px: 3 }}
     >
       <TextField
-      fullWidth
+        fullWidth
         value={filterName}
         onChange={(event) => onFilterName(event.target.value)}
-        placeholder="Search Category..."
+        placeholder="Search Company..."
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">
@@ -41,5 +41,5 @@ export default function CategoryTableToolbar({ filterName, onFilterName }: Props
         </IconButton>
       </Tooltip>
     </Stack>
-  );
+  )
 }

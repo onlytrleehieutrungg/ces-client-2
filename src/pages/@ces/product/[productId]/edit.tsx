@@ -25,19 +25,18 @@ export default function ProductEditPage() {
   const { query, push } = useRouter()
   const { enqueueSnackbar } = useSnackbar()
   const { productId } = query
-  const { data, isLoading } = useProductDetail({ id: `${productId}` })
+  const { data, isLoading, mutate } = useProductDetail({ id: `${productId}` })
   if (isLoading) {
     return <LoadingScreen />
   }
   const handleEditProductSubmit = async (payload: ProductPayload) => {
     try {
       await productApi.update(`${productId}`, payload)
-      // await update(data?.data.id, payload)
       enqueueSnackbar('Update success!')
       push(PATH_CES.product.root)
+      mutate();
     } catch (error) {
-      enqueueSnackbar('Update failed!')
-      console.error(error)
+      enqueueSnackbar('Update failed!', { variant: 'error' })
     }
   }
   return (
@@ -53,7 +52,11 @@ export default function ProductEditPage() {
             ]}
           />
           {data && (
-            <ProductNewEditForm isEdit currentUser={data?.data} onSubmit={handleEditProductSubmit} />
+            <ProductNewEditForm
+              isEdit
+              currentUser={data?.data}
+              onSubmit={handleEditProductSubmit}
+            />
           )}
         </Container>
       </Page>

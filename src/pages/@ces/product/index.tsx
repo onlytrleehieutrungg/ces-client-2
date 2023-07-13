@@ -104,7 +104,6 @@ export default function ProductPage() {
     confirmDialog('Do you really want to delete this product ?', async () => {
       try {
         await productApi.delete(id)
-
         mutate()
         enqueueSnackbar('Delete successfull')
       } catch (error) {

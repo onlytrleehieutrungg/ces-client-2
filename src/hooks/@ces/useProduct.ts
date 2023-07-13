@@ -1,5 +1,4 @@
 import { Params } from 'src/@types/@ces'
-import { Product } from 'src/@types/@ces/product'
 import { productApi } from 'src/api-client/product'
 import useSWR, { SWRConfiguration } from 'swr'
 

@@ -1,6 +1,3 @@
-import NextLink from 'next/link'
-import Page from 'src/components/Page'
-import Layout from 'src/layouts'
 // @mui
 import {
   Box,
@@ -17,38 +14,39 @@ import {
   TableContainer,
   TablePagination,
   Tabs,
-  Tooltip,
+  Tooltip
 } from '@mui/material'
 import { paramCase } from 'change-case'
+import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 import { useSnackbar } from 'notistack'
 import { useState } from 'react'
 import {
   ACCOUNT_STATUS_OPTIONS_SA,
-  CompanyData,
-  ROLE_OPTIONS_EA,
-  ROLE_OPTIONS_SA,
-  Role,
+  CompanyData, Role, ROLE_OPTIONS_EA,
+  ROLE_OPTIONS_SA
 } from 'src/@types/@ces'
+import { debtApi } from 'src/api-client/debt'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
 import Iconify from 'src/components/Iconify'
+import Page from 'src/components/Page'
 import Scrollbar from 'src/components/Scrollbar'
 import {
   TableEmptyRows,
   TableHeadCustom,
   TableNoData,
-  TableSelectedActions,
+  TableSelectedActions
 } from 'src/components/table'
 import { useCompanyList } from 'src/hooks/@ces'
 import useAuth from 'src/hooks/useAuth'
 import useSettings from 'src/hooks/useSettings'
 import useTable, { emptyRows, getComparator } from 'src/hooks/useTable'
 import useTabs from 'src/hooks/useTabs'
+import Layout from 'src/layouts'
 import { PATH_CES } from 'src/routes/paths'
-import AccountTableToolbar from 'src/sections/@ces/account/AccountTableToolbar'
 import CompanyTableRow from 'src/sections/@ces/company/CompanyTableRow'
+import CompanyTableToolbar from 'src/sections/@ces/company/CompanyTableToolbar'
 import { confirmDialog } from 'src/utils/confirmDialog'
-import { debtApi } from 'src/api-client/debt'
 
 // ----------------------------------------------------------------------
 
@@ -220,12 +218,12 @@ export default function CompanyPage() {
 
           <Divider />
 
-          <AccountTableToolbar
+          <CompanyTableToolbar
             filterName={filterName}
-            filterRole={filterRole}
+            // filterRole={filterRole}
             onFilterName={handleFilterName}
-            onFilterRole={handleFilterRole}
-            optionsRole={roleOptions}
+            // onFilterRole={handleFilterRole}
+            // optionsRole={roleOptions}
           />
 
           <Scrollbar>
