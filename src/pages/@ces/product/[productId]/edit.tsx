@@ -4,7 +4,7 @@ import { Container } from '@mui/material'
 import { useRouter } from 'next/router'
 import { useSnackbar } from 'notistack'
 import { Role } from 'src/@types/@ces'
-import { Product } from 'src/@types/@ces/product'
+import { ProductPayload } from 'src/@types/@ces/product'
 import { productApi } from 'src/api-client/product'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
 import LoadingScreen from 'src/components/LoadingScreen'
@@ -29,7 +29,7 @@ export default function ProductEditPage() {
   if (isLoading) {
     return <LoadingScreen />
   }
-  const handleEditProductSubmit = async (payload: Product) => {
+  const handleEditProductSubmit = async (payload: ProductPayload) => {
     try {
       await productApi.update(`${productId}`, payload)
       // await update(data?.data.id, payload)

@@ -1,11 +1,10 @@
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
-import React from 'react'
 import { UseFormSetValue } from 'react-hook-form'
-import { Product } from 'src/@types/@ces'
+import { ProductPayload } from 'src/@types/@ces'
 import { storage } from 'src/contexts/FirebaseContext'
 import { v4 } from 'uuid'
 interface uploadImageProps {
-  setValue: UseFormSetValue<Product>
+  setValue: UseFormSetValue<ProductPayload>
   acceptedFiles: File[]
 }
 const uploadImage = async ({ setValue, acceptedFiles }: uploadImageProps) => {

@@ -123,7 +123,7 @@ export default function CompanyTableRow({
                 }}
               >
                 <Iconify icon={'la:file-invoice-dollar'} />
-                Dues
+                Due
               </MenuItem>
             </>
           }

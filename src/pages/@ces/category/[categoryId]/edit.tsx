@@ -3,7 +3,7 @@
 import { Container } from '@mui/material'
 import { useRouter } from 'next/router'
 import { useSnackbar } from 'notistack'
-import { Category, Role } from 'src/@types/@ces'
+import { Category, CategoryPayload, Role } from 'src/@types/@ces'
 import { categoryApi } from 'src/api-client/category'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
 import LoadingScreen from 'src/components/LoadingScreen'
@@ -29,7 +29,7 @@ export default function CategoryEditPage() {
   if (isLoading) {
     return <LoadingScreen />
   }
-  const handleEditCategorySubmit = async (payload: Category) => {
+  const handleEditCategorySubmit = async (payload: CategoryPayload) => {
     try {
       await categoryApi.update(`${categoryId}`, payload)
       // await update(data?.data.id, payload)

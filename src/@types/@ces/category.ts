@@ -6,3 +6,8 @@ export type Category = {
   createdAt: string
   status: string
 }
+
+export type CategoryPayload = {
+  name: string
+  description: string
+}
