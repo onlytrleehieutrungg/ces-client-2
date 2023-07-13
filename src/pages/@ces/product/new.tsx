@@ -3,7 +3,7 @@ import { Button, Container, Stack, Typography } from '@mui/material'
 import { useRouter } from 'next/router'
 import { useSnackbar } from 'notistack'
 import { ChangeEvent, useRef, useState } from 'react'
-import { Product, Role } from 'src/@types/@ces'
+import { Product, ProductPayload, Role } from 'src/@types/@ces'
 import axiosClient from 'src/api-client/axiosClient'
 import { productApi } from 'src/api-client/product'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
@@ -25,7 +25,7 @@ export default function ProductCreatePage() {
   const { push } = useRouter()
   const [file, setFile] = useState<File>()
   const [loading, setLoading] = useState(false)
-  const handleCreateProductSubmit = async (payload: Product) => {
+  const handleCreateProductSubmit = async (payload: ProductPayload) => {
     try {
       await productApi.create(payload)
       // await create(payload)

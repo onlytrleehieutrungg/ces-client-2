@@ -1,7 +1,7 @@
 import { Container } from '@mui/material'
 import { useRouter } from 'next/router'
 import { useSnackbar } from 'notistack'
-import { Category, Role } from 'src/@types/@ces'
+import { Category, CategoryPayload, Role } from 'src/@types/@ces'
 import { categoryApi } from 'src/api-client/category'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
 import Page from 'src/components/Page'
@@ -20,7 +20,7 @@ AccountCreatePage.getLayout = function getLayout(page: React.ReactElement) {
 export default function AccountCreatePage() {
   const { enqueueSnackbar } = useSnackbar()
   const { push } = useRouter()
-  const handleCreateCategorySubmit = async (payload: Category) => {
+  const handleCreateCategorySubmit = async (payload: CategoryPayload) => {
     try {
       await categoryApi.create(payload).then()
       // await create(payload)

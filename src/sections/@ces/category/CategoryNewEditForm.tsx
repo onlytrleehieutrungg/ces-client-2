@@ -8,7 +8,7 @@ import { useSnackbar } from 'notistack';
 import { useEffect, useMemo } from 'react';
 // form
 import { useForm } from 'react-hook-form';
-import { Category } from 'src/@types/@ces';
+import { Category, CategoryPayload } from 'src/@types/@ces';
 import * as Yup from 'yup';
 import {
     FormProvider, RHFTextField
@@ -19,12 +19,12 @@ import { PATH_CES } from '../../../routes/paths';
 
 // ----------------------------------------------------------------------
 
-type FormValuesProps = Category;
+type FormValuesProps = CategoryPayload;
 
 type Props = {
     isEdit?: boolean;
-    currentUser?: Category;
-    onSubmit?: (payload: Category) => void
+    currentUser?: CategoryPayload;
+    onSubmit?: (payload: CategoryPayload) => void
 };
 
 export default function UserNewEditForm({ isEdit = false, currentUser, onSubmit }: Props) {
@@ -45,7 +45,7 @@ export default function UserNewEditForm({ isEdit = false, currentUser, onSubmit 
         [currentUser]
     );
 
-    const methods = useForm<Category>({
+    const methods = useForm<CategoryPayload>({
         resolver: yupResolver(NewUserSchema),
         defaultValues,
     });
@@ -71,7 +71,7 @@ export default function UserNewEditForm({ isEdit = false, currentUser, onSubmit 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isEdit, currentUser]);
 
-    const handleOnSubmit = async (data: Category) => {
+    const handleOnSubmit = async (data: CategoryPayload) => {
         try {
             // await new Promise((resolve) => setTimeout(resolve, 500));
             // reset();

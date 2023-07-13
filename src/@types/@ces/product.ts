@@ -16,3 +16,12 @@ export type Product = {
   categoryId: string
   category: Category
 }
+
+export type ProductPayload = {
+  name: string
+  price: number
+  imageUrl: string
+  quantity: number
+  description: string
+  categoryId: string
+}
