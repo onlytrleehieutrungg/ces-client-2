@@ -12,14 +12,14 @@ import { Card, IconButton, InputAdornment, Stack } from '@mui/material'
 // @types
 // _mock
 // components
-import { AccountPayload } from 'src/@types/@ces/account'
+import { ChangePasswordPayload } from 'src/@types/@ces/account'
 import Iconify from 'src/components/Iconify'
 import { FormProvider, RHFTextField } from '../../../components/hook-form'
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  onSubmit?: (payload: AccountPayload) => void
+  onSubmit?: (payload: ChangePasswordPayload) => void
 }
 
 export default function AccountNewEditForm({ onSubmit }: Props) {
@@ -56,9 +56,8 @@ export default function AccountNewEditForm({ onSubmit }: Props) {
     formState: { isSubmitting },
   } = methods
 
-  const handleFormSubmit = async (payload: any) => {
-    console.log(payload)
-    // await onSubmit?.(payload)
+  const handleFormSubmit = async (payload: ChangePasswordPayload) => {
+    await onSubmit?.(payload)
   }
 
   return (

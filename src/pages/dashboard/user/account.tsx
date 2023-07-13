@@ -1,46 +1,66 @@
-import { capitalCase } from 'change-case';
+import { capitalCase } from 'change-case'
 // @mui
-import { Container, Tab, Box, Tabs } from '@mui/material';
+import { Box, Container, Tab, Tabs } from '@mui/material'
 // routes
-import { PATH_DASHBOARD } from '../../../routes/paths';
+import { PATH_DASHBOARD } from '../../../routes/paths'
 // hooks
-import useTabs from '../../../hooks/useTabs';
-import useSettings from '../../../hooks/useSettings';
+import useSettings from '../../../hooks/useSettings'
+import useTabs from '../../../hooks/useTabs'
 // _mock_
-import { _userPayment, _userAddressBook, _userInvoices, _userAbout } from '../../../_mock';
+import { _userAbout, _userAddressBook, _userInvoices, _userPayment } from '../../../_mock'
 // layouts
-import Layout from '../../../layouts';
+import Layout from '../../../layouts'
 // components
-import Page from '../../../components/Page';
-import Iconify from '../../../components/Iconify';
-import HeaderBreadcrumbs from '../../../components/HeaderBreadcrumbs';
+import HeaderBreadcrumbs from '../../../components/HeaderBreadcrumbs'
+import Iconify from '../../../components/Iconify'
+import Page from '../../../components/Page'
 // sections
+import { useSnackbar } from 'notistack'
+import { ChangePasswordPayload } from 'src/@types/@ces'
+import { accountApi } from 'src/api-client'
+import AccountChangePasswordForm from 'src/sections/@ces/account/AccountChangePasswordForm'
 import {
-  AccountGeneral,
   AccountBilling,
-  AccountSocialLinks,
+  AccountGeneral,
   AccountNotifications,
-  AccountChangePassword,
-} from '../../../sections/@dashboard/user/account';
+  AccountSocialLinks,
+} from '../../../sections/@dashboard/user/account'
 
 // ----------------------------------------------------------------------
 
 UserAccount.getLayout = function getLayout(page: React.ReactElement) {
-  return <Layout>{page}</Layout>;
-};
+  return <Layout>{page}</Layout>
+}
 
 // ----------------------------------------------------------------------
 
 export default function UserAccount() {
-  const { themeStretch } = useSettings();
+  const { themeStretch } = useSettings()
+  const { enqueueSnackbar } = useSnackbar()
 
-  const { currentTab, onChangeTab } = useTabs('general');
+  const { currentTab, onChangeTab } = useTabs('general')
+
+  const handleChangePasswordSubmit = async (payload: ChangePasswordPayload) => {
+    try {
+      await accountApi.updatePassword(payload)
+      // push(PATH_CES.account.detail(`${accountId}`))
+      enqueueSnackbar('Update success!')
+    } catch (error) {
+      enqueueSnackbar('Update failed!')
+      console.error(error)
+    }
+  }
 
   const ACCOUNT_TABS = [
     {
       value: 'general',
       icon: <Iconify icon={'ic:round-account-box'} width={20} height={20} />,
       component: <AccountGeneral />,
+    },
+    {
+      value: 'change password',
+      icon: <Iconify icon={'ic:round-vpn-key'} width={20} height={20} />,
+      component: <AccountChangePasswordForm onSubmit={handleChangePasswordSubmit} />,
     },
     {
       value: 'billing',
@@ -63,12 +83,12 @@ export default function UserAccount() {
       icon: <Iconify icon={'eva:share-fill'} width={20} height={20} />,
       component: <AccountSocialLinks myProfile={_userAbout} />,
     },
-    {
-      value: 'change_password',
-      icon: <Iconify icon={'ic:round-vpn-key'} width={20} height={20} />,
-      component: <AccountChangePassword />,
-    },
-  ];
+    // {
+    //   value: 'change_password',
+    //   icon: <Iconify icon={'ic:round-vpn-key'} width={20} height={20} />,
+    //   component: <AccountChangePassword />,
+    // },
+  ]
 
   return (
     <Page title="User: Account Settings">
@@ -103,10 +123,10 @@ export default function UserAccount() {
         <Box sx={{ mb: 5 }} />
 
         {ACCOUNT_TABS.map((tab) => {
-          const isMatched = tab.value === currentTab;
-          return isMatched && <Box key={tab.value}>{tab.component}</Box>;
+          const isMatched = tab.value === currentTab
+          return isMatched && <Box key={tab.value}>{tab.component}</Box>
         })}
       </Container>
     </Page>
-  );
+  )
 }

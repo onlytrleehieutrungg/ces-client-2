@@ -1,4 +1,10 @@
-import { AccountData, AccountPayload, BaseResponse, Params } from 'src/@types/@ces'
+import {
+  AccountData,
+  AccountPayload,
+  BaseResponse,
+  ChangePasswordPayload,
+  Params,
+} from 'src/@types/@ces'
 import axiosClient from './axiosClient'
 
 export const accountApi = {
@@ -17,7 +23,7 @@ export const accountApi = {
   update(id: string, payload: AccountPayload) {
     return axiosClient.put(`/account/${id}`, payload)
   },
-  updatePassword(id: string, payload: AccountPayload) {
-    return axiosClient.patch(`/account/password`, payload)
+  updatePassword(payload: ChangePasswordPayload) {
+    return axiosClient.put(`/account/password`, payload)
   },
 }

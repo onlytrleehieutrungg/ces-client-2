@@ -5,6 +5,7 @@ import { useRouter } from 'next/router'
 import { useSnackbar } from 'notistack'
 import { AccountPayload } from 'src/@types/@ces'
 import { _userInvoices } from 'src/_mock'
+import { accountApi } from 'src/api-client'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
 import Iconify from 'src/components/Iconify'
 import Page from 'src/components/Page'
@@ -15,8 +16,6 @@ import Layout from 'src/layouts'
 import { PATH_CES } from 'src/routes/paths'
 import AccountNewEditForm from 'src/sections/@ces/account/AccountNewEditForm'
 import AccountWallet from 'src/sections/@ces/account/wallet/AccountWallet'
-import { accountApi } from 'src/api-client'
-import AccountChangePasswordForm from 'src/sections/@ces/account/AccountChangePasswordForm'
 
 // ----------------------------------------------------------------------
 
@@ -50,16 +49,6 @@ export default function UserAccount() {
     }
   }
 
-  const handleChangePasswordSubmit = async (payload: any) => {
-    try {
-      // push(PATH_CES.account.detail(`${accountId}`))
-      enqueueSnackbar('Update success!')
-    } catch (error) {
-      enqueueSnackbar('Update failed!')
-      console.error(error)
-    }
-  }
-
   const ACCOUNT_TABS = [
     {
       value: 'general',
@@ -74,11 +63,6 @@ export default function UserAccount() {
       component: (
         <AccountWallet currentUser={data?.data} invoices={_userInvoices} mutate={mutate} />
       ),
-    },
-    {
-      value: 'change password',
-      icon: <Iconify icon={'ic:round-vpn-key'} width={20} height={20} />,
-      component: <AccountChangePasswordForm onSubmit={handleChangePasswordSubmit} />,
     },
   ]
 

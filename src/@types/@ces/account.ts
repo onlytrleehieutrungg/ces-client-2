@@ -34,6 +34,11 @@ export type AccountPayload = {
   status?: number
 }
 
+export type ChangePasswordPayload = {
+  newPassword: string
+  oldPassword: string
+}
+
 export enum Role {
   'System Admin' = 1,
   'Supplier Admin' = 2,
