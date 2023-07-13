@@ -15,8 +15,7 @@ export function useBenefitList({ options, params = { Page: '1' } }: UseBenefitPr
     ['benefit-list', params],
     () => (user?.role === Role['Enterprise Admin'] ? benefitApi.getAll(params!) : null),
     {
-      dedupingInterval: 60 * 1000 * 60,
-      // dedupingInterval: 10 * 1000, // 10s
+      // dedupingInterval: 60 * 1000 * 60,
       // keepPreviousData: true,
       // fallbackData: {
       //   code: 0,

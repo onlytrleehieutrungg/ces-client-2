@@ -17,4 +17,7 @@ export const accountApi = {
   update(id: string, payload: AccountPayload) {
     return axiosClient.put(`/account/${id}`, payload)
   },
+  updatePassword(id: string, payload: AccountPayload) {
+    return axiosClient.patch(`/account/password`, payload)
+  },
 }

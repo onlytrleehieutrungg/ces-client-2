@@ -49,14 +49,12 @@ export default function BenefitNewEditForm({ isEdit = false, currentUser, onSubm
 
   const {
     reset,
-    watch,
-    control,
-    setValue,
+    // watch,
+    // control,
+    // setValue,
     handleSubmit,
     formState: { isSubmitting },
   } = methods
-
-  const values = watch()
 
   useEffect(() => {
     if (isEdit && currentUser) {
@@ -95,7 +93,7 @@ export default function BenefitNewEditForm({ isEdit = false, currentUser, onSubm
       <Grid container spacing={3}>
         {/* <Grid item xs={12} md={4}></Grid> */}
 
-        <Grid item xs={12} md={8}>
+        <Grid item xs={12}>
           <Card sx={{ p: 3 }}>
             <Box
               sx={{
@@ -121,7 +119,7 @@ export default function BenefitNewEditForm({ isEdit = false, currentUser, onSubm
 
             <Stack alignItems="flex-end" sx={{ mt: 3 }}>
               <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-                {!isEdit ? 'Create Project' : 'Save Changes'}
+                {!isEdit ? 'Create Benefit' : 'Save Changes'}
               </LoadingButton>
             </Stack>
           </Card>
