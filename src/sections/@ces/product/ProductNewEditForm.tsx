@@ -43,7 +43,7 @@ export default function ProductNewEditForm({ isEdit = false, currentUser, onSubm
     quantity: Yup.number().required('Quantity is required'),
     categoryId: Yup.string().required('CategoryId is required'),
     // description: Yup.string().required('Description is required'),
-    avatarUrl: Yup.mixed().test('required', 'Avatar is required', (value) => value !== ''),
+    imageUrl: Yup.mixed().test('required', 'Avatar is required', (value) => value !== ''),
   })
 
   const defaultValues = useMemo(

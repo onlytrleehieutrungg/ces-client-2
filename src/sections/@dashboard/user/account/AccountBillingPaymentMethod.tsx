@@ -9,69 +9,92 @@ import {
   TextField,
   Typography,
   IconButton,
-} from '@mui/material';
-import { LoadingButton } from '@mui/lab';
+} from '@mui/material'
+import { LoadingButton } from '@mui/lab'
 // @types
-import { CreditCard } from '../../../../@types/user';
+import { CreditCard } from '../../../../@types/user'
 // components
-import Image from '../../../../components/Image';
-import Iconify from '../../../../components/Iconify';
+import Image from '../../../../components/Image'
+import Iconify from '../../../../components/Iconify'
+import { AccountData } from 'src/@types/@ces'
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  cards: CreditCard[];
-  isOpen: boolean;
-  onOpen: VoidFunction;
-  onCancel: VoidFunction;
-};
+  cards: CreditCard[]
+  isOpen: boolean
+  data?: AccountData
+  onOpen: VoidFunction
+  onCancel: VoidFunction
+}
 
-export default function AccountBillingPaymentMethod({ cards, isOpen, onOpen, onCancel }: Props) {
+export default function AccountBillingPaymentMethod({
+  cards,
+  isOpen,
+  data,
+  onOpen,
+  onCancel,
+}: Props) {
   return (
-    <Card sx={{ p: 3 }}>
-      <Typography variant="overline" sx={{ mb: 3, display: 'block', color: 'text.secondary' }}>
-        Payment Method
-      </Typography>
+    <Card sx={{ p: 1 }}>
+      {/* <Typography variant="overline" sx={{ mb: 3, display: 'block', color: 'text.secondary' }}>
+        Wallet
+      </Typography> */}
 
       <Stack spacing={2} direction={{ xs: 'column', md: 'row' }}>
-        {cards.map((card) => (
-          <Paper
-            key={card.id}
-            sx={{
-              p: 3,
-              width: 1,
-              position: 'relative',
-              border: (theme) => `solid 1px ${theme.palette.grey[500_32]}`,
-            }}
-          >
-            <Image
-              alt="icon"
-              src={
-                card.cardType === 'master_card'
-                  ? 'https://minimal-assets-api-dev.vercel.app/assets/icons/ic_mastercard.svg'
-                  : 'https://minimal-assets-api-dev.vercel.app/assets/icons/ic_visa.svg'
-              }
-              sx={{ mb: 1, maxWidth: 36 }}
-            />
-            <Typography variant="subtitle2">{card.cardNumber}</Typography>
-            <IconButton
+        {data?.wallets?.map((x) => (
+          <>
+            <Paper
+              key={x.id}
               sx={{
-                top: 8,
-                right: 8,
-                position: 'absolute',
+                p: 3,
+                width: 1,
+                position: 'relative',
+                border: (theme) => `solid 1px ${theme.palette.grey[50032]}`,
               }}
             >
-              <Iconify icon={'eva:more-vertical-fill'} width={20} height={20} />
-            </IconButton>
-          </Paper>
+              Blance
+              <Typography variant="subtitle1">{x.balance}</Typography>
+              <IconButton
+                sx={{
+                  top: 8,
+                  right: 8,
+                  position: 'absolute',
+                }}
+              >
+                <Iconify icon={'eva:more-vertical-fill'} width={20} height={20} />
+              </IconButton>
+            </Paper>
+            <Paper
+              key={x.id}
+              sx={{
+                p: 3,
+                width: 1,
+                position: 'relative',
+                border: (theme) => `solid 1px ${theme.palette.grey[50032]}`,
+              }}
+            >
+              Used
+              <Typography variant="subtitle1">{x.used}</Typography>
+              <IconButton
+                sx={{
+                  top: 8,
+                  right: 8,
+                  position: 'absolute',
+                }}
+              >
+                <Iconify icon={'eva:more-vertical-fill'} width={20} height={20} />
+              </IconButton>
+            </Paper>
+          </>
         ))}
       </Stack>
 
-      <Box sx={{ mt: 3 }}>
+      {/* <Box sx={{ mt: 3 }}>
         <Button size="small" startIcon={<Iconify icon={'eva:plus-fill'} />} onClick={onOpen}>
           Add new card
         </Button>
-      </Box>
+      </Box> */}
 
       <Collapse in={isOpen}>
         <Box
@@ -109,5 +132,5 @@ export default function AccountBillingPaymentMethod({ cards, isOpen, onOpen, onC
         </Box>
       </Collapse>
     </Card>
-  );
+  )
 }

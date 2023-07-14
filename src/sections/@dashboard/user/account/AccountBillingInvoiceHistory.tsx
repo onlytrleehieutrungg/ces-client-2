@@ -18,7 +18,7 @@ export default function AccountBillingInvoiceHistory({ invoices }: Props) {
   return (
     <Stack spacing={3} alignItems="flex-end">
       <Typography variant="subtitle1" sx={{ width: 1 }}>
-        Invoice History
+        Payment History
       </Typography>
 
       <Stack spacing={2} sx={{ width: 1 }}>

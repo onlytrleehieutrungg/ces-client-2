@@ -1,23 +1,27 @@
-import { useState } from 'react';
+import { useState } from 'react'
 // @mui
-import { Box, Grid, Card, Button, Typography, Stack } from '@mui/material';
+import { Box, Grid, Card, Button, Typography, Stack } from '@mui/material'
 // @types
-import { CreditCard, UserAddressBook, UserInvoice } from '../../../../@types/user';
+import { CreditCard, UserAddressBook, UserInvoice } from '../../../../@types/user'
 //
-import AccountBillingAddressBook from './AccountBillingAddressBook';
-import AccountBillingPaymentMethod from './AccountBillingPaymentMethod';
-import AccountBillingInvoiceHistory from './AccountBillingInvoiceHistory';
+import AccountBillingAddressBook from './AccountBillingAddressBook'
+import AccountBillingPaymentMethod from './AccountBillingPaymentMethod'
+import AccountBillingInvoiceHistory from './AccountBillingInvoiceHistory'
+import { useMe } from 'src/hooks/@ces'
+import { AccountData } from 'src/@types/@ces'
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  cards: CreditCard[];
-  invoices: UserInvoice[];
-  addressBook: UserAddressBook[];
-};
+  cards: CreditCard[]
+  invoices: UserInvoice[]
+  addressBook: UserAddressBook[]
+  data?: AccountData
+}
 
 export default function AccountBilling({ cards, addressBook, invoices }: Props) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false)
+  const { data } = useMe({})
 
   return (
     <Grid container spacing={5}>
@@ -28,9 +32,9 @@ export default function AccountBilling({ cards, addressBook, invoices }: Props) 
               variant="overline"
               sx={{ mb: 3, display: 'block', color: 'text.secondary' }}
             >
-              Your Plan
+              Payment Plan{' '}
             </Typography>
-            <Typography variant="h4">Premium</Typography>
+            <Typography variant="h4">Company Wallet</Typography>
             <Box
               sx={{
                 mt: { xs: 2, sm: 0 },
@@ -40,10 +44,10 @@ export default function AccountBilling({ cards, addressBook, invoices }: Props) 
               }}
             >
               <Button size="small" color="inherit" variant="outlined" sx={{ mr: 1 }}>
-                Cancel plan
+                View Order
               </Button>
               <Button size="small" variant="outlined">
-                Upgrade plan
+                Pay Used
               </Button>
             </Box>
           </Card>
@@ -51,11 +55,12 @@ export default function AccountBilling({ cards, addressBook, invoices }: Props) 
           <AccountBillingPaymentMethod
             cards={cards}
             isOpen={open}
+            data={data}
             onOpen={() => setOpen(!open)}
             onCancel={() => setOpen(false)}
           />
 
-          <AccountBillingAddressBook addressBook={addressBook} />
+          {/* <AccountBillingAddressBook addressBook={addressBook} /> */}
         </Stack>
       </Grid>
 
@@ -63,5 +68,5 @@ export default function AccountBilling({ cards, addressBook, invoices }: Props) 
         <AccountBillingInvoiceHistory invoices={invoices} />
       </Grid>
     </Grid>
-  );
+  )
 }

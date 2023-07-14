@@ -25,6 +25,7 @@ import {
   AccountNotifications,
   AccountSocialLinks,
 } from '../../../sections/@dashboard/user/account'
+import { useMe } from 'src/hooks/@ces'
 
 // ----------------------------------------------------------------------
 
@@ -39,7 +40,7 @@ export default function UserAccount() {
   const { enqueueSnackbar } = useSnackbar()
 
   const { currentTab, onChangeTab } = useTabs('general')
-
+  const { data } = useMe({})
   const handleChangePasswordSubmit = async (payload: ChangePasswordPayload) => {
     try {
       await accountApi.updatePassword(payload)
@@ -62,7 +63,20 @@ export default function UserAccount() {
       icon: <Iconify icon={'ic:round-vpn-key'} width={20} height={20} />,
       component: <AccountChangePasswordForm onSubmit={handleChangePasswordSubmit} />,
     },
-    {
+    // {
+    //   value: 'billing',
+    //   icon: <Iconify icon={'ic:round-receipt'} width={20} height={20} />,
+    //   component: (
+    //     <AccountBilling
+    //       cards={_userPayment}
+    //       addressBook={_userAddressBook}
+    //       invoices={_userInvoices}
+    //     />
+    //   ),
+    // },
+  ]
+  if (data?.role == 3) {
+    ACCOUNT_TABS.push({
       value: 'billing',
       icon: <Iconify icon={'ic:round-receipt'} width={20} height={20} />,
       component: (
@@ -72,23 +86,8 @@ export default function UserAccount() {
           invoices={_userInvoices}
         />
       ),
-    },
-    {
-      value: 'notifications',
-      icon: <Iconify icon={'eva:bell-fill'} width={20} height={20} />,
-      component: <AccountNotifications />,
-    },
-    {
-      value: 'social_links',
-      icon: <Iconify icon={'eva:share-fill'} width={20} height={20} />,
-      component: <AccountSocialLinks myProfile={_userAbout} />,
-    },
-    // {
-    //   value: 'change_password',
-    //   icon: <Iconify icon={'ic:round-vpn-key'} width={20} height={20} />,
-    //   component: <AccountChangePassword />,
-    // },
-  ]
+    })
+  }
 
   return (
     <Page title="User: Account Settings">

@@ -1,67 +1,58 @@
-import * as Yup from 'yup'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { LoadingButton } from '@mui/lab'
+// @mui
+import { Box, Card, Grid, Stack, Typography } from '@mui/material'
 import { useSnackbar } from 'notistack'
 import { useCallback } from 'react'
 // form
 import { useForm } from 'react-hook-form'
-import { yupResolver } from '@hookform/resolvers/yup'
-// @mui
-import { Box, Grid, Card, Stack, Typography } from '@mui/material'
-import { LoadingButton } from '@mui/lab'
+import { AccountPayload, ACCOUNT_STATUS_OPTIONS_FORM, ROLE_OPTIONS_FORM_SA } from 'src/@types/@ces'
+import { accountApi } from 'src/api-client'
+import Label from 'src/components/Label'
+import uploadImageAccount from 'src/utils/uploadImageAccount'
+import * as Yup from 'yup'
+// components
+import {
+  FormProvider,
+  RHFSelect,
+  RHFSwitch,
+  RHFTextField,
+  RHFUploadAvatar,
+} from '../../../../components/hook-form'
 // hooks
 import useAuth from '../../../../hooks/useAuth'
 // utils
 import { fData } from '../../../../utils/formatNumber'
 // _mock
 import { countries } from '../../../../_mock'
-// components
-import {
-  FormProvider,
-  RHFSwitch,
-  RHFSelect,
-  RHFTextField,
-  RHFUploadAvatar,
-} from '../../../../components/hook-form'
 
 // ----------------------------------------------------------------------
-
-type FormValuesProps = {
-  displayName: string
-  email: string
-  photoURL: File | any
-  phoneNumber: string | null
-  country: string | null
-  address: string | null
-  state: string | null
-  city: string | null
-  zipCode: string | null
-  about: string | null
-  isPublic: boolean
-}
 
 export default function AccountGeneral() {
   const { enqueueSnackbar } = useSnackbar()
 
   const { user } = useAuth()
+  const accountId = user?.id
 
   const UpdateUserSchema = Yup.object().shape({
-    displayName: Yup.string().required('Name is required'),
+    name: Yup.string().required('Name is required'),
+    email: Yup.string().required('Email is required').email(),
+    address: Yup.string().required('Address is required'),
+    phone: Yup.string().required('Phone is required'),
+    imageUrl: Yup.mixed().test('required', 'Avatar is required', (value) => value !== ''),
   })
 
   const defaultValues = {
-    displayName: user?.name || '',
+    name: user?.name || '',
     email: user?.email || '',
-    // photoURL: user?.photoURL || '',
-    // phoneNumber: user?.phoneNumber || '',
-    // country: user?.country || '',
-    // address: user?.address || '',
-    // state: user?.state || '',
-    // city: user?.city || '',
-    // zipCode: user?.zipCode || '',
-    // about: user?.about || '',
-    // isPublic: user?.isPublic || false,
+    imageUrl: user?.imageUrl || '',
+    phone: user?.phone || '',
+    address: user?.address || '',
+    status: user?.status,
+    role: user?.role,
   }
 
-  const methods = useForm<FormValuesProps>({
+  const methods = useForm<AccountPayload>({
     resolver: yupResolver(UpdateUserSchema),
     defaultValues,
   })
@@ -72,9 +63,9 @@ export default function AccountGeneral() {
     formState: { isSubmitting },
   } = methods
 
-  const onSubmit = async (data: FormValuesProps) => {
+  const onSubmit = async (data: AccountPayload) => {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500))
+      accountApi.update(accountId!, data)
       enqueueSnackbar('Update success!')
     } catch (error) {
       console.error(error)
@@ -82,28 +73,26 @@ export default function AccountGeneral() {
   }
 
   const handleDrop = useCallback(
-    (acceptedFiles) => {
-      const file = acceptedFiles[0]
-
-      if (file) {
-        setValue(
-          'photoURL',
-          Object.assign(file, {
-            preview: URL.createObjectURL(file),
-          })
-        )
-      }
+    async (acceptedFiles) => {
+      uploadImageAccount({ acceptedFiles, setValue })
     },
     [setValue]
   )
-
+  const statusList = ACCOUNT_STATUS_OPTIONS_FORM
+  const rolelist = ROLE_OPTIONS_FORM_SA
   return (
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
       <Grid container spacing={3}>
         <Grid item xs={12} md={4}>
           <Card sx={{ py: 10, px: 3, textAlign: 'center' }}>
+            <Label
+              color={user?.status !== 1 ? 'error' : 'success'}
+              sx={{ textTransform: 'uppercase', position: 'absolute', top: 24, right: 24 }}
+            >
+              {user?.status === 1 ? 'Active' : 'In Active'}
+            </Label>
             <RHFUploadAvatar
-              name="photoURL"
+              name="imageUrl"
               accept="image/*"
               maxSize={3145728}
               onDrop={handleDrop}
@@ -123,13 +112,6 @@ export default function AccountGeneral() {
                 </Typography>
               }
             />
-
-            <RHFSwitch
-              name="isPublic"
-              labelPlacement="start"
-              label="Public Profile"
-              sx={{ mt: 5 }}
-            />
           </Card>
         </Grid>
 
@@ -143,30 +125,30 @@ export default function AccountGeneral() {
                 gridTemplateColumns: { xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)' },
               }}
             >
-              <RHFTextField name="displayName" label="Name" />
+              <RHFTextField name="name" label="Name" />
               <RHFTextField name="email" label="Email Address" />
 
-              <RHFTextField name="phoneNumber" label="Phone Number" />
+              <RHFTextField name="phone" label="Phone Number" />
               <RHFTextField name="address" label="Address" />
-
-              <RHFSelect name="country" label="Country" placeholder="Country">
-                <option value="" />
-                {countries.map((option) => (
-                  <option key={option.code} value={option.label}>
+              <RHFSelect name="status" label="Status" placeholder="Status" disabled>
+                <option value={undefined} />
+                {statusList.map((option) => (
+                  <option key={option.code} value={option.code}>
                     {option.label}
                   </option>
                 ))}
               </RHFSelect>
-
-              <RHFTextField name="state" label="State/Region" />
-
-              <RHFTextField name="city" label="City" />
-              <RHFTextField name="zipCode" label="Zip/Code" />
+              <RHFSelect name="role" label="role" placeholder="Role" disabled>
+                <option value={undefined} />
+                {rolelist.map((option) => (
+                  <option key={option.code} value={option.code}>
+                    {option.label}
+                  </option>
+                ))}
+              </RHFSelect>
             </Box>
 
             <Stack spacing={3} alignItems="flex-end" sx={{ mt: 3 }}>
-              <RHFTextField name="about" multiline rows={4} label="About" />
-
               <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
                 Save Changes
               </LoadingButton>
