@@ -12,7 +12,7 @@ export type AccountData = {
   companyId: number
   updatedAt: string
   createdAt: string
-  wallets?: WalletData[]
+  wallets: WalletData[]
 }
 
 export type AccountPayload = {

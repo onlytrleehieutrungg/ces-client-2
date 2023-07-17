@@ -17,6 +17,7 @@ import { CreditCard } from '../../../../@types/user'
 import Image from '../../../../components/Image'
 import Iconify from '../../../../components/Iconify'
 import { AccountData } from 'src/@types/@ces'
+import { fCurrency } from 'src/utils/formatNumber'
 
 // ----------------------------------------------------------------------
 
@@ -54,7 +55,7 @@ export default function AccountBillingPaymentMethod({
               }}
             >
               Blance
-              <Typography variant="subtitle1">{x.balance}</Typography>
+              <Typography variant="subtitle1">{fCurrency(x.balance)} đ</Typography>
               <IconButton
                 sx={{
                   top: 8,
@@ -75,7 +76,7 @@ export default function AccountBillingPaymentMethod({
               }}
             >
               Used
-              <Typography variant="subtitle1">{x.used}</Typography>
+              <Typography variant="subtitle1">{fCurrency(x.used)} đ</Typography>
               <IconButton
                 sx={{
                   top: 8,

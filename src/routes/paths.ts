@@ -25,6 +25,7 @@ export const PATH_PAGE = {
   maintenance: '/maintenance',
   pricing: '/pricing',
   payment: '/payment',
+  paymentsuccess: '/payment-success',
   about: '/about-us',
   contact: '/contact-us',
   faqs: '/faqs',
