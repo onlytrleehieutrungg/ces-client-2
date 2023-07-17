@@ -49,7 +49,7 @@ const TABLE_HEAD = [
   { id: 'description', label: 'Description', align: 'left' },
   { id: 'price', label: 'Price', align: 'left' },
   { id: 'quantity', label: 'Quantity', align: 'left' },
-  { id: 'category.name', label: 'Carogory', align: 'left' },
+  { id: 'category.name', label: 'Category', align: 'left' },
   { id: '' },
 ]
 ProductPage.getLayout = function getLayout(page: React.ReactElement) {

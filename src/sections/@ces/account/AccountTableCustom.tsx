@@ -44,8 +44,8 @@ import AccountTableToolbar from './AccountTableToolbar'
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'Name', label: 'Name', align: 'left' },
-  { id: 'Email', label: 'Email', align: 'left' },
+  { id: 'name', label: 'Name', align: 'left' },
+  { id: 'email', label: 'Email', align: 'left' },
   { id: '' },
 ]
 
