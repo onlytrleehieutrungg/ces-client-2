@@ -202,7 +202,7 @@ export default function AccountWallet({ currentUser, mutate, accountId }: Props)
       </Dialog>
 
       <Grid item xs={12} md={4}>
-        <AccountBillingInvoiceHistory />
+        {user?.role == Role['System Admin'] && <AccountBillingInvoiceHistory />}
       </Grid>
     </Grid>
   )
