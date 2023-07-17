@@ -1,20 +1,19 @@
 import {
-  Box,
   Button,
   CircularProgress,
   Container,
   Stack,
   styled,
   Typography,
-  useTheme,
+  useTheme
 } from '@mui/material'
+import NextLink from 'next/link'
+import { useRouter } from 'next/router'
 import React from 'react'
 import Iconify from 'src/components/Iconify'
 import Page from 'src/components/Page'
 import Layout from 'src/layouts'
-import NextLink from 'next/link'
-import { useRouter } from 'next/router'
-import { PATH_CES, PATH_DASHBOARD } from 'src/routes/paths'
+import { PATH_DASHBOARD } from 'src/routes/paths'
 
 const RootStyle = styled('div')(({ theme }) => ({
   minHeight: '100%',

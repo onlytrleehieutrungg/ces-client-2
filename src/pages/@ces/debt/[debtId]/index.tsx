@@ -4,14 +4,10 @@ import { Container } from '@mui/material'
 import { useRouter } from 'next/router'
 import { useSnackbar } from 'notistack'
 import { Role } from 'src/@types/@ces'
-import { orderApi } from 'src/api-client/order'
 import LoadingScreen from 'src/components/LoadingScreen'
 import RoleBasedGuard from 'src/guards/RoleBasedGuard'
 import { useDebtDetail } from 'src/hooks/@ces/useDebt'
-// sections
-import { useOrderDetail } from 'src/hooks/@ces/useOrder'
 import DebtDetails from 'src/sections/@ces/debt/detail'
-import OrderDetails from 'src/sections/@ces/order/details'
 import HeaderBreadcrumbs from '../../../../components/HeaderBreadcrumbs'
 // components
 import Page from '../../../../components/Page'
@@ -20,7 +16,7 @@ import useSettings from '../../../../hooks/useSettings'
 // layouts
 import Layout from '../../../../layouts'
 // routes
-import { PATH_CES, PATH_DASHBOARD } from '../../../../routes/paths'
+import { PATH_CES } from '../../../../routes/paths'
 
 // ----------------------------------------------------------------------
 

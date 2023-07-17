@@ -13,7 +13,7 @@ import {
   TableContainer,
   TablePagination,
   Tabs,
-  Tooltip,
+  Tooltip
 } from '@mui/material'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
@@ -28,10 +28,10 @@ import {
   TableEmptyRows,
   TableHeadCustom,
   TableNoData,
-  TableSelectedActions,
+  TableSelectedActions
 } from 'src/components/table'
 import RoleBasedGuard from 'src/guards/RoleBasedGuard'
-import { useCompanyDebt, useDebt } from 'src/hooks/@ces/useDebt'
+import { useCompanyDebt } from 'src/hooks/@ces/useDebt'
 import useAuth from 'src/hooks/useAuth'
 import useTable, { emptyRows, getComparator } from 'src/hooks/useTable'
 import useTabs from 'src/hooks/useTabs'

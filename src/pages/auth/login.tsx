@@ -1,20 +1,18 @@
+import { Alert, Box, Card, Container, Link, Stack, Tooltip, Typography } from '@mui/material';
+// @mui
+import { styled } from '@mui/material/styles';
 import { capitalCase } from 'change-case';
 // next
 import NextLink from 'next/link';
-// @mui
-import { styled } from '@mui/material/styles';
-import { Box, Card, Stack, Link, Alert, Tooltip, Container, Typography } from '@mui/material';
-// routes
-import { PATH_AUTH } from '../../routes/paths';
+// components
+import Page from '../../components/Page';
+// guards
+import GuestGuard from '../../guards/GuestGuard';
 // hooks
 import useAuth from '../../hooks/useAuth';
 import useResponsive from '../../hooks/useResponsive';
-// guards
-import GuestGuard from '../../guards/GuestGuard';
-// components
-import Page from '../../components/Page';
-import Logo from '../../components/Logo';
-import Image from '../../components/Image';
+// routes
+import { PATH_AUTH } from '../../routes/paths';
 // sections
 import { LoginForm } from '../../sections/auth/login';
 

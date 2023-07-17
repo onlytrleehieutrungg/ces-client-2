@@ -1,9 +1,7 @@
-import { m } from 'framer-motion';
+import { Box, CircularProgress } from '@mui/material';
 // @mui
 import { alpha, styled } from '@mui/material/styles';
-import { Box, CircularProgress } from '@mui/material';
-//
-import Logo from './Logo';
+import { m } from 'framer-motion';
 
 // ----------------------------------------------------------------------
 

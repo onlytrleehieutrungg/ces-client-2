@@ -1,31 +1,29 @@
-import { capitalCase } from 'change-case'
 // @mui
 import { Box, Container, Tab, Tabs } from '@mui/material'
-// routes
-import { PATH_DASHBOARD } from '../../../routes/paths'
-// hooks
-import useSettings from '../../../hooks/useSettings'
-import useTabs from '../../../hooks/useTabs'
-// _mock_
-import { _userAbout, _userAddressBook, _userInvoices, _userPayment } from '../../../_mock'
-// layouts
-import Layout from '../../../layouts'
-// components
-import HeaderBreadcrumbs from '../../../components/HeaderBreadcrumbs'
-import Iconify from '../../../components/Iconify'
-import Page from '../../../components/Page'
+import { capitalCase } from 'change-case'
 // sections
 import { useSnackbar } from 'notistack'
 import { ChangePasswordPayload } from 'src/@types/@ces'
 import { accountApi } from 'src/api-client'
+import { useMe } from 'src/hooks/@ces'
 import AccountChangePasswordForm from 'src/sections/@ces/account/AccountChangePasswordForm'
+// components
+import HeaderBreadcrumbs from '../../../components/HeaderBreadcrumbs'
+import Iconify from '../../../components/Iconify'
+import Page from '../../../components/Page'
+// hooks
+import useSettings from '../../../hooks/useSettings'
+import useTabs from '../../../hooks/useTabs'
+// layouts
+import Layout from '../../../layouts'
+// routes
+import { PATH_DASHBOARD } from '../../../routes/paths'
 import {
   AccountBilling,
-  AccountGeneral,
-  AccountNotifications,
-  AccountSocialLinks,
+  AccountGeneral
 } from '../../../sections/@dashboard/user/account'
-import { useMe } from 'src/hooks/@ces'
+// _mock_
+import { _userAddressBook, _userInvoices, _userPayment } from '../../../_mock'
 
 // ----------------------------------------------------------------------
 

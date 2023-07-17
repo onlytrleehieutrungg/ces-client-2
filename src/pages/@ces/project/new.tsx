@@ -1,19 +1,16 @@
-import { Button, Container, Stack, Typography } from '@mui/material'
-
+import { Container } from '@mui/material'
 import { useRouter } from 'next/router'
 import { useSnackbar } from 'notistack'
-import { ChangeEvent, useState } from 'react'
 import { ProjectPayload, Role } from 'src/@types/@ces'
 import { projectApi } from 'src/api-client'
-import axiosClient from 'src/api-client/axiosClient'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
 import Page from 'src/components/Page'
 import RoleBasedGuard from 'src/guards/RoleBasedGuard'
-import useAuth from 'src/hooks/useAuth'
 import useSettings from 'src/hooks/useSettings'
 import Layout from 'src/layouts'
 import { PATH_CES } from 'src/routes/paths'
 import ProjectNewEditForm from 'src/sections/@ces/project/ProjectNewEditForm'
+
 // ----------------------------------------------------------------------
 
 ProjectCreatePage.getLayout = function getLayout(page: React.ReactElement) {

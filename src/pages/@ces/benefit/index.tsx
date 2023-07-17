@@ -1,6 +1,3 @@
-import NextLink from 'next/link'
-import Page from 'src/components/Page'
-import Layout from 'src/layouts'
 // @mui
 import {
   Box,
@@ -19,13 +16,16 @@ import {
   Tabs,
   Tooltip,
 } from '@mui/material'
+import { paramCase } from 'change-case'
+import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 import { useSnackbar } from 'notistack'
 import { useState } from 'react'
 import { BenefitData, Role } from 'src/@types/@ces'
-import { PROJECT_STATUS_OPTIONS, ProjectData } from 'src/@types/@ces/project'
+import { PROJECT_STATUS_OPTIONS } from 'src/@types/@ces/project'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
 import Iconify from 'src/components/Iconify'
+import Page from 'src/components/Page'
 import Scrollbar from 'src/components/Scrollbar'
 import {
   TableEmptyRows,
@@ -34,14 +34,14 @@ import {
   TableSelectedActions,
 } from 'src/components/table'
 import RoleBasedGuard from 'src/guards/RoleBasedGuard'
-import { useBenefitList, useProjectList } from 'src/hooks/@ces'
+import { useBenefitList } from 'src/hooks/@ces'
 import useSettings from 'src/hooks/useSettings'
 import useTable, { emptyRows, getComparator } from 'src/hooks/useTable'
 import useTabs from 'src/hooks/useTabs'
+import Layout from 'src/layouts'
 import { PATH_CES } from 'src/routes/paths'
 import BenefitTableRow from 'src/sections/@ces/benefit/BenefitTableRow'
 import BenefitTableToolbar from 'src/sections/@ces/benefit/BenefitTableToolbar'
-import { paramCase } from 'change-case'
 
 // ----------------------------------------------------------------------
 
@@ -83,8 +83,6 @@ export default function BenefitPage() {
   const { push } = useRouter()
 
   const { themeStretch } = useSettings()
-
-  const { enqueueSnackbar } = useSnackbar()
 
   const { data } = useBenefitList({})
   const projectList: BenefitData[] = data?.data || []
