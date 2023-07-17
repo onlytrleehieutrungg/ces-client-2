@@ -4,7 +4,6 @@ import { Box, Container, Tab, Tabs } from '@mui/material'
 import { useRouter } from 'next/router'
 import { useSnackbar } from 'notistack'
 import { AccountPayload } from 'src/@types/@ces'
-import { _userInvoices } from 'src/_mock'
 import { accountApi } from 'src/api-client'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
 import Iconify from 'src/components/Iconify'
@@ -15,7 +14,6 @@ import useTabs from 'src/hooks/useTabs'
 import Layout from 'src/layouts'
 import { PATH_CES } from 'src/routes/paths'
 import AccountNewEditForm from 'src/sections/@ces/account/AccountNewEditForm'
-import AccountWallet from 'src/sections/@ces/account/wallet/AccountWallet'
 
 // ----------------------------------------------------------------------
 
@@ -55,13 +53,6 @@ export default function UserAccount() {
       icon: <Iconify icon={'ic:round-account-box'} width={20} height={20} />,
       component: (
         <AccountNewEditForm isEdit currentUser={data?.data} onSubmit={handleEditAccountSubmit} />
-      ),
-    },
-    {
-      value: 'wallet',
-      icon: <Iconify icon={'ic:round-receipt'} width={20} height={20} />,
-      component: (
-        <AccountWallet currentUser={data?.data} invoices={_userInvoices} mutate={mutate} />
       ),
     },
   ]
