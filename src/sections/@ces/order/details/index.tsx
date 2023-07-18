@@ -1,20 +1,33 @@
 // @mui
 import {
-  Box, Button, Card, Divider, Grid, MenuItem, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography
-} from '@mui/material';
-import { styled, useTheme } from '@mui/material/styles';
-import { toNumber } from 'lodash';
-import { useRouter } from 'next/router';
-import { useState } from 'react';
+  Box,
+  Button,
+  Card,
+  Divider,
+  Grid,
+  MenuItem,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TextField,
+  Typography,
+} from '@mui/material'
+import { styled, useTheme } from '@mui/material/styles'
+import { toNumber } from 'lodash'
+import { useRouter } from 'next/router'
+import { useState } from 'react'
 //
-import { Order, Status } from 'src/@types/@ces/order';
-import { fCurrency } from 'src/utils/formatNumber';
-import { fDate } from 'src/utils/formatTime';
+import { Order, Status } from 'src/@types/@ces/order'
+import { fCurrency } from 'src/utils/formatNumber'
+import { fDate } from 'src/utils/formatTime'
 // utils
 // components
-import Label from '../../../../components/Label';
-import Scrollbar from '../../../../components/Scrollbar';
-
+import Label from '../../../../components/Label'
+import Scrollbar from '../../../../components/Scrollbar'
 
 // ----------------------------------------------------------------------
 
@@ -23,22 +36,22 @@ const RowResultStyle = styled(TableRow)(({ theme }) => ({
     paddingTop: theme.spacing(1),
     paddingBottom: theme.spacing(1),
   },
-}));
+}))
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  order?: Order;
+  order?: Order
   handleEditOrderSubmit: (id: string, status: number) => void
-};
+}
 
 export default function OrderDetails({ order, handleEditOrderSubmit }: Props) {
-  const theme = useTheme();
+  const theme = useTheme()
   const [changeStatus, setChangeStatus] = useState(false)
   const [statusValue, setStatusValue] = useState<number>()
   const { query, push } = useRouter()
   if (!order) {
-    return null;
+    return null
   }
   const rs = Object.values(Status)
 
@@ -53,17 +66,16 @@ export default function OrderDetails({ order, handleEditOrderSubmit }: Props) {
     code,
     debtStatus,
     employee,
-    orderDetails
-  } = order;
+    orderDetails,
+  } = order
 
   const handleUpdateStatus = () => {
-    setChangeStatus(!changeStatus);
+    setChangeStatus(!changeStatus)
   }
   const handleUpdate = () => {
     handleEditOrderSubmit(id, statusValue!)
     setChangeStatus(!changeStatus)
   }
-
 
   return (
     <>
@@ -71,73 +83,86 @@ export default function OrderDetails({ order, handleEditOrderSubmit }: Props) {
         <Grid container>
           <Grid item xs={12} sm={6} sx={{ mb: 5 }}>
             <Box sx={{ textAlign: { sm: 'left' } }}>
-              {!changeStatus ? <Label
-                variant={theme.palette.mode === 'light' ? 'ghost' : 'filled'}
-                color={
-                  (status === 0 && 'primary') ||
-                  (status === 1 && 'warning') ||
-                  (status === 2 && 'info') ||
-                  (status === 3 && 'success') ||
-                  (status === 4 && 'error') ||
-                  'default'
-                }
-                sx={{ textTransform: 'uppercase', mb: 1 }}
-              >
-                {rs[status]}
-              </Label> : <TextField
-                fullWidth
-                select
-                label="Status"
-                // value={filterStatus}
-                onChange={((e: React.ChangeEvent<HTMLInputElement>) => setStatusValue(toNumber(e.target.value))
-                )}
-                SelectProps={{
-                  MenuProps: {
-                    sx: { '& .MuiPaper-root': { maxHeight: 260 } },
-                  },
-                }}
-                sx={{
-                  maxWidth: { sm: 240 },
-                  textTransform: 'capitalize',
-                }}
-              >
-                {rs.map((value, index) => (
-                  <MenuItem
-                    key={index}
-                    value={index}
-                    sx={{
-                      mx: 1,
-                      my: 0.5,
-                      borderRadius: 0.75,
-                      typography: 'body2',
-                      textTransform: 'capitalize',
-                    }}
-                  >
-                    {value}
-                  </MenuItem>
-                ))}
-              </TextField>
-              }
-
+              {!changeStatus ? (
+                <Label
+                  variant={theme.palette.mode === 'light' ? 'ghost' : 'filled'}
+                  color={
+                    (status === 1 && 'primary') ||
+                    (status === 2 && 'warning') ||
+                    (status === 3 && 'info') ||
+                    (status === 4 && 'success') ||
+                    (status === 5 && 'error') ||
+                    'default'
+                  }
+                  sx={{ textTransform: 'uppercase', mb: 1 }}
+                >
+                  {rs[status]}
+                </Label>
+              ) : (
+                <TextField
+                  fullWidth
+                  select
+                  label="Status"
+                  // value={filterStatus}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setStatusValue(toNumber(e.target.value))
+                  }
+                  SelectProps={{
+                    MenuProps: {
+                      sx: { '& .MuiPaper-root': { maxHeight: 260 } },
+                    },
+                  }}
+                  sx={{
+                    maxWidth: { sm: 240 },
+                    textTransform: 'capitalize',
+                  }}
+                >
+                  {rs.map((value, index) => (
+                    <MenuItem
+                      key={index}
+                      value={index}
+                      sx={{
+                        mx: 1,
+                        my: 0.5,
+                        borderRadius: 0.75,
+                        typography: 'body2',
+                        textTransform: 'capitalize',
+                      }}
+                    >
+                      {value}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              )}
 
               <Typography variant="h6">{`INV-${id}`}</Typography>
             </Box>
           </Grid>
           <Grid item xs={12} sm={6} sx={{ mb: 5 }}>
+            <Stack
+              justifyContent="flex-end"
+              direction="row"
+              sx={{ textAlign: { sm: 'right' } }}
+              spacing={2}
+            >
+              {changeStatus ? (
+                <Button variant="contained" size="large" onClick={handleUpdate}>
+                  Save
+                </Button>
+              ) : (
+                ''
+              )}
 
-            <Stack justifyContent="flex-end" direction="row" sx={{ textAlign: { sm: 'right' } }} spacing={2}>
-              {changeStatus ? <Button variant="contained" size='large' onClick={handleUpdate} >
-                Save
-              </Button> : ''}
-
-              <Button variant="contained" color={changeStatus ? "inherit" : 'primary'} size="large" onClick={handleUpdateStatus}>
-                {changeStatus ? "Cancel" : 'Update'}
+              <Button
+                variant="contained"
+                color={changeStatus ? 'inherit' : 'primary'}
+                size="large"
+                onClick={handleUpdateStatus}
+              >
+                {changeStatus ? 'Cancel' : 'Update'}
               </Button>
-
             </Stack>
-
           </Grid>
-
 
           <Grid item xs={12} sm={6} sx={{ mb: 5 }}>
             <Typography paragraph variant="overline" sx={{ color: 'text.disabled' }}>
@@ -159,7 +184,6 @@ export default function OrderDetails({ order, handleEditOrderSubmit }: Props) {
             </Typography>
             <Typography variant="body2">{fDate(updatedAt!)}</Typography>
           </Grid>
-
         </Grid>
 
         <Scrollbar>
@@ -233,10 +257,7 @@ export default function OrderDetails({ order, handleEditOrderSubmit }: Props) {
                     <Typography>Taxes</Typography>
                   </TableCell>
                   <TableCell align="right" width={120}>
-                    <Typography>
-                      {/* {taxes && fCurrency(taxes)} */}
-                      0
-                    </Typography>
+                    <Typography>{/* {taxes && fCurrency(taxes)} */}0</Typography>
                   </TableCell>
                 </RowResultStyle>
 
@@ -257,5 +278,5 @@ export default function OrderDetails({ order, handleEditOrderSubmit }: Props) {
         <Divider sx={{ mt: 5 }} />
       </Card>
     </>
-  );
+  )
 }

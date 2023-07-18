@@ -26,22 +26,12 @@ export function useProduct({ params, options }: UseProductProps) {
     }
   )
 
-  // const fetcher: Fetcher<Product[]> = () => productApi.getAll()
-  // async function createProduct(payload: Product) {
-  //   await productApi.create(payload)
-  // }
-  // async function updateProduct(id: string, payload: Product) {
-  //   await productApi.update(id, payload)
-  // }
-
   return {
     data,
     error,
     isValidating,
     mutate,
     isLoading,
-    // createProduct,
-    // updateProduct,
   }
 }
 

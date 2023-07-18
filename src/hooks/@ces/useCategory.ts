@@ -8,11 +8,14 @@ type UseCategoryProps = {
   id?: string
 }
 
-export function useCategoryList({ options, params = { Page: '1' } }: UseCategoryProps) {
-  const { data, error, mutate, isLoading } = useSWR(
-    ['category-list', params],
+export function useCategoryList({ options, params }: UseCategoryProps) {
+  const { data, error, mutate, isLoading, isValidating } = useSWR(
+    ['category', params],
     () => categoryApi.getAll(params!),
     {
+      refreshInterval: 0,
+      revalidateOnFocus: false,
+      dedupingInterval: 10 * 1000, // 10s
       keepPreviousData: true,
       fallbackData: {
         code: 0,
@@ -29,20 +32,28 @@ export function useCategoryList({ options, params = { Page: '1' } }: UseCategory
     error,
     isLoading,
     mutate,
+    isValidating,
   }
 }
 
 export function useCategoryDetails({ id, options }: UseCategoryProps) {
-  const { data, error, mutate,isLoading } = useSWR(['categoryId', id], () => categoryApi.getById(id!), {
-    keepPreviousData: true,
-    fallbackData: {
-      code: 0,
-      message: '',
-      metaData: null,
-      data: {},
-    },
-    ...options,
-  })
+  const { data, error, mutate, isLoading } = useSWR(
+    ['categoryId', id],
+    () => categoryApi.getById(id!),
+    {
+      refreshInterval: 0,
+      revalidateOnFocus: false,
+      dedupingInterval: 10 * 1000, // 10s
+      keepPreviousData: true,
+      fallbackData: {
+        code: 0,
+        message: '',
+        metaData: null,
+        data: [],
+      },
+      ...options,
+    }
+  )
 
   return {
     data,

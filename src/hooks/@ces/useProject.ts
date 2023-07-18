@@ -8,7 +8,7 @@ type UseProjectProps = {
   id?: string
 }
 
-export function useProjectList({ params = { Page: '1' }, options }: UseProjectProps) {
+export function useProjectList({ params = { Page: 1 }, options }: UseProjectProps) {
   const { data, error, mutate } = useSWR(
     ['project-list', params],
     () => projectApi.getAll(params!),

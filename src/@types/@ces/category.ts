@@ -1,5 +1,6 @@
 export type Category = {
   id: number
+  imageUrl: string
   name: string
   description: string
   updatedAt: string
@@ -8,6 +9,7 @@ export type Category = {
 }
 
 export type CategoryPayload = {
+  imageUrl: string
   name: string
   description: string
 }

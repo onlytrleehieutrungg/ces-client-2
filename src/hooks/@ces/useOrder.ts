@@ -8,11 +8,14 @@ type UseOrderProps = {
   options?: SWRConfiguration
   id?: string
 }
-export function useOrder({ params = { Page: 1 }, options }: UseOrderProps) {
+export function useOrder({ params, options }: UseOrderProps) {
   const { data, error, mutate, isLoading, isValidating } = useSWR(
     ['/order', params],
     () => orderApi.getAll(params!),
     {
+      refreshInterval: 0,
+      revalidateOnFocus: false,
+      dedupingInterval: 10 * 1000, // 10s
       keepPreviousData: true,
       fallbackData: {
         code: 0,

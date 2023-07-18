@@ -16,8 +16,8 @@ import {
   Tooltip,
 } from '@mui/material'
 import { useRouter } from 'next/router'
-import { useState } from 'react'
-import { Role } from 'src/@types/@ces'
+import { useMemo, useState } from 'react'
+import { Params, Role } from 'src/@types/@ces'
 import { Order, Status } from 'src/@types/@ces/order'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
 import Iconify from 'src/components/Iconify'
@@ -38,6 +38,7 @@ import Layout from 'src/layouts'
 import { PATH_CES } from 'src/routes/paths'
 import OrderTableRow from 'src/sections/@ces/order/OrderTableRow'
 import OrderTableToolbar from 'src/sections/@ces/order/OrderTableToolbar'
+import LoadingTable from 'src/utils/loadingTable'
 
 // ----------------------------------------------------------------------
 
@@ -49,7 +50,6 @@ const TABLE_HEAD = [
   { id: 'id', label: 'Id', align: 'left' },
   { id: 'total', label: 'Total', align: 'left' },
   { id: 'address', label: 'Address', align: 'left' },
-  { id: 'note', label: 'Note', align: 'left' },
   { id: 'status', label: 'Status', align: 'left' },
   { id: '' },
 ]
@@ -79,7 +79,10 @@ export default function OrderPage() {
   } = useTable()
 
   const { push } = useRouter()
-  const { data, mutate, isLoading, isValidating } = useOrder({});
+
+  const [params, setParams] = useState<Partial<Params>>()
+
+  const { data, mutate, isLoading, isValidating } = useOrder({ params })
   const tableData: Order[] = data?.data ?? []
 
   const [filterName, setFilterName] = useState('')
@@ -90,9 +93,8 @@ export default function OrderPage() {
 
   const handleFilterName = (filterName: string) => {
     setFilterName(filterName)
-    setPage(0)
   }
-  console.log(filterStatus)
+  useMemo(() => setParams({ Page: page + 1, Size: rowsPerPage }), [page, rowsPerPage])
 
   const handleFilterStatus = (event: React.ChangeEvent<HTMLInputElement>) => {
     console.log(event.target.value)
@@ -112,9 +114,9 @@ export default function OrderPage() {
   })
 
   const denseHeight = dense ? 52 : 72
-  if (isLoading) {
-    return <LoadingScreen />
-  }
+  // if (isLoading) {
+  //   return <LoadingScreen />
+  // }
   const isNotFound =
     (!dataFiltered.length && !!filterName) ||
     (!dataFiltered.length && !!filterStatus) ||
@@ -153,6 +155,8 @@ export default function OrderPage() {
               onFilterStatus={handleFilterStatus}
               optionsStatus={ROLE_OPTIONS}
             />
+            <LoadingTable isValidating={isValidating} />
+
             <Scrollbar>
               <TableContainer sx={{ minWidth: 800, position: 'relative' }}>
                 {selected.length > 0 && (
@@ -193,17 +197,16 @@ export default function OrderPage() {
                   />
 
                   <TableBody>
-                    {dataFiltered
-                      .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                      .map((row) => (
-                        <OrderTableRow
-                          key={row.id}
-                          row={row}
-                          selected={selected.includes(row.id)}
-                          onSelectRow={() => onSelectRow(row.id)}
-                          onViewRow={() => handleViewRow(row.id)}
-                        />
-                      ))}
+                    {dataFiltered.map((row) => (
+                      <OrderTableRow
+                        key={row.id}
+                        row={row}
+                        isValidating={isValidating}
+                        selected={selected.includes(row.id)}
+                        onSelectRow={() => onSelectRow(row.id)}
+                        onViewRow={() => handleViewRow(row.id)}
+                      />
+                    ))}
 
                     <TableEmptyRows
                       height={denseHeight}
@@ -218,9 +221,9 @@ export default function OrderPage() {
 
             <Box sx={{ position: 'relative' }}>
               <TablePagination
-                rowsPerPageOptions={[5, 10, 25]}
+                rowsPerPageOptions={[5, 10]}
                 component="div"
-                count={dataFiltered.length}
+                count={data?.metaData?.total}
                 rowsPerPage={rowsPerPage}
                 page={page}
                 onPageChange={onChangePage}

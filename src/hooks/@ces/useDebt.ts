@@ -9,7 +9,7 @@ type UseDebtProps = {
   options?: SWRConfiguration
   id?: string
 }
-export function useDebt({ params = { Page: '1' }, options }: UseDebtProps) {
+export function useDebt({ params = { Page: 1 }, options }: UseDebtProps) {
   const { data, error, mutate, isLoading } = useSWR(
     ['/order', params],
     () => debtApi.getAll(params!),
@@ -35,7 +35,7 @@ export function useDebt({ params = { Page: '1' }, options }: UseDebtProps) {
   }
 }
 
-export function useCompanyDebt({ params = { Page: '1' }, options, id }: UseDebtProps) {
+export function useCompanyDebt({ params = { Page: 1 }, options, id }: UseDebtProps) {
   const { data, error, mutate, isLoading } = useSWR(
     ['/order', id],
     () => debtApi.getByCompanyId(id!),

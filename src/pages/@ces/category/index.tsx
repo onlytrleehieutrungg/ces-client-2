@@ -3,22 +3,23 @@ import {
   Box,
   Button,
   Card,
-  Container, FormControlLabel,
+  Container,
+  FormControlLabel,
   IconButton,
-  Switch, Table,
+  Switch,
+  Table,
   TableBody,
   TableContainer,
-  TablePagination, Tooltip
+  TablePagination,
+  Tooltip,
 } from '@mui/material'
 import { paramCase } from 'change-case'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 import { useSnackbar } from 'notistack'
-import { useState } from 'react'
-import { Category, Role } from 'src/@types/@ces'
+import { useMemo, useState } from 'react'
+import { Category, Params, Role } from 'src/@types/@ces'
 import { categoryApi } from 'src/api-client/category'
-// import { UserManager } from 'src/@types/user'
-// import { _userList } from 'src/_mock'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
 import Iconify from 'src/components/Iconify'
 import LoadingScreen from 'src/components/LoadingScreen'
@@ -28,7 +29,7 @@ import {
   TableEmptyRows,
   TableHeadCustom,
   TableNoData,
-  TableSelectedActions
+  TableSelectedActions,
 } from 'src/components/table'
 import RoleBasedGuard from 'src/guards/RoleBasedGuard'
 import { useCategoryList } from 'src/hooks/@ces/useCategory'
@@ -39,10 +40,9 @@ import { PATH_CES } from 'src/routes/paths'
 import CategoryTableRow from 'src/sections/@ces/category/CategoryTableRow'
 import CategoryTableToolbar from 'src/sections/@ces/category/CategoryTableToolbar'
 import { confirmDialog } from 'src/utils/confirmDialog'
-
+import LoadingTable from 'src/utils/loadingTable'
 
 // ----------------------------------------------------------------------
-
 
 const TABLE_HEAD = [
   { id: 'name', label: 'Name', align: 'left' },
@@ -78,9 +78,12 @@ export default function CategoryPage() {
 
   const { push } = useRouter()
 
-  const { data, mutate, isLoading } = useCategoryList({})
+  const [params, setParams] = useState<Partial<Params>>()
+
+  const { data, mutate, isLoading, isValidating } = useCategoryList({ params })
 
   const tableData: Category[] = data?.data ?? []
+
   const { enqueueSnackbar } = useSnackbar()
 
   const [filterName, setFilterName] = useState('')
@@ -91,15 +94,12 @@ export default function CategoryPage() {
 
   const handleFilterName = (filterName: string) => {
     setFilterName(filterName)
-    setPage(0)
-  }
-  if (isLoading) {
-    return <LoadingScreen />
   }
 
   const handleFilterRole = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFilterRole(event.target.value)
   }
+  useMemo(() => setParams({ Page: page + 1, Size: rowsPerPage }), [page, rowsPerPage])
 
   const handleDeleteRow = (id: string) => {
     const cateId = parseInt(id)
@@ -116,7 +116,6 @@ export default function CategoryPage() {
   }
 
   const handleDeleteRows = (selected: string[]) => {
-    // const deleteRows = tableData.filter((row) => !selected.includes(row.id))
     setSelected([])
     console.log('delete all account action')
   }
@@ -162,6 +161,7 @@ export default function CategoryPage() {
 
           <Card>
             <CategoryTableToolbar filterName={filterName} onFilterName={handleFilterName} />
+            <LoadingTable isValidating={isValidating} />
 
             <Scrollbar>
               <TableContainer sx={{ minWidth: 800, position: 'relative' }}>
@@ -203,18 +203,17 @@ export default function CategoryPage() {
                   />
 
                   <TableBody>
-                    {dataFiltered
-                      .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                      .map((row) => (
-                        <CategoryTableRow
-                          key={`${row.id}`}
-                          row={row}
-                          selected={selected.includes(`${row.id}`)}
-                          onSelectRow={() => onSelectRow(`${row.id}`)}
-                          onDeleteRow={() => handleDeleteRow(`${row.id}`)}
-                          onEditRow={() => handleEditRow(row.id)}
-                        />
-                      ))}
+                    {dataFiltered.map((row) => (
+                      <CategoryTableRow
+                        key={`${row.id}`}
+                        row={row}
+                        isValidating={isValidating}
+                        selected={selected.includes(`${row.id}`)}
+                        onSelectRow={() => onSelectRow(`${row.id}`)}
+                        onDeleteRow={() => handleDeleteRow(`${row.id}`)}
+                        onEditRow={() => handleEditRow(row.id)}
+                      />
+                    ))}
                     <TableEmptyRows
                       height={denseHeight}
                       emptyRows={emptyRows(page, rowsPerPage, tableData.length)}
@@ -227,15 +226,14 @@ export default function CategoryPage() {
 
             <Box sx={{ position: 'relative' }}>
               <TablePagination
-                rowsPerPageOptions={[5, 10, 25]}
+                rowsPerPageOptions={[5, 10]}
                 component="div"
-                count={dataFiltered.length}
+                count={data?.metaData?.total}
                 rowsPerPage={rowsPerPage}
                 page={page}
                 onPageChange={onChangePage}
                 onRowsPerPageChange={onChangeRowsPerPage}
               />
-
               <FormControlLabel
                 control={<Switch checked={dense} onChange={onChangeDense} />}
                 label="Dense"
@@ -294,4 +292,3 @@ function applySortFilter({
 // function enqueueSnackbar(arg0: string) {
 //   throw new Error('Function not implemented.')
 // }
-

@@ -27,6 +27,7 @@ export type OrderDetail = {
   product: Product
 }
 export enum Status {
+  ALL = '',
   NEW = 'New',
   WFP = 'Confirm',
   WFS = 'Waiting for ship',

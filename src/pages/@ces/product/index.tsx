@@ -48,7 +48,6 @@ import LoadingTable from 'src/utils/loadingTable'
 
 const TABLE_HEAD = [
   { id: 'name', label: 'Name', align: 'left' },
-  { id: 'description', label: 'Description', align: 'left' },
   { id: 'price', label: 'Price', align: 'left' },
   { id: 'quantity', label: 'Quantity', align: 'left' },
   { id: 'category.name', label: 'Category', align: 'left' },
@@ -83,22 +82,21 @@ export default function ProductPage() {
   const { push } = useRouter()
   const [filterName, setFilterName] = useState('')
   const [filterRole, setFilterRole] = useState('all')
+
   const [params, setParams] = useState<Partial<Params>>()
+  
   const { data, mutate, isLoading, isValidating } = useProduct({ params })
+
   const tableData: Product[] = data?.data ?? []
+
   const { currentTab: filterStatus, onChangeTab: onChangeFilterStatus } = useTabs('all')
+
   const { enqueueSnackbar } = useSnackbar()
+
   const handleFilterName = (filterName: string) => {
     setFilterName(filterName)
-    // setPage(0)
   }
   useMemo(() => setParams({ Page: page + 1, Size: rowsPerPage }), [page, rowsPerPage])
-
-  console.log(rowsPerPage)
-
-  // const handleFilterRole = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   setFilterRole(event.target.value)
-  // }
 
   const handleDeleteRow = (id: string) => {
     confirmDialog('Do you really want to delete this product ?', async () => {
@@ -112,11 +110,8 @@ export default function ProductPage() {
       }
     })
   }
-  // if (isLoading) {
-  //   return <LoadingScreen />
-  // }
+
   const handleDeleteRows = (selected: string[]) => {
-    // const deleteRows = tableData.filter((row) => !selected.includes(row.id))
     setSelected([])
     console.log('delete all account action')
   }
@@ -200,19 +195,17 @@ export default function ProductPage() {
                     }
                   />
                   <TableBody>
-                    {dataFiltered
-                      // .slice(page * 0, dataFiltered.length)
-                      .map((row) => (
-                        <ProductTableRow
-                          key={`${row.id}`}
-                          row={row}
-                          isValidating={isValidating}
-                          selected={selected.includes(`${row.id}`)}
-                          onSelectRow={() => onSelectRow(`${row.id}`)}
-                          onDeleteRow={() => handleDeleteRow(`${row.id}`)}
-                          onEditRow={() => handleEditRow(row.id)}
-                        />
-                      ))}
+                    {dataFiltered.map((row) => (
+                      <ProductTableRow
+                        key={`${row.id}`}
+                        row={row}
+                        isValidating={isValidating}
+                        selected={selected.includes(`${row.id}`)}
+                        onSelectRow={() => onSelectRow(`${row.id}`)}
+                        onDeleteRow={() => handleDeleteRow(`${row.id}`)}
+                        onEditRow={() => handleEditRow(row.id)}
+                      />
+                    ))}
 
                     <TableEmptyRows
                       height={denseHeight}

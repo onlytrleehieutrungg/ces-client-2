@@ -9,7 +9,7 @@ type UseBenefitProps = {
   id?: string
 }
 
-export function useBenefitList({ options, params = { Page: '1' } }: UseBenefitProps) {
+export function useBenefitList({ options, params = { Page: 1 } }: UseBenefitProps) {
   const { user } = useAuth()
   const { data, error, mutate } = useSWR(
     ['benefit-list', params],

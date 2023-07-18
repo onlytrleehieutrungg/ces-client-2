@@ -95,7 +95,7 @@ export default function CompanyPage() {
   const { enqueueSnackbar } = useSnackbar()
 
   const { data } = useCompanyList({
-    params: { Page: '1' },
+    params: { Page: 1 },
     // options: {
     //   revalidateOnFocus: false,
     //   revalidateOnMount: false,
@@ -189,7 +189,7 @@ export default function CompanyPage() {
           heading="Company List"
           links={[{ name: 'Dashboard', href: '' }, { name: 'Company', href: '' }, { name: 'List' }]}
           action={
-            <NextLink href={{ pathname: PATH_CES.account.new,}} passHref>
+            <NextLink href={{ pathname: PATH_CES.account.new }} passHref>
               <Button variant="contained" startIcon={<Iconify icon={'eva:plus-fill'} />}>
                 New Company
               </Button>

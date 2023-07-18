@@ -7,7 +7,7 @@ type UsePaymentProps = {
   options?: SWRConfiguration
   id?: string
 }
-export function usePayment({ params = { Page: '1' }, options }: UsePaymentProps) {
+export function usePayment({ params = { Page: 1 }, options }: UsePaymentProps) {
   const { data, error, mutate, isLoading } = useSWR(
     ['/transaction-wallet', params],
     () => paymentApi.transaction(params!),
