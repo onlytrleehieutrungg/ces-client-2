@@ -373,7 +373,7 @@ function applySortFilter({
     tableData = tableData.filter((item: Record<string, any>) => item.status == filterStatus)
   }
 
-  const filterIds = projectDetails?.groupAccounts?.map((obj: any) => obj.accountId)
+  const filterIds = projectDetails?.employeeGroupMappings?.map((obj: any) => obj.employee.accountId)
 
   if (filterRole !== 'all') {
     const filterFunc =
