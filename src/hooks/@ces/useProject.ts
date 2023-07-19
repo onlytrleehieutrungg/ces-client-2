@@ -9,7 +9,7 @@ type UseProjectProps = {
 }
 
 export function useProjectList({ params = { Page: 1 }, options }: UseProjectProps) {
-  const { data, error, mutate } = useSWR(
+  const { data, error, mutate, isValidating } = useSWR(
     ['project-list', params],
     () => projectApi.getAll(params!),
     {
@@ -43,6 +43,7 @@ export function useProjectList({ params = { Page: 1 }, options }: UseProjectProp
     data,
     error,
     mutate,
+    isValidating,
     // create,
     // update,
     // remove,

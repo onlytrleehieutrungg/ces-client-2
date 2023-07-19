@@ -52,6 +52,9 @@ export default function ProductTableRow({
 
       <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
         <Avatar alt={name} src={imageUrl} sx={{ mr: 2 }} />
+        <Typography variant="subtitle2" noWrap>
+          {name}
+        </Typography>
       </TableCell>
       <TableCell align="left">{price}</TableCell>
 

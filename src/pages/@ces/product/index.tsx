@@ -43,6 +43,7 @@ import ProductTableRow from 'src/sections/@ces/product/ProductTableRow'
 import ProductTableToolbar from 'src/sections/@ces/product/ProductTableToolbar'
 import { confirmDialog } from 'src/utils/confirmDialog'
 import LoadingTable from 'src/utils/loadingTable'
+import { debounce } from 'lodash'
 
 // ----------------------------------------------------------------------
 
@@ -84,7 +85,7 @@ export default function ProductPage() {
   const [filterRole, setFilterRole] = useState('all')
 
   const [params, setParams] = useState<Partial<Params>>()
-  
+
   const { data, mutate, isLoading, isValidating } = useProduct({ params })
 
   const tableData: Product[] = data?.data ?? []
@@ -93,10 +94,14 @@ export default function ProductPage() {
 
   const { enqueueSnackbar } = useSnackbar()
 
+  useMemo(
+    () => setParams({ Page: page + 1, Size: rowsPerPage, Name: filterName }),
+    [page, rowsPerPage, filterName]
+  )
+
   const handleFilterName = (filterName: string) => {
     setFilterName(filterName)
   }
-  useMemo(() => setParams({ Page: page + 1, Size: rowsPerPage }), [page, rowsPerPage])
 
   const handleDeleteRow = (id: string) => {
     confirmDialog('Do you really want to delete this product ?', async () => {
@@ -268,10 +273,10 @@ function applySortFilter({
   tableData = stabilizedThis.map((el) => el[0])
 
   if (filterName) {
-    tableData = tableData.filter(
-      (item: Record<string, any>) =>
-        item?.name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
-    )
+    // tableData = tableData.filter(
+    //   (item: Record<string, any>) =>
+    //     item?.name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
+    // )
   }
 
   if (filterStatus !== 'all') {

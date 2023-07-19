@@ -57,42 +57,7 @@ export default function CategoryTableRow({
           {name}
         </Typography>
       </TableCell>
-
-      {/* <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
-                <Avatar alt={Name} src={avatarUrl} sx={{ mr: 2 }} />
-                <Typography variant="subtitle2" noWrap>
-                    {Name}
-                </Typography>
-            </TableCell> */}
-      <TableCell align="left">{name}</TableCell>
       <TableCell align="left">{description}</TableCell>
-      {/* <TableCell align="left">{status}</TableCell> */}
-
-      {/* <TableCell align="left" sx={{ textTransform: 'capitalize' }}>
-                {Quantity}
-            </TableCell>
-            <TableCell align="left">{CategoryId}</TableCell> */}
-      {/* <TableCell align="center">
-                <Iconify
-                    icon={isVerified ? 'eva:checkmark-circle-fill' : 'eva:clock-outline'}
-                    sx={{
-                        width: 20,
-                        height: 20,
-                        color: 'success.main',
-                        ...(!isVerified && { color: 'warning.main' }),
-                    }}
-                />
-            </TableCell> */}
-
-      {/* <TableCell align="left">
-                <Label
-                    variant={theme.palette.mode === 'light' ? 'ghost' : 'filled'}
-                    color={(status === 'banned' && 'error') || 'success'}
-                    sx={{ textTransform: 'capitalize' }}
-                >
-                    {status}
-                </Label>
-            </TableCell> */}
 
       <TableCell align="right">
         <TableMoreMenu

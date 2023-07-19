@@ -92,15 +92,13 @@ export default function CategoryPage() {
 
   const { currentTab: filterStatus, onChangeTab: onChangeFilterStatus } = useTabs('all')
 
-  const handleFilterName = (filterName: string) => {
-    setFilterName(filterName)
-  }
-
   const handleFilterRole = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFilterRole(event.target.value)
   }
-  useMemo(() => setParams({ Page: page + 1, Size: rowsPerPage }), [page, rowsPerPage])
-
+  useMemo(
+    () => setParams({ Page: page + 1, Size: rowsPerPage, Name: filterName }),
+    [page, rowsPerPage, filterName]
+  )
   const handleDeleteRow = (id: string) => {
     const cateId = parseInt(id)
     confirmDialog('Do you really want to delete this category ?', async () => {
@@ -118,6 +116,10 @@ export default function CategoryPage() {
   const handleDeleteRows = (selected: string[]) => {
     setSelected([])
     console.log('delete all account action')
+  }
+
+  const handleFilterName = (filterName: string) => {
+    setFilterName(filterName)
   }
 
   const handleEditRow = (id: number) => {

@@ -1,16 +1,20 @@
 // @mui
-import { IconButton, InputAdornment, Stack, TextField, Tooltip } from '@mui/material';
-import Iconify from 'src/components/Iconify';
+import { IconButton, InputAdornment, Stack, TextField, Tooltip } from '@mui/material'
+import Iconify from 'src/components/Iconify'
+import { debounce } from 'lodash'
 // components
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  filterName: string;
-  onFilterName: (value: string) => void;
-};
+  filterName?: string
+  onFilterName: (value: string) => void
+}
 
 export default function ProductTableToolbar({ filterName, onFilterName }: Props) {
+  // const debounceFilterName = debounce((event) => {
+  //   onFilterName(event)
+  // }, 1000)
   return (
     <Stack
       direction="row"
@@ -19,7 +23,7 @@ export default function ProductTableToolbar({ filterName, onFilterName }: Props)
       sx={{ py: 2.5, px: 3 }}
     >
       <TextField
-      fullWidth
+        fullWidth
         value={filterName}
         onChange={(event) => onFilterName(event.target.value)}
         placeholder="Search product..."
@@ -41,5 +45,5 @@ export default function ProductTableToolbar({ filterName, onFilterName }: Props)
         </IconButton>
       </Tooltip>
     </Stack>
-  );
+  )
 }

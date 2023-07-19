@@ -6,6 +6,7 @@ export type BaseResponse<T> = {
 }
 
 export type Params = {
+  Name?: string
   Page: number
   Size: number
   Sort: string

@@ -20,6 +20,7 @@ import createAvatar from 'src/utils/createAvatar'
 type Props = {
   row: ProjectData
   selected: boolean
+  isValidating: boolean
   onEditRow: VoidFunction
   onSelectRow: VoidFunction
   onDeleteRow: VoidFunction
@@ -32,6 +33,7 @@ export default function ProjectTableRow({
   onEditRow,
   onSelectRow,
   onDeleteRow,
+  isValidating,
   onClickRow,
 }: Props) {
   const theme = useTheme()
@@ -43,7 +45,9 @@ export default function ProjectTableRow({
   const handleOpenMenu = (event: React.MouseEvent<HTMLElement>) => {
     setOpenMenuActions(event.currentTarget)
   }
-
+  if (isValidating) {
+    return null
+  }
   const handleCloseMenu = () => {
     setOpenMenuActions(null)
   }

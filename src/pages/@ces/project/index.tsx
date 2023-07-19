@@ -22,8 +22,8 @@ import {
 import { paramCase } from 'change-case'
 import { useRouter } from 'next/router'
 import { useSnackbar } from 'notistack'
-import { useState } from 'react'
-import { Role } from 'src/@types/@ces'
+import { useMemo, useState } from 'react'
+import { Params, Role } from 'src/@types/@ces'
 import { PROJECT_STATUS_OPTIONS, ProjectData } from 'src/@types/@ces/project'
 import { projectApi } from 'src/api-client'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
@@ -44,6 +44,7 @@ import { PATH_CES } from 'src/routes/paths'
 import ProjectTableRow from 'src/sections/@ces/project/ProjectTableRow'
 import ProjectTableToolbar from 'src/sections/@ces/project/ProjectTableToolbar'
 import { confirmDialog } from 'src/utils/confirmDialog'
+import LoadingTable from 'src/utils/loadingTable'
 
 // ----------------------------------------------------------------------
 
@@ -87,8 +88,9 @@ export default function ProjectPage() {
   const { themeStretch } = useSettings()
 
   const { enqueueSnackbar } = useSnackbar()
+  const [params, setParams] = useState<Partial<Params>>()
 
-  const { data } = useProjectList({})
+  const { data, isValidating } = useProjectList({ params })
   const projectList: ProjectData[] = data?.data || []
 
   const statusList = PROJECT_STATUS_OPTIONS
@@ -98,7 +100,10 @@ export default function ProjectPage() {
   const [filterRole, setFilterRole] = useState('all')
 
   const { currentTab: filterStatus, onChangeTab: onChangeFilterStatus } = useTabs('all')
-
+  useMemo(
+    () => setParams({ Page: page + 1, Size: rowsPerPage, Name: filterName }),
+    [page, rowsPerPage, filterName]
+  )
   const handleFilterName = (filterName: string) => {
     setFilterName(filterName)
     setPage(0)
@@ -187,6 +192,7 @@ export default function ProjectPage() {
               onFilterRole={handleFilterRole}
               // optionsRole={ROLE_OPTIONS}
             />
+            <LoadingTable isValidating={isValidating} />
 
             <Scrollbar>
               <TableContainer sx={{ minWidth: 800, position: 'relative' }}>
@@ -228,19 +234,18 @@ export default function ProjectPage() {
                   />
 
                   <TableBody>
-                    {dataFiltered
-                      .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                      .map((row) => (
-                        <ProjectTableRow
-                          key={`${row.id}`}
-                          row={row}
-                          selected={selected.includes(`${row.id}`)}
-                          onSelectRow={() => onSelectRow(`${row.id}`)}
-                          onDeleteRow={() => handleDeleteRow(`${row.id}`)}
-                          onEditRow={() => handleEditRow(row.id)}
-                          onClickRow={() => handleClickRow(`${row.id}`)}
-                        />
-                      ))}
+                    {dataFiltered.map((row) => (
+                      <ProjectTableRow
+                        key={`${row.id}`}
+                        row={row}
+                        isValidating={isValidating}
+                        selected={selected.includes(`${row.id}`)}
+                        onSelectRow={() => onSelectRow(`${row.id}`)}
+                        onDeleteRow={() => handleDeleteRow(`${row.id}`)}
+                        onEditRow={() => handleEditRow(row.id)}
+                        onClickRow={() => handleClickRow(`${row.id}`)}
+                      />
+                    ))}
 
                     <TableEmptyRows
                       height={denseHeight}
@@ -255,14 +260,11 @@ export default function ProjectPage() {
 
             <Box sx={{ position: 'relative' }}>
               <TablePagination
-                rowsPerPageOptions={[5, 10, 25]}
+                rowsPerPageOptions={[5, 10]}
                 component="div"
-                count={dataFiltered.length}
+                count={data?.metaData?.total}
                 rowsPerPage={rowsPerPage}
                 page={page}
-                // onPageChange={(e) => {
-                //   onChangePage(e, page)
-                // }}
                 onPageChange={onChangePage}
                 onRowsPerPageChange={onChangeRowsPerPage}
               />
