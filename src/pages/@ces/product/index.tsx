@@ -83,6 +83,7 @@ export default function ProductPage() {
   const { push } = useRouter()
   const [filterName, setFilterName] = useState('')
   const [filterRole, setFilterRole] = useState('all')
+  const [timeoutName, setTimeoutName] = useState<any>()
 
   const [params, setParams] = useState<Partial<Params>>()
 
@@ -94,14 +95,27 @@ export default function ProductPage() {
 
   const { enqueueSnackbar } = useSnackbar()
 
-  useMemo(
-    () => setParams({ Page: page + 1, Size: rowsPerPage, Name: filterName }),
-    [page, rowsPerPage, filterName]
-  )
+  useMemo(() => setParams({ Page: page + 1, Size: rowsPerPage }), [page, rowsPerPage])
+
+  const filterNameFuction = (value: string) => {
+    setParams({ Page: page + 1, Size: rowsPerPage, Name: value })
+  }
 
   const handleFilterName = (filterName: string) => {
     setFilterName(filterName)
+
+    if (timeoutName) {
+      clearTimeout(timeoutName)
+    }
+
+    const newTimeoutname = setTimeout(() => {
+      filterNameFuction(filterName)
+    }, 300)
+
+    setTimeoutName(newTimeoutname)
   }
+
+  //1 func: nhận 1 biến nếu timeout true thì clear nó
 
   const handleDeleteRow = (id: string) => {
     confirmDialog('Do you really want to delete this product ?', async () => {
