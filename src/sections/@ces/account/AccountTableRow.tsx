@@ -20,6 +20,7 @@ import Avatar from 'src/components/Avatar'
 type Props = {
   row: AccountData
   selected: boolean
+  isValidating: boolean
   onEditRow: VoidFunction
   onSelectRow: VoidFunction
   onDeleteRow: VoidFunction
@@ -31,6 +32,7 @@ export default function AccountTableRow({
   selected,
   onEditRow,
   onSelectRow,
+  isValidating,
   onDeleteRow,
   onClickRow,
 }: Props) {
@@ -46,6 +48,9 @@ export default function AccountTableRow({
 
   const handleCloseMenu = () => {
     setOpenMenuActions(null)
+  }
+  if (isValidating) {
+    return null
   }
 
   return (

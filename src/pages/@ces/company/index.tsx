@@ -20,8 +20,8 @@ import { paramCase } from 'change-case'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 import { useSnackbar } from 'notistack'
-import { useState } from 'react'
-import { ACCOUNT_STATUS_OPTIONS_SA, CompanyData } from 'src/@types/@ces'
+import { useMemo, useState } from 'react'
+import { ACCOUNT_STATUS_OPTIONS_SA, CompanyData, Params } from 'src/@types/@ces'
 import { debtApi } from 'src/api-client/debt'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
 import Iconify from 'src/components/Iconify'
@@ -42,6 +42,7 @@ import { PATH_CES } from 'src/routes/paths'
 import CompanyTableRow from 'src/sections/@ces/company/CompanyTableRow'
 import CompanyTableToolbar from 'src/sections/@ces/company/CompanyTableToolbar'
 import { confirmDialog } from 'src/utils/confirmDialog'
+import LoadingTable from 'src/utils/loadingTable'
 
 // ----------------------------------------------------------------------
 
@@ -91,17 +92,13 @@ export default function CompanyPage() {
 
   // const roleOptions = user?.role === Role['System Admin'] ? ROLE_OPTIONS_SA : ROLE_OPTIONS_EA
   const statusOptions = ACCOUNT_STATUS_OPTIONS_SA
+  const [params, setParams] = useState<Partial<Params>>()
 
   const { enqueueSnackbar } = useSnackbar()
 
-  const { data } = useCompanyList({
-    params: { Page: 1 },
-    // options: {
-    //   revalidateOnFocus: false,
-    //   revalidateOnMount: false,
-    //   dedupingInterval: 60 * 60 * 1000,
-    // },
-  })
+  const { data, isValidating } = useCompanyList({ params })
+  useMemo(() => setParams({ Page: page + 1, Size: rowsPerPage }), [page, rowsPerPage])
+
   const companyList = data?.data || []
 
   const [filterName, setFilterName] = useState('')
@@ -112,7 +109,6 @@ export default function CompanyPage() {
 
   const handleFilterName = (filterName: string) => {
     setFilterName(filterName)
-    setPage(0)
   }
 
   // const handleFilterRole = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -220,6 +216,7 @@ export default function CompanyPage() {
             // onFilterRole={handleFilterRole}
             // optionsRole={roleOptions}
           />
+          <LoadingTable isValidating={isValidating} />
 
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800, position: 'relative' }}>
@@ -269,20 +266,19 @@ export default function CompanyPage() {
                 />
 
                 <TableBody>
-                  {dataFiltered
-                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                    .map((row) => (
-                      <CompanyTableRow
-                        key={`${row.id}`}
-                        row={row}
-                        selected={selected.includes(`${row.id}`)}
-                        onSelectRow={() => onSelectRow(`${row.id}`)}
-                        onDeleteRow={() => handleDeleteRow(`${row.id}`)}
-                        onEditRow={() => handleEditRow(`${row.id}`)}
-                        onClickRow={() => handleClickRow(`${row.id}`)}
-                        onDueRow={() => handleDueRow(row.id)}
-                      />
-                    ))}
+                  {dataFiltered.map((row) => (
+                    <CompanyTableRow
+                      key={`${row.id}`}
+                      row={row}
+                      isValidating={isValidating}
+                      selected={selected.includes(`${row.id}`)}
+                      onSelectRow={() => onSelectRow(`${row.id}`)}
+                      onDeleteRow={() => handleDeleteRow(`${row.id}`)}
+                      onEditRow={() => handleEditRow(`${row.id}`)}
+                      onClickRow={() => handleClickRow(`${row.id}`)}
+                      onDueRow={() => handleDueRow(row.id)}
+                    />
+                  ))}
 
                   <TableEmptyRows
                     height={denseHeight}
@@ -299,7 +295,7 @@ export default function CompanyPage() {
             <TablePagination
               rowsPerPageOptions={[5, 10, 25]}
               component="div"
-              count={dataFiltered.length}
+              count={data?.metaData?.total}
               rowsPerPage={rowsPerPage}
               page={page}
               onPageChange={onChangePage}

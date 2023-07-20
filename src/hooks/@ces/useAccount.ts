@@ -8,8 +8,8 @@ type UseAccountProps = {
   id?: string
 }
 
-export function useAccountList({ options, params = { Page: 1 } }: UseAccountProps) {
-  const { data, error, mutate } = useSWR(
+export function useAccountList({ options, params }: UseAccountProps) {
+  const { data, error, mutate, isValidating } = useSWR(
     ['account-list', params],
     () => accountApi.getAll(params!),
     {
@@ -37,6 +37,7 @@ export function useAccountList({ options, params = { Page: 1 } }: UseAccountProp
     data,
     error,
     mutate,
+    isValidating,
     // create,
     // update,
   }

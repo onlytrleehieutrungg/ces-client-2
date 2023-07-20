@@ -13,6 +13,7 @@ import { fDateVN } from 'src/utils/formatTime'
 type Props = {
   row: CompanyData
   selected: boolean
+  isValidating: boolean
   onEditRow: VoidFunction
   onSelectRow: VoidFunction
   onDeleteRow: VoidFunction
@@ -25,6 +26,7 @@ export default function CompanyTableRow({
   selected,
   onEditRow,
   onSelectRow,
+  isValidating,
   onDeleteRow,
   onDueRow,
   onClickRow,
@@ -42,7 +44,9 @@ export default function CompanyTableRow({
   const handleCloseMenu = () => {
     setOpenMenuActions(null)
   }
-
+  if (isValidating) {
+    return null
+  }
   return (
     <TableRow hover selected={selected} sx={{ cursor: 'pointer' }} onClick={onClickRow}>
       <TableCell

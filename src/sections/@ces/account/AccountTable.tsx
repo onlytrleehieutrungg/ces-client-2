@@ -16,13 +16,14 @@ import {
 import { paramCase } from 'change-case'
 import { useRouter } from 'next/router'
 import { useSnackbar } from 'notistack'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import {
   ACCOUNT_STATUS_OPTIONS_SA,
   AccountData,
   ROLE_OPTIONS_EA,
   ROLE_OPTIONS_SA,
   Role,
+  Params,
 } from 'src/@types/@ces'
 import { accountApi } from 'src/api-client'
 import Iconify from 'src/components/Iconify'
@@ -39,6 +40,7 @@ import useTable, { emptyRows, getComparator } from 'src/hooks/useTable'
 import useTabs from 'src/hooks/useTabs'
 import { PATH_CES } from 'src/routes/paths'
 import { confirmDialog } from 'src/utils/confirmDialog'
+import LoadingTable from 'src/utils/loadingTable'
 import AccountTableRow from './AccountTableRow'
 import AccountTableToolbar from './AccountTableToolbar'
 
@@ -86,16 +88,11 @@ export default function AccountTable({}: Props) {
   const statusOptions = ACCOUNT_STATUS_OPTIONS_SA
 
   const { enqueueSnackbar } = useSnackbar()
+  const [params, setParams] = useState<Partial<Params>>()
 
-  const { data, mutate } = useAccountList({
-    params: { Page: '1' },
-    // options: {
-    //   revalidateOnFocus: false,
-    //   revalidateOnMount: false,
-    //   dedupingInterval: 60 * 60 * 1000,
-    // },
-  })
+  const { data, mutate, isValidating } = useAccountList({ params })
   const accountList = data?.data || []
+  useMemo(() => setParams({ Page: page + 1, Size: rowsPerPage }), [page, rowsPerPage])
 
   const [filterName, setFilterName] = useState('')
 
@@ -105,7 +102,6 @@ export default function AccountTable({}: Props) {
 
   const handleFilterName = (filterName: string) => {
     setFilterName(filterName)
-    setPage(0)
   }
 
   const handleFilterRole = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -118,10 +114,6 @@ export default function AccountTable({}: Props) {
       try {
         await accountApi.delete(id)
         mutate()
-        // mutate(accountApi.delete(id), {
-        //   optimisticData: [],
-        // })
-
         enqueueSnackbar('Delete successful')
       } catch (error) {
         enqueueSnackbar('Delete failed', { variant: 'error' })
@@ -183,6 +175,7 @@ export default function AccountTable({}: Props) {
         onFilterRole={handleFilterRole}
         optionsRole={roleOptions}
       />
+      <LoadingTable isValidating={isValidating} />
 
       <Scrollbar>
         <TableContainer sx={{ minWidth: 800, position: 'relative' }}>
@@ -236,19 +229,18 @@ export default function AccountTable({}: Props) {
             />
 
             <TableBody>
-              {dataFiltered
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row) => (
-                  <AccountTableRow
-                    key={`${row.id}`}
-                    row={row}
-                    selected={selected.includes(`${row.id}`)}
-                    onSelectRow={() => onSelectRow(`${row.id}`)}
-                    onDeleteRow={() => handleDeleteRow(`${row.id}`)}
-                    onEditRow={() => handleEditRow(row.id)}
-                    onClickRow={() => handleClickRow(`${row.id}`)}
-                  />
-                ))}
+              {dataFiltered.map((row) => (
+                <AccountTableRow
+                  key={`${row.id}`}
+                  row={row}
+                  isValidating={isValidating}
+                  selected={selected.includes(`${row.id}`)}
+                  onSelectRow={() => onSelectRow(`${row.id}`)}
+                  onDeleteRow={() => handleDeleteRow(`${row.id}`)}
+                  onEditRow={() => handleEditRow(row.id)}
+                  onClickRow={() => handleClickRow(`${row.id}`)}
+                />
+              ))}
 
               <TableEmptyRows
                 height={denseHeight}
@@ -265,13 +257,10 @@ export default function AccountTable({}: Props) {
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={dataFiltered.length}
+          count={data?.metaData?.total}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={onChangePage}
-          // onPageChange={(e, newPage) => {
-          //   onChangePage(e, newPage)
-          // }}
           onRowsPerPageChange={onChangeRowsPerPage}
         />
 

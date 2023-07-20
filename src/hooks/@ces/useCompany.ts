@@ -8,8 +8,8 @@ type UseCompanyProps = {
   id?: string
 }
 
-export function useCompanyList({ options, params = { Page: 1 } }: UseCompanyProps) {
-  const { data, error, mutate } = useSWR(
+export function useCompanyList({ options, params }: UseCompanyProps) {
+  const { data, error, mutate, isValidating } = useSWR(
     ['company-list', params],
     () => companyApi.getAll(params!),
     {
@@ -29,6 +29,7 @@ export function useCompanyList({ options, params = { Page: 1 } }: UseCompanyProp
   return {
     data,
     error,
+    isValidating,
     mutate,
   }
 }

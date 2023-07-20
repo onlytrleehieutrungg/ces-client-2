@@ -19,8 +19,8 @@ import {
 import { paramCase } from 'change-case'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
-import { useState } from 'react'
-import { BenefitData, Role } from 'src/@types/@ces'
+import { useMemo, useState } from 'react'
+import { BenefitData, Params, Role } from 'src/@types/@ces'
 import { PROJECT_STATUS_OPTIONS } from 'src/@types/@ces/project'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
 import Iconify from 'src/components/Iconify'
@@ -41,6 +41,7 @@ import Layout from 'src/layouts'
 import { PATH_CES } from 'src/routes/paths'
 import BenefitTableRow from 'src/sections/@ces/benefit/BenefitTableRow'
 import BenefitTableToolbar from 'src/sections/@ces/benefit/BenefitTableToolbar'
+import LoadingTable from 'src/utils/loadingTable'
 
 // ----------------------------------------------------------------------
 
@@ -82,8 +83,9 @@ export default function BenefitPage() {
   const { push } = useRouter()
 
   const { themeStretch } = useSettings()
+  const [params, setParams] = useState<Partial<Params>>()
 
-  const { data } = useBenefitList({})
+  const { data, isValidating } = useBenefitList({ params })
   const projectList: BenefitData[] = data?.data || []
 
   const statusList = PROJECT_STATUS_OPTIONS
@@ -96,8 +98,8 @@ export default function BenefitPage() {
 
   const handleFilterName = (filterName: string) => {
     setFilterName(filterName)
-    setPage(0)
   }
+  useMemo(() => setParams({ Page: page + 1, Size: rowsPerPage }), [page, rowsPerPage])
 
   const handleFilterRole = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFilterRole(event.target.value)
@@ -182,6 +184,7 @@ export default function BenefitPage() {
               onFilterRole={handleFilterRole}
               // optionsRole={ROLE_OPTIONS}
             />
+            <LoadingTable isValidating={isValidating} />
 
             <Scrollbar>
               <TableContainer sx={{ minWidth: 800, position: 'relative' }}>
@@ -223,19 +226,17 @@ export default function BenefitPage() {
                   />
 
                   <TableBody>
-                    {dataFiltered
-                      .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                      .map((row) => (
-                        <BenefitTableRow
-                          key={`${row.id}`}
-                          row={row}
-                          selected={selected.includes(`${row.id}`)}
-                          onSelectRow={() => onSelectRow(`${row.id}`)}
-                          onDeleteRow={() => handleDeleteRow(`${row.id}`)}
-                          onEditRow={() => handleEditRow(`${row.id}`)}
-                          onClickRow={() => handleClickRow(`${row.id}`)}
-                        />
-                      ))}
+                    {dataFiltered.map((row) => (
+                      <BenefitTableRow
+                        key={`${row.id}`}
+                        row={row}
+                        selected={selected.includes(`${row.id}`)}
+                        onSelectRow={() => onSelectRow(`${row.id}`)}
+                        onDeleteRow={() => handleDeleteRow(`${row.id}`)}
+                        onEditRow={() => handleEditRow(`${row.id}`)}
+                        onClickRow={() => handleClickRow(`${row.id}`)}
+                      />
+                    ))}
 
                     <TableEmptyRows
                       height={denseHeight}
