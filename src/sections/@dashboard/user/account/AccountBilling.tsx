@@ -48,19 +48,14 @@ export default function AccountBilling({ cards, addressBook, invoices, payload }
   return (
     <Grid container spacing={5}>
       <Grid item xs={12} md={8}>
-        <Stack spacing={3}>
-          <Card sx={{ p: 3 }}>
-            <Typography
-              variant="overline"
-              sx={{ mb: 3, display: 'block', color: 'text.secondary' }}
-            >
-              Payment Action
-            </Typography>
+        <Stack spacing={2}>
+          <Card sx={{ p: 2 }}>
             <Box
               sx={{
-                mt: { xs: 2, sm: 0 },
+                // mt: { xs: 2, sm: 0 },
                 position: { sm: 'absolute' },
-                top: { sm: 24 },
+                // top: { sm: 10 },
+                alignSelf: 'center',
                 right: { sm: 24 },
               }}
             >
@@ -77,24 +72,10 @@ export default function AccountBilling({ cards, addressBook, invoices, payload }
             onOpen={() => setOpen(!open)}
             onCancel={() => setOpen(false)}
           />
-
-          {/* <AccountBillingAddressBook addressBook={addressBook} /> */}
         </Stack>
 
-        <Card sx={{ p: 3 }}>
+        <Card sx={{ p: 3, mt: 2 }}>
           <AccountOrderHistory order={orders?.data} />
-          {/* <Box
-            sx={{
-              mt: { xs: 2, sm: 0 },
-              position: { sm: 'absolute' },
-              top: { sm: 24 },
-              right: { sm: 24 },
-            }}
-          >
-            <Button color="inherit" variant="outlined">
-              View report
-            </Button>
-          </Box> */}
         </Card>
       </Grid>
       <Grid item xs={12} md={4}>

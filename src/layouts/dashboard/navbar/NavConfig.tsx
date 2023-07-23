@@ -31,6 +31,16 @@ const ICONS = {
 const navConfig = [
   // CES-ADMIN
   {
+    subheader: 'general',
+    items: [
+      { title: 'report', path: PATH_DASHBOARD.general.app, icon: ICONS.dashboard },
+      // { title: 'ecommerce', path: PATH_DASHBOARD.general.ecommerce, icon: ICONS.ecommerce },
+      // { title: 'analytics', path: PATH_DASHBOARD.general.analytics, icon: ICONS.analytics },
+      // { title: 'banking', path: PATH_DASHBOARD.general.banking, icon: ICONS.banking },
+      // { title: 'booking', path: PATH_DASHBOARD.general.booking, icon: ICONS.booking },
+    ],
+  },
+  {
     subheader: 'CES-CLIENT',
     items: [
       {
@@ -45,12 +55,12 @@ const navConfig = [
         icon: ICONS.analytics,
         roles: [Role['System Admin']],
       },
-      {
-        title: 'debt',
-        path: PATH_CES.debt.root,
-        icon: ICONS.invoice,
-        roles: [Role['System Admin']],
-      },
+      // {
+      //   title: 'debt',
+      //   path: PATH_CES.debt.root,
+      //   icon: ICONS.invoice,
+      //   roles: [Role['System Admin']],
+      // },
       {
         title: 'benefit',
         path: PATH_CES.benefit.root,
@@ -63,12 +73,12 @@ const navConfig = [
         icon: ICONS.project,
         roles: [Role['Enterprise Admin']],
       },
-      {
-        title: 'Debt',
-        path: PATH_CES.eaDebt.root,
-        icon: ICONS.invoice,
-        roles: [Role['Enterprise Admin']],
-      },
+      // {
+      //   title: 'Debt',
+      //   path: PATH_CES.eaDebt.root,
+      //   icon: ICONS.invoice,
+      //   roles: [Role['Enterprise Admin']],
+      // },
       {
         title: 'order',
         path: PATH_CES.order.root,
@@ -96,16 +106,6 @@ const navConfig = [
   // },
   // GENERAL
   // ----------------------------------------------------------------------
-  {
-    subheader: 'general',
-    items: [
-      { title: 'app', path: PATH_DASHBOARD.general.app, icon: ICONS.dashboard },
-      // { title: 'ecommerce', path: PATH_DASHBOARD.general.ecommerce, icon: ICONS.ecommerce },
-      // { title: 'analytics', path: PATH_DASHBOARD.general.analytics, icon: ICONS.analytics },
-      // { title: 'banking', path: PATH_DASHBOARD.general.banking, icon: ICONS.banking },
-      // { title: 'booking', path: PATH_DASHBOARD.general.booking, icon: ICONS.booking },
-    ],
-  },
 
   // MANAGEMENT
   // ----------------------------------------------------------------------

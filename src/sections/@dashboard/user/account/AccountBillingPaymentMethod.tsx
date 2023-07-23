@@ -37,11 +37,7 @@ export default function AccountBillingPaymentMethod({
   onCancel,
 }: Props) {
   return (
-    <Card sx={{ p: 1 }}>
-      {/* <Typography variant="overline" sx={{ mb: 3, display: 'block', color: 'text.secondary' }}>
-        Wallet
-      </Typography> */}
-
+    <Card sx={{ p: 3 }}>
       <Stack spacing={2} direction={{ xs: 'column', md: 'row' }}>
         {data?.wallets?.map((x) => (
           <>
