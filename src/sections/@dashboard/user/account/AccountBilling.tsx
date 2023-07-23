@@ -9,6 +9,8 @@ import AccountBillingInvoiceHistory from './AccountBillingInvoiceHistory'
 import { useMe } from 'src/hooks/@ces'
 import { AccountData, PaymentPayload } from 'src/@types/@ces'
 import { paymentApi } from 'src/api-client/payment'
+import AccountOrderHistory from './AccountOrderHistory'
+import { useOrderByCompanyId, usePayment } from 'src/hooks/@ces/usePayment'
 
 // ----------------------------------------------------------------------
 
@@ -23,9 +25,11 @@ type Props = {
 export default function AccountBilling({ cards, addressBook, invoices, payload }: Props) {
   const [open, setOpen] = useState(false)
   const { data } = useMe({})
-
+  const { data: payments } = usePayment({})
   const usedPayload = data?.wallets.map((u) => u?.used)[0]
   const accountId = data?.id
+  const compId = data?.companyId
+  const { data: orders } = useOrderByCompanyId({ companyId: compId })
   async function handlePayment() {
     payload = {
       used: usedPayload,
@@ -50,9 +54,8 @@ export default function AccountBilling({ cards, addressBook, invoices, payload }
               variant="overline"
               sx={{ mb: 3, display: 'block', color: 'text.secondary' }}
             >
-              Order History{' '}
+              Payment Action
             </Typography>
-            <Typography variant="h4">Company Wallet</Typography>
             <Box
               sx={{
                 mt: { xs: 2, sm: 0 },
@@ -61,12 +64,12 @@ export default function AccountBilling({ cards, addressBook, invoices, payload }
                 right: { sm: 24 },
               }}
             >
-              <Button color="inherit" variant="outlined">
-                View report
+              <Button onClick={handlePayment} variant="contained">
+                Monthly Payment
               </Button>
             </Box>
+            <Typography variant="h4">Company Wallet</Typography>
           </Card>
-
           <AccountBillingPaymentMethod
             cards={cards}
             isOpen={open}
@@ -77,14 +80,25 @@ export default function AccountBilling({ cards, addressBook, invoices, payload }
 
           {/* <AccountBillingAddressBook addressBook={addressBook} /> */}
         </Stack>
-        <Stack alignItems="flex-end" sx={{ p: 3 }}>
-          <Button onClick={handlePayment} variant="contained">
-            Pay monthly debt
-          </Button>
-        </Stack>
+
+        <Card sx={{ p: 3 }}>
+          <AccountOrderHistory order={orders?.data} />
+          {/* <Box
+            sx={{
+              mt: { xs: 2, sm: 0 },
+              position: { sm: 'absolute' },
+              top: { sm: 24 },
+              right: { sm: 24 },
+            }}
+          >
+            <Button color="inherit" variant="outlined">
+              View report
+            </Button>
+          </Box> */}
+        </Card>
       </Grid>
       <Grid item xs={12} md={4}>
-        <AccountBillingInvoiceHistory invoices={invoices} />
+        <AccountBillingInvoiceHistory Transactions={payments?.data} />
       </Grid>
     </Grid>
   )

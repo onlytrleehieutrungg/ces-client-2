@@ -6,27 +6,31 @@ import { fDate } from '../../../../utils/formatTime'
 // @types
 import { UserInvoice } from '../../../../@types/user'
 // components
-import { usePayment } from 'src/hooks/@ces/usePayment'
+import { useOrderByCompanyId, usePayment } from 'src/hooks/@ces/usePayment'
 import Iconify from '../../../../components/Iconify'
-import { MonthlyOrder, TransactionHistory } from 'src/@types/@ces'
+import { useMe } from 'src/hooks/@ces'
+import { MonthlyOrder } from 'src/@types/@ces'
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  Transactions?: TransactionHistory[]
+  order?: MonthlyOrder
 }
 
-export default function AccountBillingInvoiceHistory({ Transactions }: Props) {
+export default function AccountOrderHistory({ order }: Props) {
   return (
     <Stack spacing={3} alignItems="flex-end">
       <Typography variant="subtitle1" sx={{ width: 1 }}>
-        Payment History
+        Orders in month
       </Typography>
 
       <Stack spacing={2} sx={{ width: 1 }}>
-        {Transactions?.map((x) => (
+        {order?.orders?.map((x) => (
           <Stack key={x.id} direction="row" justifyContent="space-between" sx={{ width: 1 }}>
             <Typography variant="body2" sx={{ minWidth: 160 }}>
+              {x.employeeId}
+            </Typography>{' '}
+            <Typography variant="body2" sx={{ minWidth: 80 }}>
               {fDate(x.createdAt)}
             </Typography>
             <Typography variant="body2">{fCurrency(x.total)} đ</Typography>

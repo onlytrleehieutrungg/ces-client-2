@@ -11,8 +11,15 @@ export type Order = {
   note: string
   code: string
   debtStatus: number
+  employeeId?: string
   employee: Employee
   orderDetails: OrderDetail[]
+}
+
+export type MonthlyOrder = {
+  total: number
+
+  orders: Order[]
 }
 
 export type Employee = {
