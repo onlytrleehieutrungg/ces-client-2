@@ -42,14 +42,19 @@ import LoadingTable from 'src/utils/loadingTable'
 
 // ----------------------------------------------------------------------
 
-const STATUS_OPTIONS = ['all', 'new', 'confirm', 'waiting for ship', 'complete', 'cancel']
+const STATUS_OPTIONS = ['all', 'new', 'ready', 'shipping', 'complete', 'cancel']
 
 const ROLE_OPTIONS = ['supplier', 'shipper']
 
+const DATE_OPTIONS = ['created at', 'updated at']
+const FILTER_OPTIONS = ['descending', 'ascending']
+
 const TABLE_HEAD = [
-  { id: 'id', label: 'Id', align: 'left' },
+  { id: 'ordercode', label: 'Id', align: 'left' },
   { id: 'total', label: 'Total', align: 'left' },
-  { id: 'address', label: 'Address', align: 'left' },
+  { id: 'companyname', label: 'Company Name', align: 'left' },
+  { id: 'createat', label: 'Create At', align: 'left' },
+  { id: 'updateat', label: 'Update At', align: 'left' },
   { id: 'status', label: 'Status', align: 'left' },
   { id: '' },
 ]
@@ -81,23 +86,38 @@ export default function OrderPage() {
   const { push } = useRouter()
 
   const [params, setParams] = useState<Partial<Params>>()
-
+  //Sort=CreatedAt&Order=desc
   const { data, mutate, isLoading, isValidating } = useOrder({ params })
   const tableData: Order[] = data?.data ?? []
 
-  const [filterName, setFilterName] = useState('')
+  const [filterDate, setFilterDate] = useState('')
+  const [filterOptions, setFilterOptions] = useState('')
+  console.log(typeof filterDate)
 
   const [filterStt, setFilterStatus] = useState('supplier')
 
   const { currentTab: filterStatus, onChangeTab: onChangeFilterStatus } = useTabs('all')
 
-  const handleFilterName = (filterName: string) => {
-    setFilterName(filterName)
+  const handleFilterOptions = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFilterOptions(event.target.value)
   }
-  useMemo(() => setParams({ Page: page + 1, Size: rowsPerPage }), [page, rowsPerPage])
+  //.replace(/\s/g, '')
+  const handleFilterDatetime = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFilterDate(event.target.value)
+  }
+  useMemo(() => {
+    const statusIndex = getStatusIndex(filterStatus)
+    if (statusIndex === -1) {
+      setParams({ Page: page + 1, Size: rowsPerPage })
+    } else {
+      setParams({ Page: page + 1, Size: rowsPerPage, Status: statusIndex })
+    }
+  }, [page, rowsPerPage, filterStatus])
 
+  function getStatusIndex(status: string): number {
+    return Status[status as keyof typeof Status] || -1
+  }
   const handleFilterStatus = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(event.target.value)
     setFilterStatus(event.target.value)
   }
 
@@ -108,8 +128,9 @@ export default function OrderPage() {
   const dataFiltered = applySortFilter({
     tableData,
     comparator: getComparator(order, orderBy),
-    filterName,
+    filterOptions,
     filterStt,
+    filterDate,
     filterStatus,
   })
 
@@ -118,9 +139,10 @@ export default function OrderPage() {
   //   return <LoadingScreen />
   // }
   const isNotFound =
-    (!dataFiltered.length && !!filterName) ||
+    (!dataFiltered.length && !!filterOptions) ||
     (!dataFiltered.length && !!filterStatus) ||
-    (!dataFiltered.length && !!filterStt)
+    (!dataFiltered.length && !!filterStt) ||
+    (!dataFiltered.length && !!filterDate)
   const handleViewRow = (id: string) => {
     push(PATH_CES.order.detail(id))
   }
@@ -149,9 +171,13 @@ export default function OrderPage() {
 
             <Divider />
             <OrderTableToolbar
-              filterName={filterName}
+              filterOptions={filterOptions}
               filterStatus={filterStt}
-              onFilterName={handleFilterName}
+              filterDate={filterDate}
+              optionsDatetime={DATE_OPTIONS}
+              optionsFilter={FILTER_OPTIONS}
+              onFilterDatetime={handleFilterDatetime}
+              onFilterOptions={handleFilterOptions}
               onFilterStatus={handleFilterStatus}
               optionsStatus={ROLE_OPTIONS}
             />
@@ -248,21 +274,24 @@ export default function OrderPage() {
 function applySortFilter({
   tableData,
   comparator,
-  filterName,
+  filterOptions,
+  filterDate,
   filterStt,
   filterStatus,
 }: {
   tableData: Order[]
   comparator: (a: any, b: any) => number
-  filterName: string
   filterStatus: string
+  filterOptions: string
+  filterDate: string
   filterStt: string
 }) {
   const stabilizedThis = tableData.map((el, index) => [el, index] as const)
-  function mapStatus(status: number) {
-    const rs = Object.values(Status)
-    return rs[status].toLocaleLowerCase()
-  }
+  // function mapStatus(status: number) {
+  //   const rs = Object.values(Status)
+  //   return rs[status].toLocaleLowerCase()
+  // }
+
   stabilizedThis.sort((a, b) => {
     const order = comparator(a[0], b[0])
     if (order !== 0) return order
@@ -271,12 +300,6 @@ function applySortFilter({
 
   tableData = stabilizedThis.map((el) => el[0])
 
-  if (filterName) {
-    tableData = tableData.filter(
-      (item: Record<string, any>) => item?.id.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
-    )
-  }
-
   if (filterStt !== 'supplier') {
     tableData = tableData.filter((item: Record<string, any>) => {
       item.status === filterStt
@@ -284,10 +307,10 @@ function applySortFilter({
   }
 
   if (filterStatus !== 'all') {
-    tableData = tableData.filter(
-      (item: Record<string, any>) => mapStatus(item.status) === filterStatus
-    )
-    // console.log(tableData);
+    // tableData = tableData.filter(
+    //   (item: Record<string, any>) => item.status === getStatusIndex(filterStatus)
+    // )
+    // console.log(tableData)
   }
 
   return tableData

@@ -9,7 +9,7 @@ type UseCompanyProps = {
 }
 
 export function useCompanyList({ options, params }: UseCompanyProps) {
-  const { data, error, mutate, isValidating } = useSWR(
+  const { data, error, mutate, isValidating, isLoading } = useSWR(
     ['company-list', params],
     () => companyApi.getAll(params!),
     {
@@ -31,6 +31,7 @@ export function useCompanyList({ options, params }: UseCompanyProps) {
     error,
     isValidating,
     mutate,
+    isLoading
   }
 }
 

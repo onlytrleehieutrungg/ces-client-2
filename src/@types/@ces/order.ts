@@ -10,7 +10,9 @@ export type Order = {
   status: number
   note: string
   code: string
+  orderCode: string
   debtStatus: number
+  companyName: string
   employeeId?: string
   employee: Employee
   orderDetails: OrderDetail[]
@@ -34,12 +36,12 @@ export type OrderDetail = {
   product: Product
 }
 export enum Status {
-  ALL = '',
-  NEW = 'New',
-  WFP = 'Confirm',
-  WFS = 'Waiting for ship',
-  COMPLETE = 'Complete',
-  CANCEL = 'Cancel',
+  '',
+  'new',
+  'ready',
+  'shipping',
+  'complete',
+  'cancel',
 }
 export enum DebtStatus {
   NOTPAYMENT = 'Not Payment',

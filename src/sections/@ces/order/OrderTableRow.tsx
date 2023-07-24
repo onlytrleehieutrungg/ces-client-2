@@ -6,6 +6,7 @@ import { Order, Status } from 'src/@types/@ces/order'
 import Iconify from 'src/components/Iconify'
 import Label from 'src/components/Label'
 import { TableMoreMenu } from 'src/components/table'
+import { fDateTime } from 'src/utils/formatTime'
 type Props = {
   row: Order
   selected: boolean
@@ -23,7 +24,7 @@ export default function OrderTableRow({
 }: Props) {
   const theme = useTheme()
 
-  const { id, total, address, note, status } = row
+  const { id, total, orderCode, companyName, createdAt, updatedAt, status } = row
 
   const [openMenu, setOpenMenuActions] = useState<HTMLElement | null>(null)
 
@@ -46,11 +47,13 @@ export default function OrderTableRow({
         <Checkbox checked={selected} onClick={onSelectRow} />
       </TableCell>
 
-      <TableCell align="left">{id}</TableCell>
+      <TableCell align="left">{orderCode}</TableCell>
       <TableCell align="left" sx={{ textTransform: 'capitalize' }}>
         {total}
       </TableCell>
-      <TableCell align="left">{address}</TableCell>
+      <TableCell align="left">{companyName}</TableCell>
+      <TableCell align="left">{fDateTime(createdAt)}</TableCell>
+      <TableCell align="left">{fDateTime(updatedAt)}</TableCell>
       <TableCell align="left">
         <Label
           variant={theme.palette.mode === 'light' ? 'ghost' : 'filled'}

@@ -53,7 +53,7 @@ export default function OrderDetails({ order, handleEditOrderSubmit }: Props) {
   if (!order) {
     return null
   }
-  const rs = Object.values(Status)
+  const rs = Object.values(Status).filter((value) => typeof value === 'string')
 
   const {
     id,
@@ -103,7 +103,8 @@ export default function OrderDetails({ order, handleEditOrderSubmit }: Props) {
                   fullWidth
                   select
                   label="Status"
-                  // value={filterStatus}
+                  defaultValue={status}
+                  // value={status}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                     setStatusValue(toNumber(e.target.value))
                   }
