@@ -26,11 +26,11 @@ export default function AccountBillingInvoiceHistory({ Transactions }: Props) {
       <Stack spacing={2} sx={{ width: 1 }}>
         {Transactions?.map((x) => (
           <Stack key={x.id} direction="row" justifyContent="space-between" sx={{ width: 1 }}>
-            <Typography variant="body2" sx={{ minWidth: 160 }}>
+            <Typography variant="body2" sx={{ minWidth: 100 }}>
               {fDate(x.createdAt)}
             </Typography>
             <Typography variant="body2">{fCurrency(x.total)} đ</Typography>
-            <Typography>Zalo Pay</Typography>
+            <Typography>{x.type == 3 ? 'ZALOPAY' : 'VNPAY'}</Typography>
           </Stack>
         ))}
       </Stack>
