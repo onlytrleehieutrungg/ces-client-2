@@ -49,21 +49,12 @@ export default function AccountBilling({ cards, addressBook, invoices, payload }
     <Grid container spacing={5}>
       <Grid item xs={12} md={8}>
         <Stack spacing={2}>
-          <Card sx={{ p: 2 }}>
-            <Box
-              sx={{
-                // mt: { xs: 2, sm: 0 },
-                position: { sm: 'absolute' },
-                // top: { sm: 10 },
-                alignSelf: 'center',
-                right: { sm: 24 },
-              }}
-            >
+          <Card sx={{ p: 4 }}>
+            <Box sx={{ mr: 16 }}>
               <Button onClick={handlePayment} variant="contained">
                 Monthly Payment
               </Button>
             </Box>
-            <Typography variant="h4">Company Wallet</Typography>
           </Card>
           <AccountBillingPaymentMethod
             cards={cards}
@@ -74,7 +65,7 @@ export default function AccountBilling({ cards, addressBook, invoices, payload }
           />
         </Stack>
 
-        <Card sx={{ p: 3, mt: 2 }}>
+        <Card sx={{ mt: 5 }}>
           <AccountOrderHistory order={orders?.data} />
         </Card>
       </Grid>

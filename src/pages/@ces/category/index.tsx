@@ -45,7 +45,6 @@ import LoadingTable from 'src/utils/loadingTable'
 
 const TABLE_HEAD = [
   { id: 'name', label: 'Name', align: 'left' },
-  { id: 'description', label: 'Description', align: 'left' },
   { id: 'createdat', label: 'Created At', align: 'left' },
   { id: 'updatedat', label: 'Updated At', align: 'left' },
   { id: '' },

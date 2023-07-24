@@ -58,7 +58,6 @@ export default function CategoryTableRow({
           {name}
         </Typography>
       </TableCell>
-      <TableCell align="left">{description}</TableCell>
       <TableCell align="left">{fDateTime(createdAt)}</TableCell>
       <TableCell align="left">{fDateTime(updatedAt)}</TableCell>
 

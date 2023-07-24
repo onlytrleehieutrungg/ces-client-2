@@ -37,8 +37,12 @@ export default function AccountBillingPaymentMethod({
   onCancel,
 }: Props) {
   return (
-    <Card sx={{ p: 3 }}>
-      <Stack spacing={2} direction={{ xs: 'column', md: 'row' }}>
+    <Card sx={{}}>
+      {' '}
+      <Stack sx={{ px: 3, pt: 3 }}>
+        <Typography variant="h6">Company Wallet</Typography>
+      </Stack>
+      <Stack spacing={2} sx={{ p: 3 }} direction={{ xs: 'column', md: 'row' }}>
         {data?.wallets?.map((x) => (
           <>
             <Paper
@@ -47,10 +51,10 @@ export default function AccountBillingPaymentMethod({
                 p: 3,
                 width: 1,
                 position: 'relative',
-                border: (theme) => `solid 1px ${theme.palette.grey[50032]}`,
+                border: (theme) => `solid 4px ${theme.palette.grey[50032]}`,
               }}
             >
-              Blance
+              Balance
               <Typography variant="subtitle1">{fCurrency(x.balance)} đ</Typography>
               <IconButton
                 sx={{
@@ -68,7 +72,7 @@ export default function AccountBillingPaymentMethod({
                 p: 3,
                 width: 1,
                 position: 'relative',
-                border: (theme) => `solid 1px ${theme.palette.grey[50032]}`,
+                border: (theme) => `solid 4px ${theme.palette.grey[50032]}`,
               }}
             >
               Used
@@ -86,13 +90,11 @@ export default function AccountBillingPaymentMethod({
           </>
         ))}
       </Stack>
-
       {/* <Box sx={{ mt: 3 }}>
         <Button size="small" startIcon={<Iconify icon={'eva:plus-fill'} />} onClick={onOpen}>
           Add new card
         </Button>
       </Box> */}
-
       <Collapse in={isOpen}>
         <Box
           sx={{
