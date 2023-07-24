@@ -5,6 +5,7 @@ import { useState } from 'react'
 import { Category } from 'src/@types/@ces'
 import Iconify from 'src/components/Iconify'
 import { TableMoreMenu } from 'src/components/table'
+import { fDateTime } from 'src/utils/formatTime'
 // @types
 
 // components
@@ -30,7 +31,7 @@ export default function CategoryTableRow({
 }: Props) {
   const theme = useTheme()
 
-  const { name, description, imageUrl } = row
+  const { name, description, imageUrl, createdAt, updatedAt } = row
 
   const [openMenu, setOpenMenuActions] = useState<HTMLElement | null>(null)
 
@@ -58,6 +59,8 @@ export default function CategoryTableRow({
         </Typography>
       </TableCell>
       <TableCell align="left">{description}</TableCell>
+      <TableCell align="left">{fDateTime(createdAt)}</TableCell>
+      <TableCell align="left">{fDateTime(updatedAt)}</TableCell>
 
       <TableCell align="right">
         <TableMoreMenu

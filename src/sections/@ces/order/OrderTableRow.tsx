@@ -36,6 +36,7 @@ export default function OrderTableRow({
     setOpenMenuActions(null)
   }
 
+  const rs = Object.values(Status).filter((value) => typeof value === 'string')
   const mapStatus = (status: number) => {
     const rs = Object.values(Status)
     return rs[status]
@@ -58,11 +59,11 @@ export default function OrderTableRow({
         <Label
           variant={theme.palette.mode === 'light' ? 'ghost' : 'filled'}
           color={
-            (mapStatus(status) === 'New' && 'primary') ||
-            (mapStatus(status) === 'Waiting for ship' && 'info') ||
-            (mapStatus(status) === 'Complete' && 'success') ||
-            (mapStatus(status) === 'Confirm' && 'warning') ||
-            (mapStatus(status) === 'Cancel' && 'error') ||
+            (mapStatus(status) === 'new' && 'primary') ||
+            (mapStatus(status) === 'ready' && 'warning') ||
+            (mapStatus(status) === 'shipping' && 'info') ||
+            (mapStatus(status) === 'complete' && 'success') ||
+            (mapStatus(status) === 'cancel' && 'error') ||
             'default'
           }
           sx={{ textTransform: 'capitalize' }}

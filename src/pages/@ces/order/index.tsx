@@ -21,7 +21,6 @@ import { Params, Role } from 'src/@types/@ces'
 import { Order, Status } from 'src/@types/@ces/order'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
 import Iconify from 'src/components/Iconify'
-import LoadingScreen from 'src/components/LoadingScreen'
 import Page from 'src/components/Page'
 import Scrollbar from 'src/components/Scrollbar'
 import {
@@ -53,8 +52,8 @@ const TABLE_HEAD = [
   { id: 'ordercode', label: 'Id', align: 'left' },
   { id: 'total', label: 'Total', align: 'left' },
   { id: 'companyname', label: 'Company Name', align: 'left' },
-  { id: 'createat', label: 'Create At', align: 'left' },
-  { id: 'updateat', label: 'Update At', align: 'left' },
+  { id: 'createdat', label: 'Created At', align: 'left' },
+  { id: 'updatedat', label: 'Updated At', align: 'left' },
   { id: 'status', label: 'Status', align: 'left' },
   { id: '' },
 ]

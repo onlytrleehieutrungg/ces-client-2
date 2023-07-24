@@ -22,7 +22,6 @@ import { Category, Params, Role } from 'src/@types/@ces'
 import { categoryApi } from 'src/api-client/category'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
 import Iconify from 'src/components/Iconify'
-import LoadingScreen from 'src/components/LoadingScreen'
 import Page from 'src/components/Page'
 import Scrollbar from 'src/components/Scrollbar'
 import {
@@ -47,6 +46,8 @@ import LoadingTable from 'src/utils/loadingTable'
 const TABLE_HEAD = [
   { id: 'name', label: 'Name', align: 'left' },
   { id: 'description', label: 'Description', align: 'left' },
+  { id: 'createdat', label: 'Created At', align: 'left' },
+  { id: 'updatedat', label: 'Updated At', align: 'left' },
   { id: '' },
 ]
 

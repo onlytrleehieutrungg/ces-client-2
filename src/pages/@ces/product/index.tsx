@@ -5,33 +5,30 @@ import {
   Card,
   Container,
   FormControlLabel,
-  IconButton,
-  LinearProgress,
-  Switch,
+  IconButton, Switch,
   Table,
   TableBody,
   TableContainer,
   TablePagination,
-  Tooltip,
+  Tooltip
 } from '@mui/material'
 import { paramCase } from 'change-case'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 import { useSnackbar } from 'notistack'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Params, Role } from 'src/@types/@ces'
 import { Product } from 'src/@types/@ces/product'
 import { productApi } from 'src/api-client/product'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
 import Iconify from 'src/components/Iconify'
-import LoadingScreen from 'src/components/LoadingScreen'
 import Page from 'src/components/Page'
 import Scrollbar from 'src/components/Scrollbar'
 import {
   TableEmptyRows,
   TableHeadCustom,
   TableNoData,
-  TableSelectedActions,
+  TableSelectedActions
 } from 'src/components/table'
 import RoleBasedGuard from 'src/guards/RoleBasedGuard'
 import { useProduct } from 'src/hooks/@ces/useProduct'
@@ -43,7 +40,6 @@ import ProductTableRow from 'src/sections/@ces/product/ProductTableRow'
 import ProductTableToolbar from 'src/sections/@ces/product/ProductTableToolbar'
 import { confirmDialog } from 'src/utils/confirmDialog'
 import LoadingTable from 'src/utils/loadingTable'
-import { debounce } from 'lodash'
 
 // ----------------------------------------------------------------------
 

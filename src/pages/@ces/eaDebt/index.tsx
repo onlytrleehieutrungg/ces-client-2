@@ -83,7 +83,7 @@ export default function OrderPage() {
   console.log(user)
   const companyId = user?.companyId.toString()
 
-  const { data, mutate, isLoading } = useCompanyDebt({ id: companyId })
+  const { data, isLoading } = useCompanyDebt({ id: companyId })
   const tableData: Debt[] = data?.data ?? []
 
   const [filterName, setFilterName] = useState('')
