@@ -22,7 +22,6 @@ type Props = {
 }
 
 export default function AccountBilling({ cards, addressBook, invoices, payload }: Props) {
-  const [open, setOpen] = useState(false)
   const { data } = useMe({})
   const { data: payments } = usePayment({})
   const usedPayload = data?.wallets.map((u) => u?.used)[0]
@@ -60,14 +59,6 @@ export default function AccountBilling({ cards, addressBook, invoices, payload }
               payLoad={payload}
             />
           </Card>
-          {/* <AccountBillingPaymentMethod
-            cards={cards}
-            isOpen={open}
-            data={data}
-            onOpen={() => setOpen(!open)}
-            onCancel={() => setOpen(false)}
-            handlePayment={handlePayment}
-          /> */}
         </Stack>
 
         <Card sx={{ mt: 5 }}>

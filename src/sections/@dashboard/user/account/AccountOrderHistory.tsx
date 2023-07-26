@@ -34,7 +34,6 @@ export default function AccountOrderHistory({ order }: Props) {
               {fDate(x.createdAt)}
             </Typography>
             <Typography variant="body2">{fCurrency(x.total)} đ</Typography>
-            {/* <Typography>Zalo Pay</Typography> */}
           </Stack>
         ))}
       </Stack>
