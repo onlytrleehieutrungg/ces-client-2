@@ -1,9 +1,9 @@
 // @mui
-import { Stack, Typography, Box, CircularProgress } from '@mui/material';
-// utils
-import { fShortenNumber, fCurrency } from '../../../utils/formatNumber';
+import { Box, CircularProgress, Stack, Typography } from '@mui/material';
 // components
 import Iconify from '../../../components/Iconify';
+// utils
+import { fCurrency, fShortenNumber } from '../../../utils/formatNumber';
 
 // ----------------------------------------------------------------------
 

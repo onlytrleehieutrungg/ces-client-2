@@ -1,23 +1,15 @@
 // @mui
-import {
-  Box,
-  Card,
-  Stack,
-  Paper,
-  Button,
-  Collapse,
-  TextField,
-  Typography,
-  IconButton,
-} from '@mui/material'
 import { LoadingButton } from '@mui/lab'
+import {
+  Box, Button, Card, Collapse, IconButton, Paper, Stack, TextField,
+  Typography
+} from '@mui/material'
+import { AccountData } from 'src/@types/@ces'
 // @types
 import { CreditCard } from '../../../../@types/user'
+import Iconify from '../../../../components/Iconify'
 // components
 import Image from '../../../../components/Image'
-import Iconify from '../../../../components/Iconify'
-import { AccountData } from 'src/@types/@ces'
-import { fCurrency } from 'src/utils/formatNumber'
 
 // ----------------------------------------------------------------------
 
@@ -27,6 +19,7 @@ type Props = {
   data?: AccountData
   onOpen: VoidFunction
   onCancel: VoidFunction
+  handlePayment: VoidFunction
 }
 
 export default function AccountBillingPaymentMethod({
@@ -35,59 +28,48 @@ export default function AccountBillingPaymentMethod({
   data,
   onOpen,
   onCancel,
+  handlePayment,
 }: Props) {
   return (
     <Card sx={{}}>
-      {' '}
-      <Stack sx={{ px: 3, pt: 3 }}>
+      <Stack sx={{ px: 3, pt: 3 }} direction="row" spacing={48}>
         <Typography variant="h6">Company Wallet</Typography>
+        <Button onClick={handlePayment} variant="contained">
+          Monthly Payment
+        </Button>
       </Stack>
-      <Stack spacing={2} sx={{ p: 3 }} direction={{ xs: 'column', md: 'row' }}>
-        {data?.wallets?.map((x) => (
-          <>
-            <Paper
-              key={x.id}
+   
+      <Stack spacing={2} direction={{ xs: 'column', md: 'row' }}>
+        {cards.map((card) => (
+          <Paper
+            key={card.id}
+            sx={{
+              p: 3,
+              width: 1,
+              position: 'relative',
+              border: (theme) => `solid 1px ${theme.palette.grey[500_32]}`,
+            }}
+          >
+            <Image
+              alt="icon"
+              src={
+                card.cardType === 'master_card'
+                  ? 'https://minimal-assets-api-dev.vercel.app/assets/icons/ic_mastercard.svg'
+                  : 'https://minimal-assets-api-dev.vercel.app/assets/icons/ic_visa.svg'
+              }
+              sx={{ mb: 1, maxWidth: 36 }}
+            />
+            <Typography variant="subtitle2">{card.cardNumber}</Typography>
+            <IconButton
               sx={{
-                p: 3,
-                width: 1,
-                position: 'relative',
-                border: (theme) => `solid 4px ${theme.palette.grey[50032]}`,
+                top: 8,
+                right: 8,
+                position: 'absolute',
               }}
             >
-              Balance
-              <Typography variant="subtitle1">{fCurrency(x.balance)} đ</Typography>
-              <IconButton
-                sx={{
-                  top: 8,
-                  right: 8,
-                  position: 'absolute',
-                }}
-              >
-                <Iconify icon={'eva:more-vertical-fill'} width={20} height={20} />
-              </IconButton>
-            </Paper>
-            <Paper
-              key={x.id}
-              sx={{
-                p: 3,
-                width: 1,
-                position: 'relative',
-                border: (theme) => `solid 4px ${theme.palette.grey[50032]}`,
-              }}
-            >
-              Used
-              <Typography variant="subtitle1">{fCurrency(x.used)} đ</Typography>
-              <IconButton
-                sx={{
-                  top: 8,
-                  right: 8,
-                  position: 'absolute',
-                }}
-              >
-                <Iconify icon={'eva:more-vertical-fill'} width={20} height={20} />
-              </IconButton>
-            </Paper>
-          </>
+              <Iconify icon={'eva:more-vertical-fill'} width={20} height={20} />
+            </IconButton>
+          </Paper>
         ))}
       </Stack>
       {/* <Box sx={{ mt: 3 }}>
@@ -95,6 +77,7 @@ export default function AccountBillingPaymentMethod({
           Add new card
         </Button>
       </Box> */}
+
       <Collapse in={isOpen}>
         <Box
           sx={{
