@@ -36,7 +36,6 @@ export default function OrderTableRow({
     setOpenMenuActions(null)
   }
 
-  const rs = Object.values(Status).filter((value) => typeof value === 'string')
   const mapStatus = (status: number) => {
     const rs = Object.values(Status)
     return rs[status]

@@ -13,10 +13,10 @@ import {
   TableContainer,
   TablePagination,
   Tabs,
-  Tooltip,
+  Tooltip
 } from '@mui/material'
 import { useRouter } from 'next/router'
-import { useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Params, Role } from 'src/@types/@ces'
 import { Order, Status } from 'src/@types/@ces/order'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
@@ -27,7 +27,7 @@ import {
   TableEmptyRows,
   TableHeadCustom,
   TableNoData,
-  TableSelectedActions,
+  TableSelectedActions
 } from 'src/components/table'
 import RoleBasedGuard from 'src/guards/RoleBasedGuard'
 import { useOrder } from 'src/hooks/@ces/useOrder'
@@ -45,11 +45,10 @@ const STATUS_OPTIONS = ['all', 'new', 'ready', 'shipping', 'complete', 'cancel']
 
 const ROLE_OPTIONS = ['supplier', 'shipper']
 
-const DATE_OPTIONS = ['created at', 'updated at']
 const FILTER_OPTIONS = ['descending', 'ascending']
 
 const TABLE_HEAD = [
-  { id: 'ordercode', label: 'Id', align: 'left' },
+  { id: 'ordercode', label: 'Order Code', align: 'left' },
   { id: 'total', label: 'Total', align: 'left' },
   { id: 'companyname', label: 'Company Name', align: 'left' },
   { id: 'createdat', label: 'Created At', align: 'left' },
@@ -88,31 +87,33 @@ export default function OrderPage() {
   //Sort=CreatedAt&Order=desc
   const { data, mutate, isLoading, isValidating } = useOrder({ params })
   const tableData: Order[] = data?.data ?? []
-
-  const [filterDate, setFilterDate] = useState('')
-  const [filterOptions, setFilterOptions] = useState('')
-  console.log(typeof filterDate)
-
   const [filterStt, setFilterStatus] = useState('supplier')
-
   const { currentTab: filterStatus, onChangeTab: onChangeFilterStatus } = useTabs('all')
+  const [filterAttribute, setFilterAttribute] = useState('')
+  const [filterOptions, setFilterOptions] = useState('')
+
+  useEffect(() => {
+    const statusIndex = getStatusIndex(filterStatus)
+    if (statusIndex === -1) {
+      setParams({ Page: page + 1, Size: rowsPerPage, Sort: filterAttribute, Order: filterOptions })
+    } else {
+      setParams({
+        Page: page + 1,
+        Size: rowsPerPage,
+        Status: statusIndex,
+        Sort: filterAttribute,
+        Order: filterOptions,
+      })
+    }
+  }, [page, rowsPerPage, filterStatus, filterAttribute, filterOptions])
 
   const handleFilterOptions = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFilterOptions(event.target.value)
   }
   //.replace(/\s/g, '')
-  const handleFilterDatetime = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setFilterDate(event.target.value)
+  const handleFilterAttribute = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFilterAttribute(event.target.value)
   }
-  useMemo(() => {
-    const statusIndex = getStatusIndex(filterStatus)
-    if (statusIndex === -1) {
-      setParams({ Page: page + 1, Size: rowsPerPage })
-    } else {
-      setParams({ Page: page + 1, Size: rowsPerPage, Status: statusIndex })
-    }
-  }, [page, rowsPerPage, filterStatus])
-
   function getStatusIndex(status: string): number {
     return Status[status as keyof typeof Status] || -1
   }
@@ -129,19 +130,16 @@ export default function OrderPage() {
     comparator: getComparator(order, orderBy),
     filterOptions,
     filterStt,
-    filterDate,
+    filterAttribute,
     filterStatus,
   })
 
   const denseHeight = dense ? 52 : 72
-  // if (isLoading) {
-  //   return <LoadingScreen />
-  // }
   const isNotFound =
     (!dataFiltered.length && !!filterOptions) ||
     (!dataFiltered.length && !!filterStatus) ||
     (!dataFiltered.length && !!filterStt) ||
-    (!dataFiltered.length && !!filterDate)
+    (!dataFiltered.length && !!filterAttribute)
   const handleViewRow = (id: string) => {
     push(PATH_CES.order.detail(id))
   }
@@ -167,15 +165,14 @@ export default function OrderPage() {
                 <Tab disableRipple key={tab} label={tab} value={tab} />
               ))}
             </Tabs>
-
             <Divider />
             <OrderTableToolbar
               filterOptions={filterOptions}
               filterStatus={filterStt}
-              filterDate={filterDate}
-              optionsDatetime={DATE_OPTIONS}
-              optionsFilter={FILTER_OPTIONS}
-              onFilterDatetime={handleFilterDatetime}
+              filterAttribute={filterAttribute}
+              optionsSort={TABLE_HEAD}
+              optionsOrderBy={FILTER_OPTIONS}
+              onFilterAttribute={handleFilterAttribute}
               onFilterOptions={handleFilterOptions}
               onFilterStatus={handleFilterStatus}
               optionsStatus={ROLE_OPTIONS}
@@ -274,7 +271,7 @@ function applySortFilter({
   tableData,
   comparator,
   filterOptions,
-  filterDate,
+  filterAttribute,
   filterStt,
   filterStatus,
 }: {
@@ -282,7 +279,7 @@ function applySortFilter({
   comparator: (a: any, b: any) => number
   filterStatus: string
   filterOptions: string
-  filterDate: string
+  filterAttribute: string
   filterStt: string
 }) {
   const stabilizedThis = tableData.map((el, index) => [el, index] as const)

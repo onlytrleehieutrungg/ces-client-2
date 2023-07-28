@@ -1,13 +1,16 @@
-import { InputAdornment, MenuItem, Stack, TextField } from '@mui/material'
-import Iconify from 'src/components/Iconify'
+import { MenuItem, Stack, TextField } from '@mui/material'
 type Props = {
   optionsStatus: string[]
-  optionsDatetime: string[]
-  optionsFilter: string[]
+  optionsSort: {
+    id: string
+    label?: string
+    align?: string
+  }[]
+  optionsOrderBy: string[]
   filterOptions: string
   filterStatus: string
-  filterDate: string
-  onFilterDatetime: (event: React.ChangeEvent<HTMLInputElement>) => void
+  filterAttribute: string
+  onFilterAttribute: (event: React.ChangeEvent<HTMLInputElement>) => void
   onFilterOptions: (event: React.ChangeEvent<HTMLInputElement>) => void
   onFilterStatus: (event: React.ChangeEvent<HTMLInputElement>) => void
 }
@@ -16,12 +19,12 @@ export default function OrderTableToolbar({
   filterOptions,
   filterStatus,
   onFilterOptions,
-  onFilterDatetime,
+  onFilterAttribute,
   onFilterStatus,
-  optionsFilter,
+  optionsOrderBy,
   optionsStatus,
-  filterDate,
-  optionsDatetime,
+  filterAttribute,
+  optionsSort,
 }: Props) {
   return (
     <Stack spacing={2} direction={{ xs: 'column', sm: 'row' }} sx={{ py: 2.5, px: 3 }}>
@@ -61,8 +64,8 @@ export default function OrderTableToolbar({
         fullWidth
         select
         label="Sort By"
-        value={filterDate}
-        onChange={onFilterDatetime}
+        value={filterAttribute}
+        onChange={onFilterAttribute}
         SelectProps={{
           MenuProps: {
             sx: { '& .MuiPaper-root': { maxHeight: 260 } },
@@ -73,10 +76,10 @@ export default function OrderTableToolbar({
           textTransform: 'capitalize',
         }}
       >
-        {optionsDatetime.map((option) => (
+        {optionsSort.map((option) => (
           <MenuItem
-            key={option}
-            value={option}
+            key={option.id}
+            value={option.id}
             sx={{
               mx: 1,
               my: 0.5,
@@ -85,7 +88,7 @@ export default function OrderTableToolbar({
               textTransform: 'capitalize',
             }}
           >
-            {option}
+            {option.label}
           </MenuItem>
         ))}
       </TextField>
@@ -105,7 +108,7 @@ export default function OrderTableToolbar({
           textTransform: 'capitalize',
         }}
       >
-        {optionsFilter.map((option) => (
+        {optionsOrderBy.map((option) => (
           <MenuItem
             key={option}
             value={option}
