@@ -22,7 +22,7 @@ import { paramCase } from 'change-case'
 import { useRouter } from 'next/router'
 import { useSnackbar } from 'notistack'
 import { useState } from 'react'
-import { ACCOUNT_STATUS_OPTIONS_SA, AccountData } from 'src/@types/@ces'
+import { AccountData } from 'src/@types/@ces'
 import { projectApi } from 'src/api-client'
 import Iconify from 'src/components/Iconify'
 import Scrollbar from 'src/components/Scrollbar'
@@ -88,14 +88,14 @@ export default function AccountTableCustom({}: Props) {
     { code: 'member', label: 'Member' },
     { code: 'free', label: 'Free' },
   ]
-  const statusOptions = ACCOUNT_STATUS_OPTIONS_SA
+  // const statusOptions = ACCOUNT_STATUS_OPTIONS_SA
 
   const { data } = useAccountList({})
   const accountList: AccountData[] = data?.data ?? []
 
   const [filterName, setFilterName] = useState('')
 
-  const [filterRole, setFilterRole] = useState('all')
+  // const [filterRole, setFilterRole] = useState('all')
 
   const { currentTab: filterStatus, onChangeTab: onChangeFilterStatus } = useTabs('all')
 
@@ -104,9 +104,9 @@ export default function AccountTableCustom({}: Props) {
     setPage(0)
   }
 
-  const handleFilterRole = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setFilterRole(event.target.value)
-  }
+  // const handleFilterRole = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   setFilterRole(event.target.value)
+  // }
 
   const handleDeleteRow = (id: string) => {
     confirmDialog('Do you really want to remove this account from group ?', async () => {
@@ -181,7 +181,7 @@ export default function AccountTableCustom({}: Props) {
     tableData: accountList,
     comparator: getComparator(order, orderBy),
     filterName,
-    filterRole,
+    // filterRole,
     filterStatus,
   })
 
@@ -189,7 +189,7 @@ export default function AccountTableCustom({}: Props) {
 
   const isNotFound =
     (!dataFiltered.length && !!filterName) ||
-    (!dataFiltered.length && !!filterRole) ||
+    // (!dataFiltered.length && !!filterRole) ||
     (!dataFiltered.length && !!filterStatus)
 
   const [open, setOpen] = useState(false)
@@ -214,7 +214,7 @@ export default function AccountTableCustom({}: Props) {
         onChange={onChangeFilterStatus}
         sx={{ px: 2, bgcolor: 'background.neutral' }}
       >
-        {statusOptions.map((tab) => (
+        {roleOptions.map((tab) => (
           <Tab disableRipple key={tab.code} label={tab.label} value={tab.code} />
         ))}
       </Tabs>
@@ -223,10 +223,10 @@ export default function AccountTableCustom({}: Props) {
 
       <AccountTableToolbar
         filterName={filterName}
-        filterRole={filterRole}
+        // filterRole={filterRole}
         onFilterName={handleFilterName}
-        onFilterRole={handleFilterRole}
-        optionsRole={roleOptions}
+        // onFilterRole={handleFilterRole}
+        // optionsRole={roleOptions}
       />
 
       <Scrollbar>
@@ -342,7 +342,7 @@ function applySortFilter({
   comparator,
   filterName,
   filterStatus,
-  filterRole,
+  // filterRole,
   projectDetails,
 }: {
   projectDetails: any
@@ -350,7 +350,7 @@ function applySortFilter({
   comparator: (a: any, b: any) => number
   filterName: string
   filterStatus: string
-  filterRole: string
+  // filterRole?: string
 }) {
   const stabilizedThis = tableData.map((el, index) => [el, index] as const)
 
@@ -369,15 +369,15 @@ function applySortFilter({
     )
   }
 
-  if (filterStatus !== 'all') {
-    tableData = tableData.filter((item: Record<string, any>) => item.status == filterStatus)
-  }
+  // if (filterStatus !== 'all') {
+  //   tableData = tableData.filter((item: Record<string, any>) => item.status == filterStatus)
+  // }
 
   const filterIds = projectDetails?.employeeGroupMappings?.map((obj: any) => obj.employee.accountId)
 
-  if (filterRole !== 'all') {
+  if (filterStatus !== 'all') {
     const filterFunc =
-      filterRole === 'member'
+      filterStatus === 'member'
         ? (employee: any) => filterIds.includes(employee.id)
         : (employee: any) => !filterIds.includes(employee.id)
 

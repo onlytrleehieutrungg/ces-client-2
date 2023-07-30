@@ -10,7 +10,7 @@ import { PATH_DASHBOARD } from '../../../routes/paths'
 // components
 import { Role, WalletData } from 'src/@types/@ces'
 import { useMe } from 'src/hooks/@ces'
-import { fNumber } from 'src/utils/formatNumber'
+import { fCurrency } from 'src/utils/formatNumber'
 import MyAvatar from '../../../components/MyAvatar'
 
 // ----------------------------------------------------------------------
@@ -90,7 +90,7 @@ export default function NavbarAccount({ isCollapse }: Props) {
               )}
             </Box>
           </RootStyle>
-          {data?.wallets?.length !== 0 && (
+          {!!data?.wallets?.length && (
             <Box
               sx={{
                 transition: (theme) =>
@@ -112,14 +112,14 @@ export default function NavbarAccount({ isCollapse }: Props) {
                     <Typography variant="body2" noWrap sx={{ color: 'text.primary' }}>
                       Balance:
                     </Typography>
-                    {fNumber(x.balance)} / {fNumber(x.limits)} đ
+                    {fCurrency(x.balance)} / {fCurrency(x.limits)}đ
                   </Typography>
 
                   <Typography key={x.id} variant="body2" noWrap sx={{ color: 'text.secondary' }}>
                     <Typography variant="body2" noWrap sx={{ color: 'text.primary' }}>
                       Used:
                     </Typography>
-                    {fNumber(x.used)} đ
+                    {fCurrency(x.used)}đ
                   </Typography>
                 </>
               ))}

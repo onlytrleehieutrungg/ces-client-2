@@ -6,13 +6,15 @@ import { Order, Status } from 'src/@types/@ces/order'
 import Iconify from 'src/components/Iconify'
 import Label from 'src/components/Label'
 import { TableMoreMenu } from 'src/components/table'
-import { fDateTime } from 'src/utils/formatTime'
+import { fNumber } from 'src/utils/formatNumber'
+import { fDateVN } from 'src/utils/formatTime'
 type Props = {
   row: Order
   selected: boolean
   onSelectRow: VoidFunction
   onViewRow: VoidFunction
   isValidating?: boolean
+  onClickRow?: VoidFunction
 }
 
 export default function OrderTableRow({
@@ -21,10 +23,11 @@ export default function OrderTableRow({
   selected,
   onSelectRow,
   onViewRow,
+  onClickRow,
 }: Props) {
   const theme = useTheme()
 
-  const { id, total, orderCode, companyName, createdAt, updatedAt, status } = row
+  const { total, orderCode, companyName, createdAt, updatedAt, status } = row
 
   const [openMenu, setOpenMenuActions] = useState<HTMLElement | null>(null)
 
@@ -42,18 +45,29 @@ export default function OrderTableRow({
   }
 
   return (
-    <TableRow hover selected={selected}>
-      <TableCell padding="checkbox">
-        <Checkbox checked={selected} onClick={onSelectRow} />
+    <TableRow hover selected={selected} sx={{ cursor: 'pointer' }} onClick={onClickRow}>
+      <TableCell
+        padding="checkbox"
+        onClick={(e) => {
+          e.stopPropagation()
+        }}
+      >
+        <Checkbox
+          checked={selected}
+          onClick={(e) => {
+            e.stopPropagation()
+            onSelectRow()
+          }}
+        />
       </TableCell>
 
       <TableCell align="left">{orderCode}</TableCell>
       <TableCell align="left" sx={{ textTransform: 'capitalize' }}>
-        {total}
+        {fNumber(total)}
       </TableCell>
       <TableCell align="left">{companyName}</TableCell>
-      <TableCell align="left">{fDateTime(createdAt)}</TableCell>
-      <TableCell align="left">{fDateTime(updatedAt)}</TableCell>
+      <TableCell align="left">{fDateVN(createdAt)}</TableCell>
+      <TableCell align="left">{fDateVN(updatedAt)}</TableCell>
       <TableCell align="left">
         <Label
           variant={theme.palette.mode === 'light' ? 'ghost' : 'filled'}
@@ -70,7 +84,12 @@ export default function OrderTableRow({
           {mapStatus(status)}
         </Label>
       </TableCell>
-      <TableCell align="right">
+      <TableCell
+        align="right"
+        onClick={(e) => {
+          e.stopPropagation()
+        }}
+      >
         <TableMoreMenu
           open={openMenu}
           onOpen={handleOpenMenu}

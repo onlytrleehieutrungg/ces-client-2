@@ -8,7 +8,7 @@ import { useSnackbar } from 'notistack'
 import { useCallback, useEffect, useMemo } from 'react'
 // form
 import { useForm } from 'react-hook-form'
-import { Category, CategoryPayload } from 'src/@types/@ces'
+import { CategoryPayload } from 'src/@types/@ces'
 import { fData } from 'src/utils/formatNumber'
 import uploadImageCategory from 'src/utils/uploadImageCategory'
 import * as Yup from 'yup'
@@ -17,7 +17,7 @@ import { FormProvider, RHFTextField, RHFUploadAvatar } from '../../../components
 import { PATH_CES } from '../../../routes/paths'
 // ----------------------------------------------------------------------
 
-type FormValuesProps = CategoryPayload
+// type FormValuesProps = CategoryPayload
 
 type Props = {
   isEdit?: boolean
@@ -50,14 +50,14 @@ export default function UserNewEditForm({ isEdit = false, currentUser, onSubmit 
 
   const {
     reset,
-    watch,
-    control,
+    // watch,
+    // control,
     setValue,
     handleSubmit,
     formState: { isSubmitting },
   } = methods
 
-  const values = watch()
+  // const values = watch()
 
   useEffect(() => {
     if (isEdit && currentUser) {
@@ -126,7 +126,7 @@ export default function UserNewEditForm({ isEdit = false, currentUser, onSubmit 
                 gridTemplateColumns: { xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)' },
               }}
             >
-              <RHFTextField name="name" label="Tên danh mục" />
+              <RHFTextField name="name" label="Category Name" />
               {/* <RHFTextField name="Price" label="Giá sản phẩm" />
                             <RHFTextField name="Quantity" label="Số lượng" /> */}
               {/* <RHFSelect name="status" label="status" placeholder="status">
@@ -138,7 +138,7 @@ export default function UserNewEditForm({ isEdit = false, currentUser, onSubmit 
                                 ))}
                             </RHFSelect> */}
 
-              <RHFTextField name="description" label="Desciption" />
+              <RHFTextField name="description" label="Description" />
               {/* <RHFTextField name="ServiceDuration" label="City" />
                             <RHFTextField name="Type" label="Address" /> */}
               {/* <RHFTextField name="zipCode" label="Zip/Code" />

@@ -20,10 +20,8 @@ import { useMemo, useState } from 'react'
 import {
   ACCOUNT_STATUS_OPTIONS_SA,
   AccountData,
-  ROLE_OPTIONS_EA,
-  ROLE_OPTIONS_SA,
-  Role,
   Params,
+  Role
 } from 'src/@types/@ces'
 import { accountApi } from 'src/api-client'
 import Iconify from 'src/components/Iconify'
@@ -49,7 +47,6 @@ import AccountTableToolbar from './AccountTableToolbar'
 const TABLE_HEAD = [
   { id: 'name', label: 'Name', align: 'left' },
   { id: 'email', label: 'Email', align: 'left' },
-  { id: 'companyId', label: 'CompanyId', align: 'left' },
   { id: 'phone', label: 'Phone', align: 'left' },
   { id: 'status', label: 'Status', align: 'left' },
   { id: '' },
@@ -67,7 +64,7 @@ export default function AccountTable({}: Props) {
     order,
     orderBy,
     rowsPerPage,
-    setPage,
+    // setPage,
     //
     selected,
     // setSelected,
@@ -84,7 +81,7 @@ export default function AccountTable({}: Props) {
 
   const { user } = useAuth()
 
-  const roleOptions = user?.role === Role['System Admin'] ? ROLE_OPTIONS_SA : ROLE_OPTIONS_EA
+  // const roleOptions = user?.role === Role['System Admin'] ? ROLE_OPTIONS_SA : ROLE_OPTIONS_EA
   const statusOptions = ACCOUNT_STATUS_OPTIONS_SA
 
   const { enqueueSnackbar } = useSnackbar()
@@ -96,7 +93,7 @@ export default function AccountTable({}: Props) {
 
   const [filterName, setFilterName] = useState('')
 
-  const [filterRole, setFilterRole] = useState('all')
+  const [filterRole] = useState('all')
 
   const { currentTab: filterStatus, onChangeTab: onChangeFilterStatus } = useTabs('all')
 
@@ -104,10 +101,10 @@ export default function AccountTable({}: Props) {
     setFilterName(filterName)
   }
 
-  const handleFilterRole = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setFilterRole(event.target.value)
-    setPage(0)
-  }
+  // const handleFilterRole = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   setFilterRole(event.target.value)
+  //   setPage(0)
+  // }
 
   const handleDeleteRow = (id: string) => {
     confirmDialog('Do you really want to delete this account ?', async () => {
@@ -170,10 +167,10 @@ export default function AccountTable({}: Props) {
 
       <AccountTableToolbar
         filterName={filterName}
-        filterRole={filterRole}
         onFilterName={handleFilterName}
-        onFilterRole={handleFilterRole}
-        optionsRole={roleOptions}
+        // filterRole={filterRole}
+        // onFilterRole={handleFilterRole}
+        // optionsRole={roleOptions}
       />
       <LoadingTable isValidating={isValidating} />
 

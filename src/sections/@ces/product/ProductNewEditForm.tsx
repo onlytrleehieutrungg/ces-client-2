@@ -3,8 +3,6 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { LoadingButton } from '@mui/lab'
 import { Box, Card, Grid, Stack, Typography } from '@mui/material'
 // next
-import { useRouter } from 'next/router'
-import { useSnackbar } from 'notistack'
 import { useCallback, useEffect, useMemo } from 'react'
 // form
 import { useForm } from 'react-hook-form'
@@ -19,7 +17,6 @@ import {
   RHFUploadAvatar,
 } from '../../../components/hook-form'
 // routes
-import { PATH_CES } from '../../../routes/paths'
 // utils
 import { fData } from '../../../utils/formatNumber'
 
@@ -32,10 +29,10 @@ type Props = {
 }
 
 export default function ProductNewEditForm({ isEdit = false, currentUser, onSubmit }: Props) {
-  const { push } = useRouter()
+  // const { push } = useRouter()
   const { data } = useCategoryList({})
   const categories: Category[] = data?.data ?? []
-  const { enqueueSnackbar } = useSnackbar()
+  // const { enqueueSnackbar } = useSnackbar()
 
   const NewUserSchema = Yup.object().shape({
     name: Yup.string().required('Name is required'),
@@ -67,7 +64,7 @@ export default function ProductNewEditForm({ isEdit = false, currentUser, onSubm
   const {
     reset,
     watch,
-    control,
+    // control,
     setValue,
     handleSubmit,
     formState: { isSubmitting },
@@ -139,10 +136,10 @@ export default function ProductNewEditForm({ isEdit = false, currentUser, onSubm
                 gridTemplateColumns: { xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)' },
               }}
             >
-              <RHFTextField name="name" label="Tên sản phẩm" />
-              <RHFTextField name="price" label="Giá sản phẩm" />
-              <RHFTextField name="quantity" label="Số lượng" />
-              <RHFSelect name="categoryId" label="category" placeholder="category">
+              <RHFTextField name="name" label="Name" />
+              <RHFTextField name="price" label="Price" />
+              <RHFTextField name="quantity" label="Quantity" />
+              <RHFSelect name="categoryId" label="Category" placeholder="category">
                 <option value={undefined} />
                 {categories.map((option) => (
                   <option key={option.id} value={option.id}>

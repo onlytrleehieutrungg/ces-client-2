@@ -1,10 +1,10 @@
 import { Avatar, Checkbox, MenuItem, TableCell, TableRow, Typography } from '@mui/material'
 // @mui
-import { useTheme } from '@mui/material/styles'
 import { useState } from 'react'
 import { Product } from 'src/@types/@ces/product'
 import Iconify from 'src/components/Iconify'
 import { TableMoreMenu } from 'src/components/table'
+import { fNumber, fShortenNumber } from 'src/utils/formatNumber'
 // @types
 
 // components
@@ -28,9 +28,9 @@ export default function ProductTableRow({
   isValidating,
   onDeleteRow,
 }: Props) {
-  const theme = useTheme()
+  // const theme = useTheme()
 
-  const { name, price, quantity, description, category, imageUrl } = row
+  const { name, price, quantity, category, imageUrl } = row
 
   const [openMenu, setOpenMenuActions] = useState<HTMLElement | null>(null)
 
@@ -56,10 +56,10 @@ export default function ProductTableRow({
           {name}
         </Typography>
       </TableCell>
-      <TableCell align="left">{price}</TableCell>
+      <TableCell align="left">{fNumber(price)}</TableCell>
 
       <TableCell align="left" sx={{ textTransform: 'capitalize' }}>
-        {quantity}
+        {fShortenNumber(quantity)}
       </TableCell>
       <TableCell align="left">{category?.name}</TableCell>
 

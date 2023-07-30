@@ -67,7 +67,7 @@ export default function BenefitPage() {
     order,
     orderBy,
     rowsPerPage,
-    setPage,
+    // setPage,
     //
     selected,
     // setSelected,
@@ -124,6 +124,7 @@ export default function BenefitPage() {
 
   const handleClickRow = (id: string) => {
     // push(PATH_CES.project.detail(paramCase(id)))
+    push(PATH_CES.benefit.edit(paramCase(id)))
   }
 
   const dataFiltered = applySortFilter({

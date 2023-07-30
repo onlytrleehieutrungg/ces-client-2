@@ -18,10 +18,7 @@ import useTabs from '../../../hooks/useTabs'
 import Layout from '../../../layouts'
 // routes
 import { PATH_DASHBOARD } from '../../../routes/paths'
-import {
-  AccountBilling,
-  AccountGeneral
-} from '../../../sections/@dashboard/user/account'
+import { AccountBilling, AccountGeneral } from '../../../sections/@dashboard/user/account'
 // _mock_
 import { _userAddressBook, _userInvoices, _userPayment } from '../../../_mock'
 
@@ -56,22 +53,6 @@ export default function UserAccount() {
       icon: <Iconify icon={'ic:round-account-box'} width={20} height={20} />,
       component: <AccountGeneral />,
     },
-    {
-      value: 'change password',
-      icon: <Iconify icon={'ic:round-vpn-key'} width={20} height={20} />,
-      component: <AccountChangePasswordForm onSubmit={handleChangePasswordSubmit} />,
-    },
-    // {
-    //   value: 'billing',
-    //   icon: <Iconify icon={'ic:round-receipt'} width={20} height={20} />,
-    //   component: (
-    //     <AccountBilling
-    //       cards={_userPayment}
-    //       addressBook={_userAddressBook}
-    //       invoices={_userInvoices}
-    //     />
-    //   ),
-    // },
   ]
   if (data?.role == 3) {
     ACCOUNT_TABS.push({
@@ -84,6 +65,17 @@ export default function UserAccount() {
           invoices={_userInvoices}
         />
       ),
+    })
+    ACCOUNT_TABS.push({
+      value: 'change password',
+      icon: <Iconify icon={'ic:round-vpn-key'} width={20} height={20} />,
+      component: <AccountChangePasswordForm onSubmit={handleChangePasswordSubmit} />,
+    })
+  } else {
+    ACCOUNT_TABS.push({
+      value: 'change password',
+      icon: <Iconify icon={'ic:round-vpn-key'} width={20} height={20} />,
+      component: <AccountChangePasswordForm onSubmit={handleChangePasswordSubmit} />,
     })
   }
 

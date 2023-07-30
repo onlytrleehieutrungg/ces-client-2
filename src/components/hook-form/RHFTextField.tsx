@@ -1,18 +1,18 @@
 // form
-import { useFormContext, Controller } from 'react-hook-form';
+import { useFormContext, Controller } from 'react-hook-form'
 // @mui
-import { TextField, TextFieldProps } from '@mui/material';
+import { TextField, TextFieldProps } from '@mui/material'
 
 // ----------------------------------------------------------------------
 
 type IProps = {
-  name: string;
-};
+  name: string
+}
 
-type Props = IProps & TextFieldProps;
+type Props = IProps & TextFieldProps
 
 export default function RHFTextField({ name, ...other }: Props) {
-  const { control } = useFormContext();
+  const { control } = useFormContext()
 
   return (
     <Controller
@@ -22,5 +22,5 @@ export default function RHFTextField({ name, ...other }: Props) {
         <TextField {...field} fullWidth error={!!error} helperText={error?.message} {...other} />
       )}
     />
-  );
+  )
 }

@@ -6,6 +6,7 @@ import Avatar from 'src/components/Avatar'
 import Iconify from 'src/components/Iconify'
 import { TableMoreMenu } from 'src/components/table'
 import createAvatar from 'src/utils/createAvatar'
+import { fNumber } from 'src/utils/formatNumber'
 import { fDateVN } from 'src/utils/formatTime'
 
 // ----------------------------------------------------------------------
@@ -74,8 +75,8 @@ export default function CompanyTableRow({
         </Typography>
       </TableCell>
 
-      <TableCell align="left">{limits}</TableCell>
-      <TableCell align="left">{used}</TableCell>
+      <TableCell align="left">{fNumber(limits)}</TableCell>
+      <TableCell align="left">{fNumber(used)}</TableCell>
       <TableCell align="left">{fDateVN(expiredDate)}</TableCell>
 
       {/* <TableCell align="left">

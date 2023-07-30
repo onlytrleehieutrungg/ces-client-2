@@ -1,11 +1,10 @@
 import { Avatar, Checkbox, MenuItem, TableCell, TableRow, Typography } from '@mui/material'
 // @mui
-import { useTheme } from '@mui/material/styles'
 import { useState } from 'react'
 import { Category } from 'src/@types/@ces'
 import Iconify from 'src/components/Iconify'
 import { TableMoreMenu } from 'src/components/table'
-import { fDateTime } from 'src/utils/formatTime'
+import { fDateVN } from 'src/utils/formatTime'
 // @types
 
 // components
@@ -29,9 +28,9 @@ export default function CategoryTableRow({
   onSelectRow,
   onDeleteRow,
 }: Props) {
-  const theme = useTheme()
+  // const theme = useTheme()
 
-  const { name, description, imageUrl, createdAt, updatedAt } = row
+  const { name, imageUrl, createdAt, updatedAt } = row
 
   const [openMenu, setOpenMenuActions] = useState<HTMLElement | null>(null)
 
@@ -57,9 +56,10 @@ export default function CategoryTableRow({
         <Typography variant="subtitle2" noWrap>
           {name}
         </Typography>
+
       </TableCell>
-      <TableCell align="left">{fDateTime(createdAt)}</TableCell>
-      <TableCell align="left">{fDateTime(updatedAt)}</TableCell>
+      <TableCell align="left">{fDateVN(createdAt)}</TableCell>
+      <TableCell align="left">{fDateVN(updatedAt)}</TableCell>
 
       <TableCell align="right">
         <TableMoreMenu

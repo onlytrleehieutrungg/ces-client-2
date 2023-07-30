@@ -10,9 +10,9 @@ type Props = {
     label: string
   }[]
   filterName: string
-  filterRole: string
   onFilterName: (value: string) => void
-  onFilterRole: (event: React.ChangeEvent<HTMLInputElement>) => void
+  filterRole?: string
+  onFilterRole?: (event: React.ChangeEvent<HTMLInputElement>) => void
 }
 
 export default function AccountTableToolbar({

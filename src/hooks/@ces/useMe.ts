@@ -7,7 +7,7 @@ type UseMeProps = {
 
 export function useMe({ options }: UseMeProps) {
   const { data, error } = useSWR(['me'], () => authApi.getMe(), {
-    refreshInterval: 6 * 10 * 1000,
+    refreshInterval: 10 * 1000,
     // revalidateOnFocus: false,
     // dedupingInterval: 10 * 1000, // 10s
     // keepPreviousData: true,

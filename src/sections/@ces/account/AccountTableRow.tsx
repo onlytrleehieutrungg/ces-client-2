@@ -38,7 +38,7 @@ export default function AccountTableRow({
 }: Props) {
   const theme = useTheme()
 
-  const { name, imageUrl, phone, email, status, companyId } = row
+  const { name, imageUrl, phone, email, status } = row
 
   const [openMenu, setOpenMenuActions] = useState<HTMLElement | null>(null)
 
@@ -81,8 +81,6 @@ export default function AccountTableRow({
       </TableCell>
 
       <TableCell align="left">{email}</TableCell>
-
-      {companyId && <TableCell align="left">{companyId}</TableCell>}
 
       <TableCell align="left">{phone === 'string' ? '' : phone}</TableCell>
 

@@ -15,6 +15,7 @@ import {
   Stack,
   TextField,
   Typography,
+  useTheme,
 } from '@mui/material'
 import { useSnackbar } from 'notistack'
 import { useForm } from 'react-hook-form'
@@ -47,6 +48,8 @@ export default function AccountWallet({ currentUser, mutate, accountId }: Props)
   const { user } = useAuth()
   const { data: benefitList } = useBenefitList({})
   const { data: accountDetails } = useAccountDetails({ id: `${accountId}` })
+
+  const theme = useTheme()
 
   const handleClickOpen = (wallet: WalletData) => {
     setCurrentWallet(wallet)
@@ -111,7 +114,7 @@ export default function AccountWallet({ currentUser, mutate, accountId }: Props)
   }
 
   return (
-    <Grid container spacing={5}>
+    <Grid container spacing={3}>
       <Grid item xs={12} md={8}>
         <Stack spacing={3}>
           {accountDetails?.data?.wallets &&
@@ -130,7 +133,7 @@ export default function AccountWallet({ currentUser, mutate, accountId }: Props)
                 {user?.role === Role['Enterprise Admin'] ? (
                   <>
                     <Typography variant="h6" flex={1}>
-                      {fNumber(wallet.balance)} đ
+                      {fNumber(wallet.balance)}đ
                     </Typography>
                     <Box
                       sx={{
@@ -152,16 +155,38 @@ export default function AccountWallet({ currentUser, mutate, accountId }: Props)
                 ) : (
                   <Stack direction={'row'} alignItems={'center'}>
                     <Typography variant="h6" flex={1}>
-                      {fNumber(wallet.balance)} / {fNumber(wallet.limits)} đ
+                      {fNumber(wallet.balance)} / {fNumber(wallet.limits)}đ
                     </Typography>
                     <Stack direction={'row'} spacing={1} flex={1}>
                       <Typography variant="h6">Used:</Typography>
-                      <Typography variant="h6">{fNumber(wallet.used)} đ</Typography>
+                      <Typography variant="h6">{fNumber(wallet.used)}đ</Typography>
                     </Stack>
                   </Stack>
                 )}
               </Card>
             ))}
+        </Stack>
+      </Grid>
+      <Grid item xs={12} md={8}>
+        <Stack spacing={3}>
+          <Card sx={{ p: 3 }}>
+            <Stack spacing={2} alignItems="flex-end">
+
+              <Typography variant="h6" sx={{ width: 1, color: theme.palette.primary.main }}>
+                Currently Receiving Benefits (***TODO***)
+              </Typography>
+
+              <Stack spacing={2} sx={{ width: 1 }}>
+                <Stack direction="column" spacing={1}>
+                  {benefitList?.data?.map((x, index) => (
+                    <Typography key={x.id} variant="body1">
+                      {index + 1}. {x.name} ({fCurrency(x.unitPrice)}đ)
+                    </Typography>
+                  ))}
+                </Stack>
+              </Stack>
+            </Stack>
+          </Card>
         </Stack>
       </Grid>
 

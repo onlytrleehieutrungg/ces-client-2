@@ -13,8 +13,9 @@ import {
   TableContainer,
   TablePagination,
   Tabs,
-  Tooltip
+  Tooltip,
 } from '@mui/material'
+import { paramCase } from 'change-case'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { Params, Role } from 'src/@types/@ces'
@@ -27,7 +28,7 @@ import {
   TableEmptyRows,
   TableHeadCustom,
   TableNoData,
-  TableSelectedActions
+  TableSelectedActions,
 } from 'src/components/table'
 import RoleBasedGuard from 'src/guards/RoleBasedGuard'
 import { useOrder } from 'src/hooks/@ces/useOrder'
@@ -68,7 +69,7 @@ export default function OrderPage() {
     order,
     orderBy,
     rowsPerPage,
-    setPage,
+    // setPage,
     //
     selected,
     setSelected,
@@ -85,7 +86,7 @@ export default function OrderPage() {
 
   const [params, setParams] = useState<Partial<Params>>()
   //Sort=CreatedAt&Order=desc
-  const { data, mutate, isLoading, isValidating } = useOrder({ params })
+  const { data, isValidating } = useOrder({ params })
   const tableData: Order[] = data?.data ?? []
   const [filterStt, setFilterStatus] = useState('supplier')
   const { currentTab: filterStatus, onChangeTab: onChangeFilterStatus } = useTabs('all')
@@ -123,6 +124,10 @@ export default function OrderPage() {
 
   const handleDeleteRows = (selected: string[]) => {
     setSelected([])
+  }
+
+  const handleClickRow = (id: string) => {
+    push(PATH_CES.order.detail(paramCase(id)))
   }
 
   const dataFiltered = applySortFilter({
@@ -227,6 +232,7 @@ export default function OrderPage() {
                         selected={selected.includes(row.id)}
                         onSelectRow={() => onSelectRow(row.id)}
                         onViewRow={() => handleViewRow(row.id)}
+                        onClickRow={() => handleClickRow(row.id)}
                       />
                     ))}
 

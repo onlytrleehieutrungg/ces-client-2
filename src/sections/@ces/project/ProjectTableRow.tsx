@@ -3,17 +3,12 @@ import { useState } from 'react'
 import { Checkbox, MenuItem, TableCell, TableRow, Typography } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 import { ProjectData } from 'src/@types/@ces/project'
+import Avatar from 'src/components/Avatar'
 import Iconify from 'src/components/Iconify'
 import Label from 'src/components/Label'
 import { TableMoreMenu } from 'src/components/table'
-import Avatar from 'src/components/Avatar'
 import createAvatar from 'src/utils/createAvatar'
-// @types
-// import { UserManager } from '../../../../@types/user';
-// // components
-// import Label from '../../../../components/Label';
-// import Iconify from '../../../../components/Iconify';
-// import { TableMoreMenu } from '../../../../components/table';
+import { fDateVN } from 'src/utils/formatTime'
 
 // ----------------------------------------------------------------------
 
@@ -38,7 +33,7 @@ export default function ProjectTableRow({
 }: Props) {
   const theme = useTheme()
 
-  const { name, imageUrl, status, companyId } = row
+  const { name, imageUrl, status, createdAt, updatedAt } = row
 
   const [openMenu, setOpenMenuActions] = useState<HTMLElement | null>(null)
 
@@ -89,7 +84,8 @@ export default function ProjectTableRow({
         </Label>
       </TableCell>
 
-      <TableCell align="left">{companyId}</TableCell>
+      <TableCell align="left">{fDateVN(createdAt || '')}</TableCell>
+      <TableCell align="left">{fDateVN(updatedAt || '')}</TableCell>
 
       <TableCell
         align="right"

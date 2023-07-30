@@ -9,7 +9,7 @@ export function fDate(date: Date | string | number) {
 
 export function fDateVN(date: Date | string | number) {
   if (date) return format(new Date(date), 'dd/MM/yyyy')
-  else return 'Nah'
+  else return ''
 }
 
 export function fDateParam(date: Date | string | number) {

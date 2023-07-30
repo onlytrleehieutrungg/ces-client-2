@@ -18,12 +18,11 @@ import {
 } from '@mui/material'
 import { styled, useTheme } from '@mui/material/styles'
 import { toNumber } from 'lodash'
-import { useRouter } from 'next/router'
 import { useState } from 'react'
 //
 import { Order, Status } from 'src/@types/@ces/order'
 import { fCurrency } from 'src/utils/formatNumber'
-import { fDate } from 'src/utils/formatTime'
+import { fDateVN } from 'src/utils/formatTime'
 // utils
 // components
 import Label from '../../../../components/Label'
@@ -49,7 +48,7 @@ export default function OrderDetails({ order, handleEditOrderSubmit }: Props) {
   const theme = useTheme()
   const [changeStatus, setChangeStatus] = useState(false)
   const [statusValue, setStatusValue] = useState<number>()
-  const { query, push } = useRouter()
+  // const { query, push } = useRouter()
   if (!order) {
     return null
   }
@@ -57,14 +56,15 @@ export default function OrderDetails({ order, handleEditOrderSubmit }: Props) {
 
   const {
     id,
+    orderCode,
     total,
-    address,
+    // address,
     updatedAt,
     createdAt,
     status,
-    note,
-    code,
-    debtStatus,
+    // note,
+    // code,
+    // debtStatus,
     employee,
     orderDetails,
   } = order
@@ -136,7 +136,8 @@ export default function OrderDetails({ order, handleEditOrderSubmit }: Props) {
                 </TextField>
               )}
 
-              <Typography variant="h6">{`INV-${id}`}</Typography>
+              <Typography variant="h6">{orderCode}</Typography>
+              {/* <Typography variant="h6">{`INV-${id}`}</Typography> */}
             </Box>
           </Grid>
           <Grid item xs={12} sm={6} sx={{ mb: 5 }}>
@@ -179,11 +180,11 @@ export default function OrderDetails({ order, handleEditOrderSubmit }: Props) {
             <Typography paragraph variant="overline" sx={{ color: 'text.disabled' }}>
               Date create
             </Typography>
-            <Typography variant="body2">{fDate(createdAt!)}</Typography>
+            <Typography variant="body2">{fDateVN(createdAt!)}</Typography>
             <Typography paragraph variant="overline" sx={{ color: 'text.disabled' }}>
               Date update
             </Typography>
-            <Typography variant="body2">{fDate(updatedAt!)}</Typography>
+            <Typography variant="body2">{fDateVN(updatedAt!)}</Typography>
           </Grid>
         </Grid>
 

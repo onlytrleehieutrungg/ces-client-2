@@ -22,9 +22,9 @@ export default function BalanceAnalytic({ title, balance, limit, color }: Props)
       sx={{ py: 2, width: 1, minWidth: 200 }}
     >
       <Stack spacing={0.5} sx={{ ml: 2 }}>
-        <Typography variant="h6">{title}</Typography>
+        <Typography variant="h5">{title}</Typography>
 
-        <Typography variant="h4" sx={{ color }}>
+        <Typography variant="h5" sx={{ color }}>
           {fCurrency(balance)}
           <Box component="span" sx={{ color: 'text.secondary', typography: 'body1' }}>
             /{fCurrency(limit)}đ

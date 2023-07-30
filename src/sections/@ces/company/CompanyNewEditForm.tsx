@@ -125,7 +125,7 @@ export default function CompanyNewEditForm({ isEdit = false, currentUser, onSubm
             >
               <RHFTextField name="name" label="Company Name" />
               <RHFTextField name="address" label="Company Address" />
-              <RHFTextField name="limits" label="Limit" />
+              <RHFTextField name="limits" label="Limit" type="number" />
 
               <Controller
                 name="expiredDate"
