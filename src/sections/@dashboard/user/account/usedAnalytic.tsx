@@ -2,10 +2,11 @@
 import {
   Accordion,
   AccordionDetails,
-  AccordionSummary, Button,
+  AccordionSummary,
+  Button,
   Paper,
   Stack,
-  Typography
+  Typography,
 } from '@mui/material'
 import { useState } from 'react'
 import { AccountData, PaymentPayload } from 'src/@types/@ces'
@@ -45,8 +46,8 @@ export default function UsedAnalytic({ title, used, color, data, payLoad }: Prop
   return (
     <Accordion>
       <AccordionSummary
-        disableRipple
-        disableTouchRipple
+        disableRipple={true}
+        disableTouchRipple={true}
         expandIcon={<Iconify icon={'eva:arrow-ios-downward-fill'} width={20} height={20} />}
       >
         <Typography variant="subtitle1">

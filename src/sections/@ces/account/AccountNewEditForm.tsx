@@ -41,6 +41,7 @@ import {
   RHFTextField,
   RHFUploadAvatar,
 } from '../../../components/hook-form'
+import uploadImageAccount from 'src/utils/uploadImageAccount'
 
 // ----------------------------------------------------------------------
 
@@ -176,17 +177,8 @@ export default function AccountNewEditForm({ isEdit = false, currentUser, onSubm
   }
 
   const handleDrop = useCallback(
-    (acceptedFiles) => {
-      const file = acceptedFiles[0]
-
-      if (file) {
-        setValue(
-          'imageUrl',
-          Object.assign(file, {
-            preview: URL.createObjectURL(file),
-          })
-        )
-      }
+    async (acceptedFiles) => {
+      uploadImageAccount({ acceptedFiles, setValue })
     },
     [setValue]
   )
