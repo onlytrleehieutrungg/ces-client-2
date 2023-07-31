@@ -223,8 +223,8 @@ export default function AccountTableCustom({}: Props) {
 
       <AccountTableToolbar
         filterName={filterName}
-        // filterRole={filterRole}
         onFilterName={handleFilterName}
+        // filterRole={filterRole}
         // onFilterRole={handleFilterRole}
         // optionsRole={roleOptions}
       />
@@ -235,26 +235,40 @@ export default function AccountTableCustom({}: Props) {
             <TableSelectedActions
               dense={dense}
               numSelected={selected.length}
-              rowCount={accountList.length}
-              onSelectAllRows={(checked) =>
+              rowCount={dataFiltered.length}
+              onSelectAllRows={(checked) => {
                 onSelectAllRows(
                   checked,
-                  accountList.map((row) => `${row.id}`)
+                  dataFiltered.map((row) => `${row.id}`)
                 )
-              }
+              }}
               actions={
-                <>
-                  <Tooltip title="Add All">
-                    <IconButton color="primary" onClick={() => handleAddRows(selected)}>
-                      <Iconify icon={'material-symbols:add'} />
-                    </IconButton>
-                  </Tooltip>
-                  <Tooltip title="Remove All">
+                filterStatus === 'all' ? (
+                  <>
+                    <Tooltip title="Add all">
+                      <IconButton color="primary" onClick={() => handleAddRows(selected)}>
+                        <Iconify icon={'material-symbols:add'} />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Remove all">
+                      <IconButton color="primary" onClick={() => handleRemoveRows(selected)}>
+                        <Iconify icon={'material-symbols:remove'} />
+                      </IconButton>
+                    </Tooltip>
+                  </>
+                ) : filterStatus === 'member' ? (
+                  <Tooltip title="Remove all">
                     <IconButton color="primary" onClick={() => handleRemoveRows(selected)}>
                       <Iconify icon={'material-symbols:remove'} />
                     </IconButton>
                   </Tooltip>
-                </>
+                ) : (
+                  <Tooltip title="Add all">
+                    <IconButton color="primary" onClick={() => handleAddRows(selected)}>
+                      <Iconify icon={'material-symbols:add'} />
+                    </IconButton>
+                  </Tooltip>
+                )
               }
             />
           )}
@@ -264,13 +278,13 @@ export default function AccountTableCustom({}: Props) {
               order={order}
               orderBy={orderBy}
               headLabel={TABLE_HEAD}
-              rowCount={accountList.length}
+              rowCount={dataFiltered.length}
               numSelected={selected.length}
               onSort={onSort}
               onSelectAllRows={(checked) =>
                 onSelectAllRows(
                   checked,
-                  accountList.map((row: any) => `${row.id}`)
+                  dataFiltered.map((row: any) => `${row.id}`)
                 )
               }
             />
@@ -279,8 +293,6 @@ export default function AccountTableCustom({}: Props) {
               {dataFiltered
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => {
-                  console.log(row.id)
-                  console.log(projectDetails?.employeeGroupMappings)
                   const isMember = projectDetails?.employeeGroupMappings?.some(
                     (e) => e.employee.accountId == row.id
                   )

@@ -1,7 +1,7 @@
 // next
 import NextLink from 'next/link'
 // @mui
-import { Box, Divider, Link, Typography } from '@mui/material'
+import { Box, Divider, Link, Stack, Typography } from '@mui/material'
 import { styled } from '@mui/material/styles'
 // hooks
 import useAuth from '../../../hooks/useAuth'
@@ -107,21 +107,24 @@ export default function NavbarAccount({ isCollapse }: Props) {
               <Divider sx={{ my: 1 }} />
 
               {data?.wallets?.map((x: WalletData) => (
-                <>
-                  <Typography key={x.id} variant="body2" noWrap sx={{ color: 'text.secondary' }}>
+                <Box key={x.id}>
+                  <Stack>
                     <Typography variant="body2" noWrap sx={{ color: 'text.primary' }}>
                       Balance:
                     </Typography>
-                    {fCurrency(x.balance)} / {fCurrency(x.limits)}đ
-                  </Typography>
-
-                  <Typography key={x.id} variant="body2" noWrap sx={{ color: 'text.secondary' }}>
+                    <Typography variant="body2" noWrap sx={{ color: 'text.secondary' }}>
+                      {fCurrency(x.balance)} / {fCurrency(x.limits)}đ
+                    </Typography>
+                  </Stack>
+                  <Stack>
                     <Typography variant="body2" noWrap sx={{ color: 'text.primary' }}>
                       Used:
                     </Typography>
-                    {fCurrency(x.used)}đ
-                  </Typography>
-                </>
+                    <Typography variant="body2" noWrap sx={{ color: 'text.secondary' }}>
+                      {fCurrency(x.used)}đ
+                    </Typography>
+                  </Stack>
+                </Box>
               ))}
             </Box>
           )}

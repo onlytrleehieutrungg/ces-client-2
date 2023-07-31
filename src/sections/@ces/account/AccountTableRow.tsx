@@ -8,6 +8,7 @@ import { TableMoreMenu } from 'src/components/table'
 import Iconify from 'src/components/Iconify'
 import createAvatar from 'src/utils/createAvatar'
 import Avatar from 'src/components/Avatar'
+import { fDateVN } from 'src/utils/formatTime'
 // @types
 // import { UserManager } from '../../../../@types/user';
 // // components
@@ -38,7 +39,7 @@ export default function AccountTableRow({
 }: Props) {
   const theme = useTheme()
 
-  const { name, imageUrl, phone, email, status } = row
+  const { name, imageUrl, phone, email, status, createdAt, updatedAt } = row
 
   const [openMenu, setOpenMenuActions] = useState<HTMLElement | null>(null)
 
@@ -93,6 +94,9 @@ export default function AccountTableRow({
           {status === 1 ? 'Active' : status === 2 ? 'In Active' : 'Deleted'}
         </Label>
       </TableCell>
+
+      <TableCell align="left">{fDateVN(createdAt)}</TableCell>
+      <TableCell align="left">{fDateVN(updatedAt)}</TableCell>
 
       <TableCell
         align="right"

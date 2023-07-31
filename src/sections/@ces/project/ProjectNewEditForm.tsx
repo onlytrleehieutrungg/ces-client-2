@@ -33,7 +33,7 @@ type Props = {
 export default function ProjectNewEditForm({ isEdit = false, currentUser, onSubmit }: Props) {
   const NewUserSchema = Yup.object().shape({
     name: Yup.string().required('Name is required'),
-    address: Yup.string().required('Address is required'),
+
     // imageUrl: Yup.string().required('Image is required'),
     status: Yup.number().required('Status is required'),
   })
@@ -41,7 +41,7 @@ export default function ProjectNewEditForm({ isEdit = false, currentUser, onSubm
   const defaultValues = useMemo(
     () => ({
       name: currentUser?.name || '',
-      address: currentUser?.address || '',
+
       imageUrl: currentUser?.imageUrl !== 'string' ? currentUser?.imageUrl : '',
       status: currentUser?.status,
     }),
@@ -178,7 +178,7 @@ export default function ProjectNewEditForm({ isEdit = false, currentUser, onSubm
             >
               <RHFTextField name="name" label="Name" />
 
-              <RHFTextField name="address" label="Address" />
+              {/* <RHFTextField name="address" label="Address" /> */}
 
               <RHFSelect name="status" label="Status" placeholder="Status">
                 <option value={undefined} />

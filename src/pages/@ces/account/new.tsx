@@ -67,7 +67,7 @@ export default function AccountCreatePage() {
       const formData = new FormData()
 
       formData.append('file', file!)
-      await axiosClient.post('/excel/product/import', formData, {
+      await axiosClient.post('/excel/account/import', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       })
       setLoading(false)
@@ -96,7 +96,7 @@ export default function AccountCreatePage() {
           action={
             user?.role === Role['Enterprise Admin'] && (
               <Button
-                variant="outlined"
+                variant="contained"
                 onClick={() =>
                   (window.location.href = 'https://api-dev.ces.bio/api/excel/account/template')
                 }

@@ -24,7 +24,7 @@ export type AccountPayload = {
   imageUrl: string | null
   role?: number
   companyId?: number | null
-  company: {
+  company?: {
     name?: string
     address?: string
     imageUrl?: string | null
@@ -44,6 +44,7 @@ export enum Role {
   'Supplier Admin' = 2,
   'Enterprise Admin' = 3,
   'Employee' = 4,
+  'Shipper' = 5,
 }
 
 export function roleNumberToString(value: number): string | undefined {
@@ -77,7 +78,7 @@ export const ROLE_OPTIONS_EA = [
 export const ROLE_OPTIONS_FORM_EA = filterRoleOptions((value) => [Role['Employee']].includes(value))
 
 export const ROLE_OPTIONS_FORM_SA = filterRoleOptions((value) =>
-  [Role['Supplier Admin'], Role['Enterprise Admin']].includes(value)
+  [Role['Supplier Admin'], Role['Enterprise Admin'], Role['Shipper']].includes(value)
 )
 
 export enum AccountStatus {

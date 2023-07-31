@@ -17,12 +17,7 @@ import { paramCase } from 'change-case'
 import { useRouter } from 'next/router'
 import { useSnackbar } from 'notistack'
 import { useMemo, useState } from 'react'
-import {
-  ACCOUNT_STATUS_OPTIONS_SA,
-  AccountData,
-  Params,
-  Role
-} from 'src/@types/@ces'
+import { ACCOUNT_STATUS_OPTIONS_SA, AccountData, Params, Role } from 'src/@types/@ces'
 import { accountApi } from 'src/api-client'
 import Iconify from 'src/components/Iconify'
 import Scrollbar from 'src/components/Scrollbar'
@@ -45,10 +40,12 @@ import AccountTableToolbar from './AccountTableToolbar'
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'name', label: 'Name', align: 'left' },
-  { id: 'email', label: 'Email', align: 'left' },
-  { id: 'phone', label: 'Phone', align: 'left' },
-  { id: 'status', label: 'Status', align: 'left' },
+  { id: 'name', label: 'name', align: 'left' },
+  { id: 'email', label: 'email', align: 'left' },
+  { id: 'phone', label: 'phone', align: 'left' },
+  { id: 'status', label: 'status', align: 'left' },
+  { id: 'createdAt', label: 'created at', align: 'left' },
+  { id: 'updatedAt', label: 'updated at', align: 'left' },
   { id: '' },
 ]
 

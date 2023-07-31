@@ -52,7 +52,7 @@ const TABLE_HEAD = [
   { id: 'name', label: 'Name', align: 'left' },
   { id: 'status', label: 'Status', align: 'left' },
   { id: 'createdAt', label: 'created At', align: 'left' },
-  { id: 'updateAt', label: 'update At', align: 'left' },
+  { id: 'updatedAt', label: 'updated At', align: 'left' },
   { id: '' },
 ]
 
@@ -128,7 +128,7 @@ export default function ProjectPage() {
   }
 
   const handleEditRow = (id: string) => {
-    push(PATH_CES.project.edit(paramCase(id)))
+    push(PATH_CES.project.detail(paramCase(id)))
   }
 
   const handleClickRow = (id: string) => {
@@ -162,9 +162,9 @@ export default function ProjectPage() {
               { name: 'List' },
             ]}
             action={
-              <NextLink href={PATH_CES.project.new} passHref>
+              <NextLink href={PATH_CES.benefit.new} passHref>
                 <Button variant="contained" startIcon={<Iconify icon={'eva:plus-fill'} />}>
-                  New Project
+                  New Group Benefit
                 </Button>
               </NextLink>
             }

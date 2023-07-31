@@ -2,8 +2,7 @@ import { capitalCase } from 'change-case'
 // @mui
 import { Box, Button, Container, Tab, Tabs } from '@mui/material'
 import { useRouter } from 'next/router'
-import { useSnackbar } from 'notistack'
-import { ProjectPayload, Role } from 'src/@types/@ces'
+import { Role } from 'src/@types/@ces'
 import { projectApi } from 'src/api-client'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
 import Iconify from 'src/components/Iconify'
@@ -14,7 +13,6 @@ import useSettings from 'src/hooks/useSettings'
 import useTabs from 'src/hooks/useTabs'
 import Layout from 'src/layouts'
 import { PATH_CES } from 'src/routes/paths'
-import ProjectNewEditForm from 'src/sections/@ces/project/ProjectNewEditForm'
 import ProjectMember from 'src/sections/@ces/project/members/ProjectMember'
 
 // ----------------------------------------------------------------------
@@ -28,34 +26,34 @@ ProjectDetails.getLayout = function getLayout(page: React.ReactElement) {
 export default function ProjectDetails() {
   const { themeStretch } = useSettings()
 
-  const { currentTab, onChangeTab } = useTabs('general')
+  const { currentTab, onChangeTab } = useTabs("members")
 
-  const { enqueueSnackbar } = useSnackbar()
+  // const { enqueueSnackbar } = useSnackbar()
 
   const { query } = useRouter()
   const { projectId } = query
 
   const { data } = useProjectDetails({ id: `${projectId}` })
 
-  const handleEditProjectSubmit = async (payload: ProjectPayload) => {
-    try {
-      await projectApi.update(`${projectId}`, payload)
+  // const handleEditProjectSubmit = async (payload: ProjectPayload) => {
+  //   try {
+  //     await projectApi.update(`${projectId}`, payload)
 
-      enqueueSnackbar('Update success!')
-    } catch (error) {
-      enqueueSnackbar('Update failed!')
-      console.error(error)
-    }
-  }
+  //     enqueueSnackbar('Update success!')
+  //   } catch (error) {
+  //     enqueueSnackbar('Update failed!')
+  //     console.error(error)
+  //   }
+  // }
 
   const ACCOUNT_TABS = [
-    {
-      value: 'general',
-      icon: <Iconify icon={'ic:round-account-box'} width={20} height={20} />,
-      component: (
-        <ProjectNewEditForm isEdit currentUser={data?.data} onSubmit={handleEditProjectSubmit} />
-      ),
-    },
+    // {
+    //   value: 'general',
+    //   icon: <Iconify icon={'ic:round-account-box'} width={20} height={20} />,
+    //   component: (
+    //     <ProjectNewEditForm isEdit currentUser={data?.data} onSubmit={handleEditProjectSubmit} />
+    //   ),
+    // },
     {
       value: 'members',
       icon: <Iconify icon={'fa6-solid:people-line'} width={20} height={20} />,

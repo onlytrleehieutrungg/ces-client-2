@@ -116,15 +116,8 @@ export default function AccountNewEditForm({ isEdit = false, currentUser, onSubm
         ? Role.Employee
         : undefined,
       password: '',
-      companyId: null,
-      company: null,
-      // company: {
-      //   address: '',
-      //   expiredDate: '',
-      //   imageUrl: '',
-      //   limits: 0,
-      //   name: '',
-      // },
+      // companyId: null,
+      // company: null,
     }),
     [currentUser, user]
   )
@@ -157,6 +150,7 @@ export default function AccountNewEditForm({ isEdit = false, currentUser, onSubm
   }, [isEdit, currentUser])
 
   const handleFormSubmit = async (payload: AccountPayload) => {
+    console.log(payload)
     if (
       payload.role === Role['Enterprise Admin'] &&
       payload.company &&
