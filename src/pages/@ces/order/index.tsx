@@ -91,6 +91,8 @@ export default function OrderPage() {
   const { currentTab: filterStatus, onChangeTab: onChangeFilterStatus } = useTabs('all')
   const [filterAttribute, setFilterAttribute] = useState('')
   const [filterOptions, setFilterOptions] = useState('')
+  const [timeoutName, setTimeoutName] = useState<any>()
+  const [filterName, setFilterName] = useState('')
 
   useEffect(() => {
     const statusIndex = getStatusIndex(filterStatus)
@@ -120,7 +122,22 @@ export default function OrderPage() {
     setFilterAttribute('')
     setFilterOptions('')
   }
+  const filterNameFuction = (value: string) => {
+    setParams({ Page: page + 1, Size: rowsPerPage, OrderCode: value })
+  }
+  const handleFilterName = (filterName: string) => {
+    setFilterName(filterName)
 
+    if (timeoutName) {
+      clearTimeout(timeoutName)
+    }
+
+    const newTimeoutname = setTimeout(() => {
+      filterNameFuction(filterName)
+    }, 300)
+
+    setTimeoutName(newTimeoutname)
+  }
   const handleFilterStatus = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFilterStatus(event.target.value)
   }
@@ -175,6 +192,7 @@ export default function OrderPage() {
             </Tabs>
             <Divider />
             <OrderTableToolbar
+              filterName={filterName}
               filterOptions={filterOptions}
               filterStatus={filterStt}
               filterAttribute={filterAttribute}
@@ -184,6 +202,7 @@ export default function OrderPage() {
               onFilterOptions={handleFilterOptions}
               onFilterStatus={handleFilterStatus}
               optionsStatus={ROLE_OPTIONS}
+              onFilterName={handleFilterName}
               handleClearFilter={handleClearFilter}
             />
             <LoadingTable isValidating={isLoading} />

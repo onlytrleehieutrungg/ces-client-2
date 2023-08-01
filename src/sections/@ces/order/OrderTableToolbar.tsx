@@ -1,4 +1,4 @@
-import { IconButton, MenuItem, Stack, TextField, Tooltip } from '@mui/material'
+import { IconButton, InputAdornment, MenuItem, Stack, TextField, Tooltip } from '@mui/material'
 import Iconify from 'src/components/Iconify'
 type Props = {
   optionsStatus: string[]
@@ -7,6 +7,7 @@ type Props = {
     label?: string
     align?: string
   }[]
+  filterName?: string
   optionsOrderBy: string[]
   filterOptions: string
   filterStatus: string
@@ -15,6 +16,7 @@ type Props = {
   onFilterOptions: (event: React.ChangeEvent<HTMLInputElement>) => void
   onFilterStatus: (event: React.ChangeEvent<HTMLInputElement>) => void
   handleClearFilter: () => void
+  onFilterName: (value: string) => void
 }
 
 export default function OrderTableToolbar({
@@ -24,8 +26,10 @@ export default function OrderTableToolbar({
   onFilterAttribute,
   onFilterStatus,
   optionsOrderBy,
+  filterName,
   optionsStatus,
   filterAttribute,
+  onFilterName,
   handleClearFilter,
   optionsSort,
 }: Props) {
@@ -33,36 +37,20 @@ export default function OrderTableToolbar({
     <Stack spacing={2} direction={{ xs: 'column', sm: 'row' }} sx={{ py: 2.5, px: 3 }}>
       <TextField
         fullWidth
-        select
-        label="Status"
-        value={filterStatus}
-        onChange={onFilterStatus}
-        SelectProps={{
-          MenuProps: {
-            sx: { '& .MuiPaper-root': { maxHeight: 260 } },
-          },
+        value={filterName}
+        onChange={(event) => onFilterName(event.target.value)}
+        placeholder="Search order code..."
+        InputProps={{
+          startAdornment: (
+            <InputAdornment position="start">
+              <Iconify
+                icon={'eva:search-fill'}
+                sx={{ color: 'text.disabled', width: 20, height: 20 }}
+              />
+            </InputAdornment>
+          ),
         }}
-        sx={{
-          maxWidth: { sm: 240 },
-          textTransform: 'capitalize',
-        }}
-      >
-        {optionsStatus.map((option) => (
-          <MenuItem
-            key={option}
-            value={option}
-            sx={{
-              mx: 1,
-              my: 0.5,
-              borderRadius: 0.75,
-              typography: 'body2',
-              textTransform: 'capitalize',
-            }}
-          >
-            {option}
-          </MenuItem>
-        ))}
-      </TextField>
+      />
       <TextField
         fullWidth
         select
@@ -127,7 +115,7 @@ export default function OrderTableToolbar({
           </MenuItem>
         ))}
       </TextField>
-      <Tooltip title="Filter list">
+      <Tooltip title="Filter list" placement="right" sx={{ right: 0 }}>
         <IconButton onClick={handleClearFilter}>
           <Iconify icon={'fluent-mdl2:clear-filter'} />
         </IconButton>

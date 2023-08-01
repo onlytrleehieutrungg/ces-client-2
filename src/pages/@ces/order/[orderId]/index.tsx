@@ -1,37 +1,36 @@
 // next
 // @mui
-import { Container } from '@mui/material';
-import { useRouter } from 'next/router';
-import { useSnackbar } from 'notistack';
-import { Role } from 'src/@types/@ces';
-import { orderApi } from 'src/api-client/order';
-import LoadingScreen from 'src/components/LoadingScreen';
-import RoleBasedGuard from 'src/guards/RoleBasedGuard';
+import { Container } from '@mui/material'
+import { useRouter } from 'next/router'
+import { useSnackbar } from 'notistack'
+import { Role } from 'src/@types/@ces'
+import { orderApi } from 'src/api-client/order'
+import LoadingScreen from 'src/components/LoadingScreen'
+import RoleBasedGuard from 'src/guards/RoleBasedGuard'
 // sections
-import { useOrderDetail } from 'src/hooks/@ces/useOrder';
-import OrderDetails from 'src/sections/@ces/order/details';
-import HeaderBreadcrumbs from '../../../../components/HeaderBreadcrumbs';
+import { useOrderDetail } from 'src/hooks/@ces/useOrder'
+import OrderDetails from 'src/sections/@ces/order/details'
+import HeaderBreadcrumbs from '../../../../components/HeaderBreadcrumbs'
 // components
-import Page from '../../../../components/Page';
+import Page from '../../../../components/Page'
 // hooks
-import useSettings from '../../../../hooks/useSettings';
+import useSettings from '../../../../hooks/useSettings'
 // layouts
-import Layout from '../../../../layouts';
+import Layout from '../../../../layouts'
 // routes
-import { PATH_CES, PATH_DASHBOARD } from '../../../../routes/paths';
+import { PATH_CES, PATH_DASHBOARD } from '../../../../routes/paths'
 
 // ----------------------------------------------------------------------
 
 InvoiceDetails.getLayout = function getLayout(page: React.ReactElement) {
-  return <Layout>{page}</Layout>;
-};
+  return <Layout>{page}</Layout>
+}
 
 // ----------------------------------------------------------------------
 
 export default function InvoiceDetails() {
-  const { themeStretch } = useSettings();
+  const { themeStretch } = useSettings()
   const { enqueueSnackbar } = useSnackbar()
-
   const { query, push } = useRouter()
   const { orderId } = query
   const { data, mutate, isLoading } = useOrderDetail({ id: `${orderId}` })
@@ -70,5 +69,5 @@ export default function InvoiceDetails() {
         </Container>
       </Page>
     </RoleBasedGuard>
-  );
+  )
 }

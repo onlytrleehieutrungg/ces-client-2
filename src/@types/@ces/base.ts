@@ -12,6 +12,7 @@ export type Params = {
   Size: number
   Sort: string
   Order: string
+  OrderCode: string
 }
 
 export type Paging = {
