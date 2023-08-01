@@ -20,7 +20,7 @@ import { styled, useTheme } from '@mui/material/styles'
 import { toNumber } from 'lodash'
 import { useState } from 'react'
 //
-import { Order, Status } from 'src/@types/@ces/order'
+import { Order, Status, UpdateOrderStatus } from 'src/@types/@ces/order'
 import { fCurrency } from 'src/utils/formatNumber'
 import { fDateVN } from 'src/utils/formatTime'
 // utils
@@ -53,6 +53,7 @@ export default function OrderDetails({ order, handleEditOrderSubmit }: Props) {
     return null
   }
   const rs = Object.values(Status).filter((value) => typeof value === 'string')
+  const rsu = Object.values(UpdateOrderStatus).filter((value) => typeof value === 'string')
 
   const {
     id,
@@ -73,10 +74,10 @@ export default function OrderDetails({ order, handleEditOrderSubmit }: Props) {
     setChangeStatus(!changeStatus)
   }
   const handleUpdate = () => {
-    handleEditOrderSubmit(id, statusValue!)
-    setChangeStatus(!changeStatus)
+    handleEditOrderSubmit(id, status + 1)
+    // setChangeStatus(!changeStatus)
   }
-
+  console.log(rsu[status])
   return (
     <>
       <Card sx={{ pt: 5, px: 5 }}>
@@ -118,7 +119,7 @@ export default function OrderDetails({ order, handleEditOrderSubmit }: Props) {
                     textTransform: 'capitalize',
                   }}
                 >
-                  {rs.map((value, index) => (
+                  {rsu.map((value, index) => (
                     <MenuItem
                       key={index}
                       value={index}
@@ -158,10 +159,11 @@ export default function OrderDetails({ order, handleEditOrderSubmit }: Props) {
               <Button
                 variant="contained"
                 color={changeStatus ? 'inherit' : 'primary'}
+                disabled={rsu[status] === undefined ? true : false}
                 size="large"
-                onClick={handleUpdateStatus}
+                onClick={handleUpdate}
               >
-                {changeStatus ? 'Cancel' : 'Update'}
+                {status == 1 ? 'Ready' : status == 2 ? 'Shipping' : 'Update'}
               </Button>
             </Stack>
           </Grid>
@@ -252,17 +254,6 @@ export default function OrderDetails({ order, handleEditOrderSubmit }: Props) {
                     </Typography>
                   </TableCell>
                 </RowResultStyle>
-
-                {/* <RowResultStyle>
-                  <TableCell colSpan={3} />
-                  <TableCell align="right">
-                    <Typography>Taxes</Typography>
-                  </TableCell>
-                  <TableCell align="right" width={120}>
-                    <Typography>{taxes && fCurrency(taxes)}0</Typography>
-                  </TableCell>
-                </RowResultStyle> */}
-
                 <RowResultStyle>
                   <TableCell colSpan={3} />
                   <TableCell align="right">

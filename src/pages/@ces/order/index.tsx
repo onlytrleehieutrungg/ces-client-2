@@ -85,7 +85,7 @@ export default function OrderPage() {
   const { push } = useRouter()
 
   const [params, setParams] = useState<Partial<Params>>()
-  const { data, isValidating, isLoading } = useOrder({ params })
+  const { data, isValidating, isLoading, mutate } = useOrder({ params })
   const tableData: Order[] = data?.data ?? []
   const [filterStt, setFilterStatus] = useState('supplier')
   const { currentTab: filterStatus, onChangeTab: onChangeFilterStatus } = useTabs('all')

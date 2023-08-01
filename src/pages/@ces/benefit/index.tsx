@@ -54,6 +54,7 @@ const TABLE_HEAD = [
   { id: 'updateAt', label: 'update At', align: 'left' },
   { id: '' },
 ]
+const STATUS_OPTIONS = ['all', 'active', 'in active']
 
 // ----------------------------------------------------------------------
 
@@ -62,7 +63,11 @@ BenefitPage.getLayout = function getLayout(page: React.ReactElement) {
 }
 
 // ----------------------------------------------------------------------
-
+export enum Status {
+  '',
+  'active',
+  'in active',
+}
 export default function BenefitPage() {
   const {
     dense,
@@ -71,7 +76,6 @@ export default function BenefitPage() {
     orderBy,
     rowsPerPage,
     // setPage,
-    //
     selected,
     // setSelected,
     onSelectRow,
@@ -107,18 +111,26 @@ export default function BenefitPage() {
 
   const { currentTab: filterStatus, onChangeTab: onChangeFilterStatus } = useTabs('all')
 
-  useMemo(
-    () =>
+  useMemo(() => {
+    const statusIndex = getStatusIndex(filterStatus)
+
+    if (statusIndex === -1) {
+      setParams({ Page: page + 1, Size: rowsPerPage, Sort: filterAttribute, Order: filterOptions })
+    } else {
       setParams({
         Page: page + 1,
         Size: rowsPerPage,
+        Status: statusIndex,
         Sort: filterAttribute,
         Order: filterOptions,
-      }),
-    [filterAttribute, filterOptions, page, rowsPerPage]
-  )
+      })
+    }
+  }, [filterAttribute, filterStatus, filterOptions, page, rowsPerPage])
   const handleFilterRole = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFilterRole(event.target.value)
+  }
+  function getStatusIndex(status: string): number {
+    return Status[status as keyof typeof Status] || -1
   }
   const filterNameFuction = (value: string) => {
     setParams({ Page: page + 1, Size: rowsPerPage, Name: value })
@@ -199,7 +211,7 @@ export default function BenefitPage() {
           />
 
           <Card>
-            {/* <Tabs
+            <Tabs
               allowScrollButtonsMobile
               variant="scrollable"
               scrollButtons="auto"
@@ -207,10 +219,10 @@ export default function BenefitPage() {
               onChange={onChangeFilterStatus}
               sx={{ px: 2, bgcolor: 'background.neutral' }}
             >
-              {statusList.map((tab) => (
-                <Tab disableRipple key={tab.code} label={tab.label} value={tab.code} />
+              {STATUS_OPTIONS.map((tab) => (
+                <Tab disableRipple key={tab} label={tab} value={tab} />
               ))}
-            </Tabs> */}
+            </Tabs>
 
             <BenefitTableToolbar
               filterName={filterName}
