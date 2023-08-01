@@ -4,6 +4,7 @@ import {
   Button,
   Card,
   Container,
+  Divider,
   FormControlLabel,
   IconButton,
   Switch,
@@ -42,6 +43,7 @@ import { confirmDialog } from 'src/utils/confirmDialog'
 import LoadingTable from 'src/utils/loadingTable'
 
 // ----------------------------------------------------------------------
+const FILTER_OPTIONS = ['descending', 'ascending']
 
 const TABLE_HEAD = [
   { id: 'name', label: 'Name', align: 'left' },
@@ -90,15 +92,30 @@ export default function CategoryPage() {
 
   const [filterRole, setFilterRole] = useState('all')
 
+  const [timeoutName, setTimeoutName] = useState<any>()
+  const [filterAttribute, setFilterAttribute] = useState('')
+  const [filterOptions, setFilterOptions] = useState('')
   const { currentTab: filterStatus, onChangeTab: onChangeFilterStatus } = useTabs('all')
 
   const handleFilterRole = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFilterRole(event.target.value)
   }
   useMemo(
-    () => setParams({ Page: page + 1, Size: rowsPerPage, Name: filterName }),
-    [page, rowsPerPage, filterName]
+    () =>
+      setParams({
+        Page: page + 1,
+        Size: rowsPerPage,
+        Sort: filterAttribute,
+        Order: filterOptions,
+      }),
+    [filterAttribute, filterOptions, page, rowsPerPage]
   )
+
+  const handleClearFilter = () => {
+    setFilterAttribute('')
+    setFilterName('')
+    setFilterOptions('')
+  }
   const handleDeleteRow = (id: string) => {
     const cateId = parseInt(id)
     confirmDialog('Do you really want to delete this category ?', async () => {
@@ -117,11 +134,28 @@ export default function CategoryPage() {
     setSelected([])
     console.log('delete all account action')
   }
-
+  const filterNameFuction = (value: string) => {
+    setParams({ Page: page + 1, Size: rowsPerPage, Name: value })
+  }
   const handleFilterName = (filterName: string) => {
     setFilterName(filterName)
-  }
 
+    if (timeoutName) {
+      clearTimeout(timeoutName)
+    }
+
+    const newTimeoutname = setTimeout(() => {
+      filterNameFuction(filterName)
+    }, 300)
+
+    setTimeoutName(newTimeoutname)
+  }
+  const handleFilterOptions = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFilterOptions(event.target.value)
+  }
+  const handleFilterAttribute = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFilterAttribute(event.target.value)
+  }
   const handleEditRow = (id: number) => {
     push(PATH_CES.category.edit(paramCase(id.toString())))
   }
@@ -162,8 +196,18 @@ export default function CategoryPage() {
           />
 
           <Card>
-            <CategoryTableToolbar filterName={filterName} onFilterName={handleFilterName} />
-            <LoadingTable isValidating={isValidating} />
+            <CategoryTableToolbar
+              filterName={filterName}
+              onFilterName={handleFilterName}
+              filterOptions={filterOptions}
+              filterAttribute={filterAttribute}
+              optionsSort={TABLE_HEAD}
+              optionsOrderBy={FILTER_OPTIONS}
+              onFilterAttribute={handleFilterAttribute}
+              onFilterOptions={handleFilterOptions}
+              handleClearFilter={handleClearFilter}
+            />
+            <LoadingTable isValidating={isLoading} />
 
             <Scrollbar>
               <TableContainer sx={{ minWidth: 800, position: 'relative' }}>
@@ -187,7 +231,7 @@ export default function CategoryPage() {
                     }
                   />
                 )}
-
+                <Divider />
                 <Table size={dense ? 'small' : 'medium'}>
                   <TableHeadCustom
                     order={order}
@@ -209,7 +253,7 @@ export default function CategoryPage() {
                       <CategoryTableRow
                         key={`${row.id}`}
                         row={row}
-                        isValidating={isValidating}
+                        isValidating={isLoading}
                         selected={selected.includes(`${row.id}`)}
                         onSelectRow={() => onSelectRow(`${row.id}`)}
                         onDeleteRow={() => handleDeleteRow(`${row.id}`)}
@@ -264,33 +308,5 @@ function applySortFilter({
   filterStatus: string
   filterRole: string
 }) {
-  const stabilizedThis = tableData.map((el, index) => [el, index] as const)
-
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0])
-    if (order !== 0) return order
-    return a[1] - b[1]
-  })
-
-  tableData = stabilizedThis.map((el) => el[0])
-
-  if (filterName) {
-    tableData = tableData.filter(
-      (item: Record<string, any>) =>
-        item.name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
-    )
-  }
-
-  if (filterStatus !== 'all') {
-    tableData = tableData.filter((item: Record<string, any>) => item.Status == filterStatus)
-  }
-
-  if (filterRole !== 'all') {
-    tableData = tableData.filter((item: Record<string, any>) => item.Role == filterRole)
-  }
-
   return tableData
 }
-// function enqueueSnackbar(arg0: string) {
-//   throw new Error('Function not implemented.')
-// }

@@ -22,13 +22,13 @@ type Props = {
 
 export default function AccountBilling({ cards, addressBook, invoices, payload }: Props) {
   const { data } = useMe({})
-  const { data: payments } = usePayment({})
+  const { data: payments, isLoading: isPaymentLoading } = usePayment({})
   const usedPayload = data?.wallets.map((u) => u?.used)[0]
   const balance = data?.wallets.map((u) => u?.balance)[0]
   const limit = data?.wallets.map((u) => u?.limits)[0]
   const accountId = data?.id
   const compId = data?.companyId
-  const { data: orders } = useOrderByCompanyId({ companyId: compId })
+  const { data: orders, isLoading } = useOrderByCompanyId({ companyId: compId })
   payload = {
     used: usedPayload,
     accountId: accountId!,
@@ -61,11 +61,11 @@ export default function AccountBilling({ cards, addressBook, invoices, payload }
         </Stack>
 
         <Card sx={{ mt: 5 }}>
-          <AccountOrderHistory order={orders?.data} />
+          <AccountOrderHistory order={orders?.data} isLoading={isLoading} />
         </Card>
       </Grid>
       <Grid item xs={12} md={4}>
-        <AccountBillingInvoiceHistory Transactions={payments?.data} />
+        <AccountBillingInvoiceHistory Transactions={payments?.data} isLoading={isPaymentLoading} />
       </Grid>
     </Grid>
   )

@@ -85,8 +85,7 @@ export default function OrderPage() {
   const { push } = useRouter()
 
   const [params, setParams] = useState<Partial<Params>>()
-  //Sort=CreatedAt&Order=desc
-  const { data, isValidating } = useOrder({ params })
+  const { data, isValidating, isLoading } = useOrder({ params })
   const tableData: Order[] = data?.data ?? []
   const [filterStt, setFilterStatus] = useState('supplier')
   const { currentTab: filterStatus, onChangeTab: onChangeFilterStatus } = useTabs('all')
@@ -111,13 +110,17 @@ export default function OrderPage() {
   const handleFilterOptions = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFilterOptions(event.target.value)
   }
-  //.replace(/\s/g, '')
   const handleFilterAttribute = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFilterAttribute(event.target.value)
   }
   function getStatusIndex(status: string): number {
     return Status[status as keyof typeof Status] || -1
   }
+  const handleClearFilter = () => {
+    setFilterAttribute('')
+    setFilterOptions('')
+  }
+
   const handleFilterStatus = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFilterStatus(event.target.value)
   }
@@ -181,8 +184,9 @@ export default function OrderPage() {
               onFilterOptions={handleFilterOptions}
               onFilterStatus={handleFilterStatus}
               optionsStatus={ROLE_OPTIONS}
+              handleClearFilter={handleClearFilter}
             />
-            <LoadingTable isValidating={isValidating} />
+            <LoadingTable isValidating={isLoading} />
 
             <Scrollbar>
               <TableContainer sx={{ minWidth: 800, position: 'relative' }}>
@@ -288,32 +292,5 @@ function applySortFilter({
   filterAttribute: string
   filterStt: string
 }) {
-  const stabilizedThis = tableData.map((el, index) => [el, index] as const)
-  // function mapStatus(status: number) {
-  //   const rs = Object.values(Status)
-  //   return rs[status].toLocaleLowerCase()
-  // }
-
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0])
-    if (order !== 0) return order
-    return a[1] - b[1]
-  })
-
-  tableData = stabilizedThis.map((el) => el[0])
-
-  if (filterStt !== 'supplier') {
-    tableData = tableData.filter((item: Record<string, any>) => {
-      item.status === filterStt
-    })
-  }
-
-  if (filterStatus !== 'all') {
-    // tableData = tableData.filter(
-    //   (item: Record<string, any>) => item.status === getStatusIndex(filterStatus)
-    // )
-    // console.log(tableData)
-  }
-
   return tableData
 }

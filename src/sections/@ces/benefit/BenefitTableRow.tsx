@@ -7,6 +7,7 @@ import Iconify from 'src/components/Iconify'
 import Label from 'src/components/Label'
 import { TableMoreMenu } from 'src/components/table'
 import { fCurrency } from 'src/utils/formatNumber'
+import { fDateVN } from 'src/utils/formatTime'
 
 // ----------------------------------------------------------------------
 
@@ -29,7 +30,7 @@ export default function BenefitTableRow({
 }: Props) {
   const theme = useTheme()
 
-  const { name, unitPrice, status } = row
+  const { name, unitPrice, status, createdAt, updatedAt } = row
 
   const [openMenu, setOpenMenuActions] = useState<HTMLElement | null>(null)
 
@@ -80,8 +81,8 @@ export default function BenefitTableRow({
         </Label>
       </TableCell>
 
-      {/* <TableCell align="left">{fDateVN(createdAt)}</TableCell>
-      <TableCell align="left">{fDateVN(updatedAt)}</TableCell> */}
+      <TableCell align="left">{fDateVN(createdAt)}</TableCell>
+      <TableCell align="left">{fDateVN(updatedAt)}</TableCell>
 
       <TableCell
         align="right"

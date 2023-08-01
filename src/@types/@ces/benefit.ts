@@ -9,6 +9,8 @@ export type BenefitData = {
   status: number
   companyId: number
   company: CompanyData
+  createdAt: string
+  updatedAt: string
 }
 
 export type BenefitPayload = {

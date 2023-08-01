@@ -1,4 +1,5 @@
-import { MenuItem, Stack, TextField } from '@mui/material'
+import { IconButton, MenuItem, Stack, TextField, Tooltip } from '@mui/material'
+import Iconify from 'src/components/Iconify'
 type Props = {
   optionsStatus: string[]
   optionsSort: {
@@ -13,6 +14,7 @@ type Props = {
   onFilterAttribute: (event: React.ChangeEvent<HTMLInputElement>) => void
   onFilterOptions: (event: React.ChangeEvent<HTMLInputElement>) => void
   onFilterStatus: (event: React.ChangeEvent<HTMLInputElement>) => void
+  handleClearFilter: () => void
 }
 
 export default function OrderTableToolbar({
@@ -24,6 +26,7 @@ export default function OrderTableToolbar({
   optionsOrderBy,
   optionsStatus,
   filterAttribute,
+  handleClearFilter,
   optionsSort,
 }: Props) {
   return (
@@ -76,7 +79,7 @@ export default function OrderTableToolbar({
           textTransform: 'capitalize',
         }}
       >
-        {optionsSort.map((option) => (
+        {optionsSort?.map((option) => (
           <MenuItem
             key={option.id}
             value={option.id}
@@ -108,7 +111,7 @@ export default function OrderTableToolbar({
           textTransform: 'capitalize',
         }}
       >
-        {optionsOrderBy.map((option) => (
+        {optionsOrderBy?.map((option) => (
           <MenuItem
             key={option}
             value={option}
@@ -124,23 +127,11 @@ export default function OrderTableToolbar({
           </MenuItem>
         ))}
       </TextField>
-
-      {/* <TextField
-        fullWidth
-        value={filterName}
-        onChange={(event) => onFilterName(event.target.value)}
-        placeholder="Search order..."
-        InputProps={{
-          startAdornment: (
-            <InputAdornment position="start">
-              <Iconify
-                icon={'eva:search-fill'}
-                sx={{ color: 'text.disabled', width: 20, height: 20 }}
-              />
-            </InputAdornment>
-          ),
-        }}
-      /> */}
+      <Tooltip title="Filter list">
+        <IconButton onClick={handleClearFilter}>
+          <Iconify icon={'fluent-mdl2:clear-filter'} />
+        </IconButton>
+      </Tooltip>
     </Stack>
   )
 }

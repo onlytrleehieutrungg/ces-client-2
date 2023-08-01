@@ -5,6 +5,7 @@ import { Product } from 'src/@types/@ces/product'
 import Iconify from 'src/components/Iconify'
 import { TableMoreMenu } from 'src/components/table'
 import { fNumber, fShortenNumber } from 'src/utils/formatNumber'
+import { fDateVN } from 'src/utils/formatTime'
 // @types
 
 // components
@@ -30,7 +31,7 @@ export default function ProductTableRow({
 }: Props) {
   // const theme = useTheme()
 
-  const { name, price, quantity, category, imageUrl } = row
+  const { name, price, quantity, category, imageUrl, createdAt, updatedAt } = row
 
   const [openMenu, setOpenMenuActions] = useState<HTMLElement | null>(null)
 
@@ -62,6 +63,8 @@ export default function ProductTableRow({
         {fShortenNumber(quantity)}
       </TableCell>
       <TableCell align="left">{category?.name}</TableCell>
+      <TableCell align="left">{fDateVN(createdAt)}</TableCell>
+      <TableCell align="left">{fDateVN(updatedAt)}</TableCell>
 
       <TableCell align="right">
         <TableMoreMenu

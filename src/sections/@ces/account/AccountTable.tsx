@@ -17,7 +17,7 @@ import { paramCase } from 'change-case'
 import { useRouter } from 'next/router'
 import { useSnackbar } from 'notistack'
 import { useMemo, useState } from 'react'
-import { ACCOUNT_STATUS_OPTIONS_SA, AccountData, Params, Role } from 'src/@types/@ces'
+import { AccountData, ACCOUNT_STATUS_OPTIONS_SA, Params, Role } from 'src/@types/@ces'
 import { accountApi } from 'src/api-client'
 import Iconify from 'src/components/Iconify'
 import Scrollbar from 'src/components/Scrollbar'
@@ -48,6 +48,7 @@ const TABLE_HEAD = [
   { id: 'updatedAt', label: 'updated at', align: 'left' },
   { id: '' },
 ]
+const FILTER_OPTIONS = ['descending', 'ascending']
 
 // ----------------------------------------------------------------------
 
@@ -83,19 +84,52 @@ export default function AccountTable({}: Props) {
 
   const { enqueueSnackbar } = useSnackbar()
   const [params, setParams] = useState<Partial<Params>>()
-
-  const { data, mutate, isValidating } = useAccountList({ params })
+  const [timeoutName, setTimeoutName] = useState<any>()
+  const [filterAttribute, setFilterAttribute] = useState('')
+  const [filterOptions, setFilterOptions] = useState('')
+  const { data, mutate, isValidating, isLoading } = useAccountList({ params })
   const accountList = data?.data || []
-  useMemo(() => setParams({ Page: page + 1, Size: rowsPerPage }), [page, rowsPerPage])
-
+  useMemo(
+    () =>
+      setParams({
+        Page: page + 1,
+        Size: rowsPerPage,
+        Sort: filterAttribute,
+        Order: filterOptions,
+      }),
+    [filterAttribute, filterOptions, page, rowsPerPage]
+  )
   const [filterName, setFilterName] = useState('')
 
   const [filterRole] = useState('all')
 
   const { currentTab: filterStatus, onChangeTab: onChangeFilterStatus } = useTabs('all')
+  const handleClearFilter = () => {
+    setFilterAttribute('')
+    setFilterName('')
+    setFilterOptions('')
+  }
+  const filterNameFuction = (value: string) => {
+    setParams({ Page: page + 1, Size: rowsPerPage, Name: value })
+  }
 
+  const handleFilterOptions = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFilterOptions(event.target.value)
+  }
+  const handleFilterAttribute = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFilterAttribute(event.target.value)
+  }
   const handleFilterName = (filterName: string) => {
     setFilterName(filterName)
+
+    if (timeoutName) {
+      clearTimeout(timeoutName)
+    }
+
+    const newTimeoutname = setTimeout(() => {
+      filterNameFuction(filterName)
+    }, 300)
+    setTimeoutName(newTimeoutname)
   }
 
   // const handleFilterRole = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -165,11 +199,19 @@ export default function AccountTable({}: Props) {
       <AccountTableToolbar
         filterName={filterName}
         onFilterName={handleFilterName}
+        filterOptions={filterOptions}
+        filterAttribute={filterAttribute}
+        optionsSort={TABLE_HEAD}
+        optionsOrderBy={FILTER_OPTIONS}
+        onFilterAttribute={handleFilterAttribute}
+        onFilterOptions={handleFilterOptions}
+        handleClearFilter={handleClearFilter}
+
         // filterRole={filterRole}
         // onFilterRole={handleFilterRole}
         // optionsRole={roleOptions}
       />
-      <LoadingTable isValidating={isValidating} />
+      <LoadingTable isValidating={isLoading} />
 
       <Scrollbar>
         <TableContainer sx={{ minWidth: 800, position: 'relative' }}>
@@ -227,7 +269,7 @@ export default function AccountTable({}: Props) {
                 <AccountTableRow
                   key={`${row.id}`}
                   row={row}
-                  isValidating={isValidating}
+                  isValidating={isLoading}
                   selected={selected.includes(`${row.id}`)}
                   onSelectRow={() => onSelectRow(`${row.id}`)}
                   onDeleteRow={() => handleDeleteRow(`${row.id}`)}

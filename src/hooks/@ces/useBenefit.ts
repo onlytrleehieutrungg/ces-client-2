@@ -11,7 +11,7 @@ type UseBenefitProps = {
 
 export function useBenefitList({ options, params = { Page: 1 } }: UseBenefitProps) {
   const { user } = useAuth()
-  const { data, error, mutate, isValidating } = useSWR(
+  const { data, error, mutate, isValidating, isLoading } = useSWR(
     ['benefit-list', params],
     () => (user?.role === Role['Enterprise Admin'] ? benefitApi.getAll(params!) : null),
     {
@@ -32,6 +32,7 @@ export function useBenefitList({ options, params = { Page: 1 } }: UseBenefitProp
     error,
     mutate,
     isValidating,
+    isLoading,
   }
 }
 

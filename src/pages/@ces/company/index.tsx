@@ -8,12 +8,10 @@ import {
   FormControlLabel,
   IconButton,
   Switch,
-  Tab,
   Table,
   TableBody,
   TableContainer,
   TablePagination,
-  Tabs,
   Tooltip,
 } from '@mui/material'
 import { paramCase } from 'change-case'
@@ -53,12 +51,14 @@ CompanyPage.getLayout = function getLayout(page: React.ReactElement) {
 // ----------------------------------------------------------------------
 
 // ----------------------------------------------------------------------
-
+const FILTER_OPTIONS = ['descending', 'ascending']
 const TABLE_HEAD = [
   { id: 'name', label: 'Name', align: 'left' },
   { id: 'limits', label: 'Limit', align: 'left' },
   { id: 'used', label: 'Used', align: 'left' },
   { id: 'expiredDate', label: 'ExpiredDate', align: 'left' },
+  { id: 'createdat', label: 'Created At', align: 'left' },
+  { id: 'updatedat', label: 'Updated At', align: 'left' },
   { id: '' },
 ]
 
@@ -93,12 +93,22 @@ export default function CompanyPage() {
   // const roleOptions = user?.role === Role['System Admin'] ? ROLE_OPTIONS_SA : ROLE_OPTIONS_EA
   const statusOptions = ACCOUNT_STATUS_OPTIONS_SA
   const [params, setParams] = useState<Partial<Params>>()
-
+  const [timeoutName, setTimeoutName] = useState<any>()
+  const [filterAttribute, setFilterAttribute] = useState('')
+  const [filterOptions, setFilterOptions] = useState('')
   const { enqueueSnackbar } = useSnackbar()
 
-  const { data, isValidating } = useCompanyList({ params })
-  useMemo(() => setParams({ Page: page + 1, Size: rowsPerPage }), [page, rowsPerPage])
-
+  const { data, isValidating, isLoading } = useCompanyList({ params })
+  useMemo(
+    () =>
+      setParams({
+        Page: page + 1,
+        Size: rowsPerPage,
+        Sort: filterAttribute,
+        Order: filterOptions,
+      }),
+    [filterAttribute, filterOptions, page, rowsPerPage]
+  )
   const companyList = data?.data || []
 
   const [filterName, setFilterName] = useState('')
@@ -106,25 +116,36 @@ export default function CompanyPage() {
   const [filterRole, setFilterRole] = useState('all')
 
   const { currentTab: filterStatus, onChangeTab: onChangeFilterStatus } = useTabs('all')
-
+  const filterNameFuction = (value: string) => {
+    setParams({ Page: page + 1, Size: rowsPerPage, Name: value })
+  }
   const handleFilterName = (filterName: string) => {
     setFilterName(filterName)
-  }
 
-  // const handleFilterRole = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   setFilterRole(event.target.value)
-  //   setPage(0)
-  // }
+    if (timeoutName) {
+      clearTimeout(timeoutName)
+    }
+
+    const newTimeoutname = setTimeout(() => {
+      filterNameFuction(filterName)
+    }, 300)
+    setTimeoutName(newTimeoutname)
+  }
+  const handleClearFilter = () => {
+    setFilterAttribute('')
+    setFilterName('')
+    setFilterOptions('')
+  }
+  const handleFilterOptions = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFilterOptions(event.target.value)
+  }
+  const handleFilterAttribute = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFilterAttribute(event.target.value)
+  }
 
   const handleDeleteRow = (id: string) => {
     confirmDialog('Do you really want to delete this account ?', async () => {
       try {
-        // await companyApi.delete(id)
-        // mutate()
-        // mutate(accountApi.delete(id), {
-        //   optimisticData: [],
-        // })
-
         enqueueSnackbar('Delete successful')
       } catch (error) {
         enqueueSnackbar('Delete failed', { variant: 'error' })
@@ -194,7 +215,7 @@ export default function CompanyPage() {
         />
 
         <Card>
-          <Tabs
+          {/* <Tabs
             allowScrollButtonsMobile
             variant="scrollable"
             scrollButtons="auto"
@@ -205,18 +226,20 @@ export default function CompanyPage() {
             {statusOptions.map((tab) => (
               <Tab disableRipple key={tab.code} label={tab.label} value={tab.code} />
             ))}
-          </Tabs>
-
-          <Divider />
+          </Tabs> */}
 
           <CompanyTableToolbar
             filterName={filterName}
-            // filterRole={filterRole}
             onFilterName={handleFilterName}
-            // onFilterRole={handleFilterRole}
-            // optionsRole={roleOptions}
+            filterOptions={filterOptions}
+            filterAttribute={filterAttribute}
+            optionsSort={TABLE_HEAD}
+            optionsOrderBy={FILTER_OPTIONS}
+            onFilterAttribute={handleFilterAttribute}
+            onFilterOptions={handleFilterOptions}
+            handleClearFilter={handleClearFilter}
           />
-          <LoadingTable isValidating={isValidating} />
+          <LoadingTable isValidating={isLoading} />
 
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800, position: 'relative' }}>
@@ -248,6 +271,7 @@ export default function CompanyPage() {
                   }
                 />
               )}
+              <Divider />
 
               <Table size={dense ? 'small' : 'medium'}>
                 <TableHeadCustom
@@ -270,7 +294,7 @@ export default function CompanyPage() {
                     <CompanyTableRow
                       key={`${row.id}`}
                       row={row}
-                      isValidating={isValidating}
+                      isValidating={isLoading}
                       selected={selected.includes(`${row.id}`)}
                       onSelectRow={() => onSelectRow(`${row.id}`)}
                       onDeleteRow={() => handleDeleteRow(`${row.id}`)}
@@ -333,30 +357,5 @@ function applySortFilter({
   filterStatus: string
   filterRole: string
 }) {
-  const stabilizedThis = tableData.map((el, index) => [el, index] as const)
-
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0])
-    if (order !== 0) return order
-    return a[1] - b[1]
-  })
-
-  tableData = stabilizedThis.map((el) => el[0])
-
-  if (filterName) {
-    tableData = tableData.filter(
-      (item: Record<string, any>) =>
-        item.name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
-    )
-  }
-
-  if (filterStatus !== 'all') {
-    tableData = tableData.filter((item: Record<string, any>) => item.status == filterStatus)
-  }
-
-  if (filterRole !== 'all') {
-    tableData = tableData.filter((item: Record<string, any>) => item.roleId == filterRole)
-  }
-
   return tableData
 }

@@ -34,7 +34,7 @@ export default function CompanyTableRow({
 }: Props) {
   // const theme = useTheme()
 
-  const { name, imageUrl, limits, used, expiredDate } = row
+  const { name, imageUrl, limits, used, expiredDate, createdAt, updatedAt } = row
 
   const [openMenu, setOpenMenuActions] = useState<HTMLElement | null>(null)
 
@@ -78,6 +78,8 @@ export default function CompanyTableRow({
       <TableCell align="left">{fNumber(limits)}</TableCell>
       <TableCell align="left">{fNumber(used)}</TableCell>
       <TableCell align="left">{fDateVN(expiredDate)}</TableCell>
+      <TableCell align="left">{fDateVN(createdAt)}</TableCell>
+      <TableCell align="left">{fDateVN(updatedAt)}</TableCell>
 
       {/* <TableCell align="left">
         <Label

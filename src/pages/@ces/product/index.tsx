@@ -4,13 +4,15 @@ import {
   Button,
   Card,
   Container,
+  Divider,
   FormControlLabel,
-  IconButton, Switch,
+  IconButton,
+  Switch,
   Table,
   TableBody,
   TableContainer,
   TablePagination,
-  Tooltip
+  Tooltip,
 } from '@mui/material'
 import { paramCase } from 'change-case'
 import NextLink from 'next/link'
@@ -28,7 +30,7 @@ import {
   TableEmptyRows,
   TableHeadCustom,
   TableNoData,
-  TableSelectedActions
+  TableSelectedActions,
 } from 'src/components/table'
 import RoleBasedGuard from 'src/guards/RoleBasedGuard'
 import { useProduct } from 'src/hooks/@ces/useProduct'
@@ -42,12 +44,14 @@ import { confirmDialog } from 'src/utils/confirmDialog'
 import LoadingTable from 'src/utils/loadingTable'
 
 // ----------------------------------------------------------------------
-
+const FILTER_OPTIONS = ['descending', 'ascending']
 const TABLE_HEAD = [
   { id: 'name', label: 'Name', align: 'left' },
   { id: 'price', label: 'Price', align: 'left' },
   { id: 'quantity', label: 'Quantity', align: 'left' },
   { id: 'category.name', label: 'Category', align: 'left' },
+  { id: 'createdat', label: 'Created At', align: 'left' },
+  { id: 'updatedat', label: 'Updated At', align: 'left' },
   { id: '' },
 ]
 ProductPage.getLayout = function getLayout(page: React.ReactElement) {
@@ -80,10 +84,12 @@ export default function ProductPage() {
   const [filterName, setFilterName] = useState('')
   const [filterRole, setFilterRole] = useState('all')
   const [timeoutName, setTimeoutName] = useState<any>()
+  const [filterAttribute, setFilterAttribute] = useState('')
+  const [filterOptions, setFilterOptions] = useState('')
 
   const [params, setParams] = useState<Partial<Params>>()
 
-  const { data, mutate, isLoading, isValidating } = useProduct({ params })
+  const { data, mutate, isLoading } = useProduct({ params })
 
   const tableData: Product[] = data?.data ?? []
 
@@ -91,10 +97,30 @@ export default function ProductPage() {
 
   const { enqueueSnackbar } = useSnackbar()
 
-  useMemo(() => setParams({ Page: page + 1, Size: rowsPerPage }), [page, rowsPerPage])
+  useMemo(
+    () =>
+      setParams({
+        Page: page + 1,
+        Size: rowsPerPage,
+        Sort: filterAttribute,
+        Order: filterOptions,
+      }),
+    [filterAttribute, filterOptions, page, rowsPerPage]
+  )
 
   const filterNameFuction = (value: string) => {
     setParams({ Page: page + 1, Size: rowsPerPage, Name: value })
+  }
+  const handleFilterOptions = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFilterOptions(event.target.value)
+  }
+  const handleFilterAttribute = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFilterAttribute(event.target.value)
+  }
+  const handleClearFilter = () => {
+    setFilterAttribute('')
+    setFilterName('')
+    setFilterOptions('')
   }
 
   const handleFilterName = (filterName: string) => {
@@ -169,8 +195,18 @@ export default function ProductPage() {
             }
           />
           <Card>
-            <ProductTableToolbar filterName={filterName} onFilterName={handleFilterName} />
-            <LoadingTable isValidating={isValidating} />
+            <ProductTableToolbar
+              filterName={filterName}
+              onFilterName={handleFilterName}
+              filterOptions={filterOptions}
+              filterAttribute={filterAttribute}
+              optionsSort={TABLE_HEAD}
+              optionsOrderBy={FILTER_OPTIONS}
+              onFilterAttribute={handleFilterAttribute}
+              onFilterOptions={handleFilterOptions}
+              handleClearFilter={handleClearFilter}
+            />
+            <LoadingTable isValidating={isLoading} />
             <Scrollbar>
               <TableContainer sx={{ minWidth: 800, position: 'relative' }}>
                 {selected.length > 0 && (
@@ -209,12 +245,14 @@ export default function ProductPage() {
                       )
                     }
                   />
+
+                  <Divider />
                   <TableBody>
                     {dataFiltered.map((row) => (
                       <ProductTableRow
                         key={`${row.id}`}
                         row={row}
-                        isValidating={isValidating}
+                        isValidating={isLoading}
                         selected={selected.includes(`${row.id}`)}
                         onSelectRow={() => onSelectRow(`${row.id}`)}
                         onDeleteRow={() => handleDeleteRow(`${row.id}`)}
@@ -226,7 +264,6 @@ export default function ProductPage() {
                       height={denseHeight}
                       emptyRows={emptyRows(page, rowsPerPage, tableData.length)}
                     />
-
                     <TableNoData isNotFound={isNotFound} />
                   </TableBody>
                 </Table>
@@ -272,30 +309,5 @@ function applySortFilter({
   filterStatus: string
   filterRole: string
 }) {
-  const stabilizedThis = tableData.map((el, index) => [el, index] as const)
-
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0])
-    if (order !== 0) return order
-    return a[1] - b[1]
-  })
-
-  tableData = stabilizedThis.map((el) => el[0])
-
-  if (filterName) {
-    // tableData = tableData.filter(
-    //   (item: Record<string, any>) =>
-    //     item?.name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
-    // )
-  }
-
-  if (filterStatus !== 'all') {
-    tableData = tableData.filter((item: Record<string, any>) => item.Status == filterStatus)
-  }
-
-  if (filterRole !== 'all') {
-    tableData = tableData.filter((item: Record<string, any>) => item.Role == filterRole)
-  }
-
   return tableData
 }

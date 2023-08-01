@@ -14,6 +14,7 @@ export type Order = {
   debtStatus: number
   companyName: string
   employeeId?: string
+  employeeName?: string
   employee: Employee
   orderDetails: OrderDetail[]
 }

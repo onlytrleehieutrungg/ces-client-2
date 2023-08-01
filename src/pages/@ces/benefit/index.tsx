@@ -44,13 +44,14 @@ import BenefitTableToolbar from 'src/sections/@ces/benefit/BenefitTableToolbar'
 import LoadingTable from 'src/utils/loadingTable'
 
 // ----------------------------------------------------------------------
+const FILTER_OPTIONS = ['descending', 'ascending']
 
 const TABLE_HEAD = [
   { id: 'name', label: 'Name', align: 'left' },
   { id: 'unitPrice', label: 'Unit Price', align: 'left' },
   { id: 'status', label: 'Status', align: 'left' },
-  // { id: 'createdAt', label: 'created At', align: 'left' },
-  // { id: 'updateAt', label: 'update At', align: 'left' },
+  { id: 'createdAt', label: 'created At', align: 'left' },
+  { id: 'updateAt', label: 'update At', align: 'left' },
   { id: '' },
 ]
 
@@ -87,7 +88,7 @@ export default function BenefitPage() {
   const { themeStretch } = useSettings()
   const [params, setParams] = useState<Partial<Params>>()
 
-  const { data, isValidating } = useBenefitList({ params })
+  const { data, isLoading } = useBenefitList({ params })
   const projectList: BenefitData[] = data?.data || []
 
   const statusList = PROJECT_STATUS_OPTIONS
@@ -95,18 +96,46 @@ export default function BenefitPage() {
   const [filterName, setFilterName] = useState('')
 
   const [filterRole, setFilterRole] = useState('all')
+  const [timeoutName, setTimeoutName] = useState<any>()
+  const [filterAttribute, setFilterAttribute] = useState('')
+  const [filterOptions, setFilterOptions] = useState('')
+  const handleClearFilter = () => {
+    setFilterAttribute('')
+    setFilterName('')
+    setFilterOptions('')
+  }
 
   const { currentTab: filterStatus, onChangeTab: onChangeFilterStatus } = useTabs('all')
 
-  const handleFilterName = (filterName: string) => {
-    setFilterName(filterName)
-  }
-  useMemo(() => setParams({ Page: page + 1, Size: rowsPerPage }), [page, rowsPerPage])
-
+  useMemo(
+    () =>
+      setParams({
+        Page: page + 1,
+        Size: rowsPerPage,
+        Sort: filterAttribute,
+        Order: filterOptions,
+      }),
+    [filterAttribute, filterOptions, page, rowsPerPage]
+  )
   const handleFilterRole = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFilterRole(event.target.value)
   }
+  const filterNameFuction = (value: string) => {
+    setParams({ Page: page + 1, Size: rowsPerPage, Name: value })
+  }
+  const handleFilterName = (filterName: string) => {
+    setFilterName(filterName)
 
+    if (timeoutName) {
+      clearTimeout(timeoutName)
+    }
+
+    const newTimeoutname = setTimeout(() => {
+      filterNameFuction(filterName)
+    }, 300)
+
+    setTimeoutName(newTimeoutname)
+  }
   const handleDeleteRow = (id: string) => {
     // confirmDialog('Do you really want to delete this project ?', async () => {
     //   await projectApi.delete(id)
@@ -123,7 +152,12 @@ export default function BenefitPage() {
   const handleEditRow = (id: string) => {
     push(PATH_CES.benefit.edit(paramCase(id)))
   }
-
+  const handleFilterOptions = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFilterOptions(event.target.value)
+  }
+  const handleFilterAttribute = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFilterAttribute(event.target.value)
+  }
   const handleClickRow = (id: string) => {
     // push(PATH_CES.project.detail(paramCase(id)))
     push(PATH_CES.benefit.edit(paramCase(id)))
@@ -165,7 +199,7 @@ export default function BenefitPage() {
           />
 
           <Card>
-            <Tabs
+            {/* <Tabs
               allowScrollButtonsMobile
               variant="scrollable"
               scrollButtons="auto"
@@ -176,18 +210,22 @@ export default function BenefitPage() {
               {statusList.map((tab) => (
                 <Tab disableRipple key={tab.code} label={tab.label} value={tab.code} />
               ))}
-            </Tabs>
-
-            <Divider />
+            </Tabs> */}
 
             <BenefitTableToolbar
               filterName={filterName}
               filterRole={filterRole}
               onFilterName={handleFilterName}
               onFilterRole={handleFilterRole}
-              // optionsRole={ROLE_OPTIONS}
+              filterOptions={filterOptions}
+              filterAttribute={filterAttribute}
+              optionsSort={TABLE_HEAD}
+              optionsOrderBy={FILTER_OPTIONS}
+              onFilterAttribute={handleFilterAttribute}
+              onFilterOptions={handleFilterOptions}
+              handleClearFilter={handleClearFilter}
             />
-            <LoadingTable isValidating={isValidating} />
+            <LoadingTable isValidating={isLoading} />
 
             <Scrollbar>
               <TableContainer sx={{ minWidth: 800, position: 'relative' }}>
@@ -211,7 +249,7 @@ export default function BenefitPage() {
                     }
                   />
                 )}
-
+                <Divider />
                 <Table size={dense ? 'small' : 'medium'}>
                   <TableHeadCustom
                     order={order}
@@ -294,30 +332,5 @@ function applySortFilter({
   filterStatus: string
   filterRole: string
 }) {
-  const stabilizedThis = tableData.map((el, index) => [el, index] as const)
-
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0])
-    if (order !== 0) return order
-    return a[1] - b[1]
-  })
-
-  tableData = stabilizedThis.map((el) => el[0])
-
-  if (filterName) {
-    tableData = tableData.filter(
-      (item: Record<string, any>) =>
-        item.name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
-    )
-  }
-
-  if (filterStatus !== 'all') {
-    tableData = tableData.filter((item: Record<string, any>) => item.status == filterStatus)
-  }
-
-  if (filterRole !== 'all') {
-    tableData = tableData.filter((item: Record<string, any>) => item.roleId == filterRole)
-  }
-
   return tableData
 }

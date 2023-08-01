@@ -253,15 +253,15 @@ export default function OrderDetails({ order, handleEditOrderSubmit }: Props) {
                   </TableCell>
                 </RowResultStyle>
 
-                <RowResultStyle>
+                {/* <RowResultStyle>
                   <TableCell colSpan={3} />
                   <TableCell align="right">
                     <Typography>Taxes</Typography>
                   </TableCell>
                   <TableCell align="right" width={120}>
-                    <Typography>{/* {taxes && fCurrency(taxes)} */}0</Typography>
+                    <Typography>{taxes && fCurrency(taxes)}0</Typography>
                   </TableCell>
-                </RowResultStyle>
+                </RowResultStyle> */}
 
                 <RowResultStyle>
                   <TableCell colSpan={3} />

@@ -9,7 +9,7 @@ type UseAccountProps = {
 }
 
 export function useAccountList({ options, params }: UseAccountProps) {
-  const { data, error, mutate, isValidating } = useSWR(
+  const { data, error, mutate, isValidating, isLoading } = useSWR(
     ['account-list', params],
     () => accountApi.getAll(params!),
     {
@@ -38,6 +38,7 @@ export function useAccountList({ options, params }: UseAccountProps) {
     error,
     mutate,
     isValidating,
+    isLoading,
     // create,
     // update,
   }
