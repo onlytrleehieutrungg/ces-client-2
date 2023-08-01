@@ -21,8 +21,8 @@ import {
 import { paramCase } from 'change-case'
 import { useRouter } from 'next/router'
 import { useSnackbar } from 'notistack'
-import { useState } from 'react'
-import { AccountData } from 'src/@types/@ces'
+import { useMemo, useState } from 'react'
+import { AccountData, Params } from 'src/@types/@ces'
 import { projectApi } from 'src/api-client'
 import Iconify from 'src/components/Iconify'
 import Scrollbar from 'src/components/Scrollbar'
@@ -48,6 +48,7 @@ const TABLE_HEAD = [
   { id: 'email', label: 'Email', align: 'left' },
   { id: '' },
 ]
+const FILTER_OPTIONS = ['descending', 'ascending']
 
 // ----------------------------------------------------------------------
 
@@ -90,20 +91,54 @@ export default function AccountTableCustom({}: Props) {
   ]
   // const statusOptions = ACCOUNT_STATUS_OPTIONS_SA
 
-  const { data } = useAccountList({})
-  const accountList: AccountData[] = data?.data ?? []
-
   const [filterName, setFilterName] = useState('')
+  const [timeoutName, setTimeoutName] = useState<any>()
+  const [filterAttribute, setFilterAttribute] = useState('')
+  const [filterOptions, setFilterOptions] = useState('')
+  const [params, setParams] = useState<Partial<Params>>()
+  const { data } = useAccountList({ params })
+  const accountList: AccountData[] = data?.data ?? []
 
   // const [filterRole, setFilterRole] = useState('all')
 
   const { currentTab: filterStatus, onChangeTab: onChangeFilterStatus } = useTabs('all')
-
+  useMemo(
+    () =>
+      setParams({
+        Page: page + 1,
+        Size: rowsPerPage,
+        Sort: filterAttribute,
+        Order: filterOptions,
+      }),
+    [filterAttribute, filterOptions, page, rowsPerPage]
+  )
+  const filterNameFuction = (value: string) => {
+    setParams({ Page: page + 1, Size: rowsPerPage, Name: value })
+  }
+  const handleFilterOptions = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFilterOptions(event.target.value)
+  }
+  const handleFilterAttribute = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFilterAttribute(event.target.value)
+  }
   const handleFilterName = (filterName: string) => {
     setFilterName(filterName)
-    setPage(0)
-  }
 
+    if (timeoutName) {
+      clearTimeout(timeoutName)
+    }
+
+    const newTimeoutname = setTimeout(() => {
+      filterNameFuction(filterName)
+    }, 300)
+
+    setTimeoutName(newTimeoutname)
+  }
+  const handleClearFilter = () => {
+    setFilterAttribute('')
+    setFilterName('')
+    setFilterOptions('')
+  }
   // const handleFilterRole = (event: React.ChangeEvent<HTMLInputElement>) => {
   //   setFilterRole(event.target.value)
   // }
@@ -227,6 +262,13 @@ export default function AccountTableCustom({}: Props) {
         // filterRole={filterRole}
         // onFilterRole={handleFilterRole}
         // optionsRole={roleOptions}
+        filterOptions={filterOptions}
+        filterAttribute={filterAttribute}
+        optionsSort={TABLE_HEAD}
+        optionsOrderBy={FILTER_OPTIONS}
+        onFilterAttribute={handleFilterAttribute}
+        onFilterOptions={handleFilterOptions}
+        handleClearFilter={handleClearFilter}
       />
 
       <Scrollbar>
@@ -290,27 +332,25 @@ export default function AccountTableCustom({}: Props) {
             />
 
             <TableBody>
-              {dataFiltered
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row) => {
-                  const isMember = projectDetails?.employeeGroupMappings?.some(
-                    (e) => e.employee.accountId == row.id
-                  )
+              {dataFiltered.map((row) => {
+                const isMember = projectDetails?.employeeGroupMappings?.some(
+                  (e) => e.employee.accountId == row.id
+                )
 
-                  return (
-                    <AccountTableRowCustom
-                      isMember={isMember}
-                      onAddMemberRow={handleAddMemberRow}
-                      key={`${row.id}`}
-                      row={row}
-                      selected={selected.includes(`${row.id}`)}
-                      onSelectRow={() => onSelectRow(`${row.id}`)}
-                      onDeleteRow={() => handleDeleteRow(`${row.id}`)}
-                      onEditRow={() => handleEditRow(row.id)}
-                      onClickRow={() => handleClickRow(`${row.id}`)}
-                    />
-                  )
-                })}
+                return (
+                  <AccountTableRowCustom
+                    isMember={isMember}
+                    onAddMemberRow={handleAddMemberRow}
+                    key={`${row.id}`}
+                    row={row}
+                    selected={selected.includes(`${row.id}`)}
+                    onSelectRow={() => onSelectRow(`${row.id}`)}
+                    onDeleteRow={() => handleDeleteRow(`${row.id}`)}
+                    onEditRow={() => handleEditRow(row.id)}
+                    onClickRow={() => handleClickRow(`${row.id}`)}
+                  />
+                )
+              })}
 
               <TableEmptyRows
                 height={denseHeight}
@@ -327,7 +367,7 @@ export default function AccountTableCustom({}: Props) {
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={dataFiltered.length}
+          count={data?.metaData?.total}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={onChangePage}
