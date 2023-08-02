@@ -161,17 +161,19 @@ export default function AccountTableCustom({}: Props) {
   }
 
   const handleAddRows = async (selected: string[]) => {
-    try {
-      await projectApi.addMember({
-        groupId: `${projectId}`,
-        accountId: [...selected],
-      })
-      mutateProject()
-      setSelected([])
-      enqueueSnackbar('Add successful')
-    } catch (error) {
-      console.error(error)
-    }
+    confirmDialog('Do you really want to add all account to group ?', async () => {
+      try {
+        await projectApi.addMember({
+          groupId: `${projectId}`,
+          accountId: [...selected],
+        })
+        mutateProject()
+        setSelected([])
+        enqueueSnackbar('Add successful')
+      } catch (error) {
+        console.error(error)
+      }
+    })
   }
   const handleRemoveRows = (selected: string[]) => {
     confirmDialog('Do you really want to remove all account from group ?', async () => {
@@ -456,7 +458,7 @@ function AccountDetails({ handleClose, id }: AccountDetailsProps) {
     {
       value: 'general',
       icon: <Iconify icon={'ic:round-account-box'} width={20} height={20} />,
-      component: <AccountNewEditForm currentUser={account} isDetail/>,
+      component: <AccountNewEditForm currentUser={account} isDetail />,
     },
     {
       value: 'wallet',

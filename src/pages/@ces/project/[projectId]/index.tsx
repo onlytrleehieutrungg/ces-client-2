@@ -16,6 +16,8 @@ import { PATH_CES } from 'src/routes/paths'
 import ProjectMember from 'src/sections/@ces/project/members/ProjectMember'
 import { confirmDialog } from 'src/utils/confirmDialog'
 import { useSnackbar } from 'notistack'
+import { useState } from 'react'
+import { LoadingButton } from '@mui/lab'
 
 // ----------------------------------------------------------------------
 
@@ -29,7 +31,7 @@ export default function ProjectDetails() {
   const { themeStretch } = useSettings()
 
   const { currentTab, onChangeTab } = useTabs('members')
-
+  const [loading, setLoading] = useState(false)
   const { enqueueSnackbar } = useSnackbar()
 
   const { query } = useRouter()
@@ -66,11 +68,14 @@ export default function ProjectDetails() {
   const handleTransferBenefit = () => {
     confirmDialog('Do you really want to transfer?', async () => {
       try {
+        setLoading(true)
         await projectApi.transferMoney(`${projectId}`)
         enqueueSnackbar('Transfer successful')
       } catch (error) {
         enqueueSnackbar('Transfer failed')
         console.error(error)
+      } finally {
+        setLoading(false)
       }
     })
   }
@@ -87,13 +92,14 @@ export default function ProjectDetails() {
               { name: 'Group Benefit Details' },
             ]}
             action={
-              <Button
+              <LoadingButton
+                loading={loading}
                 onClick={handleTransferBenefit}
                 variant="contained"
                 // startIcon={<Iconify icon={'eva:plus-fill'} />}
               >
                 Transfer Benefit
-              </Button>
+              </LoadingButton>
             }
           />
 
