@@ -6,7 +6,7 @@ import { Box, Card, Grid, Stack, Typography } from '@mui/material'
 import { useCallback, useEffect, useMemo } from 'react'
 // form
 import { useForm } from 'react-hook-form'
-import { Category, ProductPayload } from 'src/@types/@ces'
+import { Category, ProductPayload, PROJECT_STATUS_OPTIONS_FORM } from 'src/@types/@ces'
 import { useCategoryList } from 'src/hooks/@ces/useCategory'
 import uploadImage from 'src/utils/uploadImage'
 import * as Yup from 'yup'
@@ -49,6 +49,7 @@ export default function ProductNewEditForm({ isEdit = false, currentUser, onSubm
       price: currentUser?.price || 0,
       quantity: currentUser?.quantity || 0,
       categoryId: currentUser?.categoryId || '',
+      status: currentUser?.status || 1,
       description: currentUser?.description || '',
       imageUrl: currentUser?.imageUrl || '',
     }),
@@ -70,8 +71,7 @@ export default function ProductNewEditForm({ isEdit = false, currentUser, onSubm
     formState: { isSubmitting },
   } = methods
 
-  const values = watch('imageUrl')
-  console.log(values)
+  const statusList = PROJECT_STATUS_OPTIONS_FORM
 
   useEffect(() => {
     if (isEdit && currentUser) {
@@ -148,6 +148,15 @@ export default function ProductNewEditForm({ isEdit = false, currentUser, onSubm
                 ))}
               </RHFSelect>
               <RHFTextField name="description" label="Description" />
+
+              <RHFSelect name="status" label="Status" placeholder="Status">
+                <option value={undefined} />
+                {statusList.map((option) => (
+                  <option key={option.code} value={option.code}>
+                    {option.label}
+                  </option>
+                ))}
+              </RHFSelect>
             </Box>
 
             <Stack alignItems="flex-end" sx={{ mt: 3 }}>

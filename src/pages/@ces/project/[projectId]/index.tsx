@@ -14,6 +14,9 @@ import useTabs from 'src/hooks/useTabs'
 import Layout from 'src/layouts'
 import { PATH_CES } from 'src/routes/paths'
 import ProjectMember from 'src/sections/@ces/project/members/ProjectMember'
+import { confirmDialog } from 'src/utils/confirmDialog'
+import { useState } from 'react'
+import { useSnackbar } from 'notistack'
 
 // ----------------------------------------------------------------------
 
@@ -25,10 +28,10 @@ ProjectDetails.getLayout = function getLayout(page: React.ReactElement) {
 
 export default function ProjectDetails() {
   const { themeStretch } = useSettings()
+  const [loading, setLoading] = useState(false)
+  const { currentTab, onChangeTab } = useTabs('members')
 
-  const { currentTab, onChangeTab } = useTabs("members")
-
-  // const { enqueueSnackbar } = useSnackbar()
+  const { enqueueSnackbar } = useSnackbar()
 
   const { query } = useRouter()
   const { projectId } = query
@@ -61,6 +64,18 @@ export default function ProjectDetails() {
     },
   ]
 
+  const handleTransferBenefit = () => {
+    confirmDialog('Do you really want to transfer?', async () => {
+      try {
+        await projectApi.transferMoney(`${projectId}`)
+        enqueueSnackbar('Transfer successful')
+      } catch (error) {
+        enqueueSnackbar('Transfer failed')
+        console.error(error)
+      }
+    })
+  }
+
   return (
     <RoleBasedGuard hasContent roles={[Role['Enterprise Admin']]}>
       <Page title="Project: Project Settings">
@@ -74,9 +89,7 @@ export default function ProjectDetails() {
             ]}
             action={
               <Button
-                onClick={() => {
-                  projectApi.transferMoney(`${projectId}`)
-                }}
+                onClick={handleTransferBenefit}
                 variant="contained"
                 // startIcon={<Iconify icon={'eva:plus-fill'} />}
               >
@@ -117,4 +130,7 @@ export default function ProjectDetails() {
       </Page>
     </RoleBasedGuard>
   )
+}
+function enqueueSnackbar(arg0: string) {
+  throw new Error('Function not implemented.')
 }

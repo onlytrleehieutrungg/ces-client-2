@@ -1,5 +1,3 @@
-import { useEffect, useState } from 'react'
-import * as Yup from 'yup'
 // @mui
 import { yupResolver } from '@hookform/resolvers/yup'
 import { LoadingButton } from '@mui/lab'
@@ -18,16 +16,19 @@ import {
   useTheme,
 } from '@mui/material'
 import { useSnackbar } from 'notistack'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { AccountData, Role, UpdateWalletBalancePayLoad, WalletData } from 'src/@types/@ces'
 import { walletApi } from 'src/api-client'
-import Image from 'src/components/Image'
 import { FormProvider, RHFSelect } from 'src/components/hook-form'
+import Image from 'src/components/Image'
 import { useAccountDetails, useBenefitList } from 'src/hooks/@ces'
+import { usePayment, usePaymentSystem } from 'src/hooks/@ces/usePayment'
 import useAuth from 'src/hooks/useAuth'
 import { AccountBillingInvoiceHistory } from 'src/sections/@dashboard/user/account'
 import { confirmDialog } from 'src/utils/confirmDialog'
 import { fCurrency, fNumber } from 'src/utils/formatNumber'
+import * as Yup from 'yup'
 
 // ----------------------------------------------------------------------
 
@@ -36,9 +37,10 @@ type Props = {
   // invoices: UserInvoice[]
   currentUser?: AccountData
   accountId?: string
+  companyId?: string
 }
 
-export default function AccountWallet({ currentUser, mutate, accountId }: Props) {
+export default function AccountWallet({ currentUser, mutate, accountId, companyId }: Props) {
   const { enqueueSnackbar } = useSnackbar()
 
   const [openWallet, setOpenWallet] = useState(false)
@@ -48,6 +50,7 @@ export default function AccountWallet({ currentUser, mutate, accountId }: Props)
   const { user } = useAuth()
   const { data: benefitList } = useBenefitList({})
   const { data: accountDetails } = useAccountDetails({ id: `${accountId}` })
+  const { data: payments, isLoading: isPaymentLoading } = usePayment({ companyId: companyId })
 
   const theme = useTheme()
 
@@ -171,7 +174,6 @@ export default function AccountWallet({ currentUser, mutate, accountId }: Props)
         <Stack spacing={3}>
           <Card sx={{ p: 3 }}>
             <Stack spacing={2} alignItems="flex-end">
-
               <Typography variant="h6" sx={{ width: 1, color: theme.palette.primary.main }}>
                 Currently Receiving Benefits (***TODO***)
               </Typography>
@@ -227,7 +229,12 @@ export default function AccountWallet({ currentUser, mutate, accountId }: Props)
       </Dialog>
 
       <Grid item xs={12} md={4}>
-        {user?.role == Role['System Admin'] && <AccountBillingInvoiceHistory isLoading={false} />}
+        {user?.role == Role['System Admin'] && (
+          <AccountBillingInvoiceHistory
+            Transactions={payments?.data}
+            isLoading={isPaymentLoading}
+          />
+        )}
       </Grid>
     </Grid>
   )

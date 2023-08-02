@@ -39,7 +39,6 @@ export default function InvoiceDetails() {
       await orderApi.update(id, status)
       mutate()
       enqueueSnackbar('Update success!')
-      push(PATH_CES.order.root)
     } catch (error) {
       enqueueSnackbar('Update failed!')
       console.error(error)

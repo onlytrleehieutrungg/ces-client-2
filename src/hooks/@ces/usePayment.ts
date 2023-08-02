@@ -6,12 +6,37 @@ type UsePaymentProps = {
   params?: Partial<Params>
   options?: SWRConfiguration
   id?: string
-  companyId?: number
+  companyId?: string
 }
-export function usePayment({ params, options }: UsePaymentProps) {
+export function usePayment({ params, options, companyId }: UsePaymentProps) {
   const { data, error, mutate, isLoading } = useSWR(
     ['/transaction-wallet', params],
-    () => paymentApi.transaction(params!),
+    () => paymentApi.eatransaction(companyId!, params!),
+    {
+      // revalidateOnFocus: false,
+      // dedupingInterval: 10 * 1000, // 10s
+      keepPreviousData: true,
+      fallbackData: {
+        code: 0,
+        message: '',
+        metaData: null,
+        data: [],
+      },
+      ...options,
+    }
+  )
+  return {
+    data,
+    error,
+    mutate,
+    isLoading,
+  }
+}
+
+export function usePaymentSystem({ params, options, companyId }: UsePaymentProps) {
+  const { data, error, mutate, isLoading } = useSWR(
+    ['/transaction-wallet', params],
+    () => paymentApi.satransaction(params!),
     {
       // revalidateOnFocus: false,
       // dedupingInterval: 10 * 1000, // 10s

@@ -34,7 +34,7 @@ export default function BenefitNewEditForm({ isEdit = false, currentUser, onSubm
   const defaultValues = useMemo(
     () => ({
       name: currentUser?.name || '',
-      status: currentUser?.status,
+      status: currentUser?.status || 1,
       description: currentUser?.description || '',
       type: currentUser?.type,
       unitPrice: currentUser?.unitPrice,

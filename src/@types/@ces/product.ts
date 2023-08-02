@@ -6,7 +6,7 @@ export type Product = {
   price: number
   imageUrl: string
   quantity: number
-  status: string
+  status: number
   updatedAt: string
   createdAt: string
   notes: string
@@ -23,5 +23,8 @@ export type ProductPayload = {
   imageUrl: string
   quantity: number
   description: string
+  status: number
   categoryId: string
 }
+
+

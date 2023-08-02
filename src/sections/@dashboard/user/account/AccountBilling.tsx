@@ -22,13 +22,14 @@ type Props = {
 
 export default function AccountBilling({ cards, addressBook, invoices, payload }: Props) {
   const { data } = useMe({})
-  const { data: payments, isLoading: isPaymentLoading } = usePayment({})
   const usedPayload = data?.wallets.map((u) => u?.used)[0]
   const balance = data?.wallets.map((u) => u?.balance)[0]
   const limit = data?.wallets.map((u) => u?.limits)[0]
   const accountId = data?.id
-  const compId = data?.companyId
+  const compId = data?.companyId.toString()
   const { data: orders, isLoading } = useOrderByCompanyId({ companyId: compId })
+  const { data: payments, isLoading: isPaymentLoading } = usePayment({ companyId: compId })
+
   payload = {
     used: usedPayload,
     accountId: accountId!,

@@ -49,7 +49,6 @@ export enum UpdateOrderStatus {
   '',
   'new',
   'ready',
-  'shipping',
 }
 export enum DebtStatus {
   NOTPAYMENT = 'Not Payment',

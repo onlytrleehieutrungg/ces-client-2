@@ -45,14 +45,14 @@ export default function BenefitCreatePage() {
   }
 
   return (
-    <Page title="Project: Create a new project">
+    <Page title="Project: Create a new ">
       <Container maxWidth={themeStretch ? false : 'lg'}>
         <HeaderBreadcrumbs
-          heading="Create a new project"
+          heading="Create a new benefit"
           links={[
             { name: 'Dashboard', href: '' },
-            { name: 'Project', href: '' },
-            { name: 'New Project' },
+            { name: 'Benefit', href: '' },
+            { name: 'New benefit' },
           ]}
         />
 

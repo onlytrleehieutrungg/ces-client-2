@@ -50,6 +50,7 @@ const TABLE_HEAD = [
   { id: 'price', label: 'Price', align: 'left' },
   { id: 'quantity', label: 'Quantity', align: 'left' },
   { id: 'category.name', label: 'Category', align: 'left' },
+  { id: 'statuss', label: 'Status', align: 'left' },
   { id: 'createdat', label: 'Created At', align: 'left' },
   { id: 'updatedat', label: 'Updated At', align: 'left' },
   { id: '' },

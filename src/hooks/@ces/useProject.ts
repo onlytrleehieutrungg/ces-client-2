@@ -25,31 +25,6 @@ export function useProjectList({ params, options }: UseProjectProps) {
       ...options,
     }
   )
-
-  // async function create(payload: ProjectPayload) {
-  //   await projectApi.create(payload)
-  // }
-  // async function update(id: string, payload: ProjectPayload) {
-  //   await projectApi.update(id, payload)
-  // }
-  // async function remove(id: string) {
-  //   await projectApi.delete(id)
-  // }
-  // async function addMember(payload: AddProjectMemberPayload) {
-  //   await projectApi.addMember(payload)
-  // }
-
-  return {
-    data,
-    error,
-    mutate,
-    isValidating,
-    isLoading,
-    // create,
-    // update,
-    // remove,
-    // addMember,
-  }
 }
 
 export function useProjectDetails({ id, options }: UseProjectProps) {
