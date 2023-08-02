@@ -15,12 +15,10 @@ export const paymentApi = {
     params: Partial<Params>
   ): Promise<BaseResponse<TransactionHistory[]>> =>
     axiosClient.get(
-      `/transaction/wallet-transaction?page=1&size=10&paymentType=1&companyId=${companyId}&Sort=CreatedAt&Order=desc`
+      `/transaction?page=1&size=10&paymentType=1&companyId=${companyId}&Sort=CreatedAt&Order=desc`
     ),
   satransaction: (params: Partial<Params>): Promise<BaseResponse<TransactionHistory[]>> =>
-    axiosClient.get(
-      `/transaction/wallet-transaction?page=1&size=10&paymentType=1&Sort=CreatedAt&Order=desc`
-    ),
+    axiosClient.get(`/transaction?paymentType=1`, { params }),
   orders: (companyId: string): Promise<AxiosResponse<MonthlyOrder>> =>
     axiosClient.get(`/payment/total-order/${companyId}`),
 }

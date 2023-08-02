@@ -1,22 +1,22 @@
 // @mui
-import { Button, Container, Grid } from '@mui/material'
+import { Container, Grid } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
+// assets
+import { Role } from 'src/@types/@ces'
+import { SeoIllustration } from 'src/assets'
+import { useReportEA, useReportSA } from 'src/hooks/@ces'
+import { useOrderByCompanyId } from 'src/hooks/@ces/usePayment'
+import AppOrder from 'src/sections/@dashboard/general/app/@ces/AppOrder'
+// _mock_
+// components
+import Page from '../../components/Page'
 // hooks
 import useAuth from '../../hooks/useAuth'
 import useSettings from '../../hooks/useSettings'
 // layouts
 import Layout from '../../layouts'
-// _mock_
-// components
-import Page from '../../components/Page'
 // sections
 import { AppWelcome, AppWidgetSummary } from '../../sections/@dashboard/general/app'
-// assets
-import { Role } from 'src/@types/@ces'
-import { useReportEA, useReportSA } from 'src/hooks/@ces'
-import { useOrderByCompanyId } from 'src/hooks/@ces/usePayment'
-import AppOrder from 'src/sections/@dashboard/general/app/@ces/AppOrder'
-import { SeoIllustration } from 'src/assets'
 
 // ----------------------------------------------------------------------
 

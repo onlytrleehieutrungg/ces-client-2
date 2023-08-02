@@ -1,6 +1,3 @@
-import NextLink from 'next/link'
-import Page from 'src/components/Page'
-import Layout from 'src/layouts'
 // @mui
 import {
   Box,
@@ -18,26 +15,29 @@ import {
   Tooltip
 } from '@mui/material'
 import { paramCase } from 'change-case'
+import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 import { useSnackbar } from 'notistack'
 import { useMemo, useState } from 'react'
 import { Params, Role } from 'src/@types/@ces'
-import { PROJECT_STATUS_OPTIONS, ProjectData } from 'src/@types/@ces/project'
+import { ProjectData, PROJECT_STATUS_OPTIONS } from 'src/@types/@ces/project'
 import { projectApi } from 'src/api-client'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
 import Iconify from 'src/components/Iconify'
+import Page from 'src/components/Page'
 import Scrollbar from 'src/components/Scrollbar'
 import {
   TableEmptyRows,
   TableHeadCustom,
   TableNoData,
-  TableSelectedActions,
+  TableSelectedActions
 } from 'src/components/table'
 import RoleBasedGuard from 'src/guards/RoleBasedGuard'
 import { useProjectList } from 'src/hooks/@ces'
 import useSettings from 'src/hooks/useSettings'
 import useTable, { emptyRows, getComparator } from 'src/hooks/useTable'
 import useTabs from 'src/hooks/useTabs'
+import Layout from 'src/layouts'
 import { PATH_CES } from 'src/routes/paths'
 import ProjectTableRow from 'src/sections/@ces/project/ProjectTableRow'
 import ProjectTableToolbar from 'src/sections/@ces/project/ProjectTableToolbar'

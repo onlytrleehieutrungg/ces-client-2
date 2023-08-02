@@ -9,6 +9,7 @@ export type TransactionHistory = {
   total: number
   description: string
   type: number
+  companyName: string
   createdAt: string
   senderId: string
   recieveId: string

@@ -59,13 +59,9 @@ export default function OrderDetails({ order, handleEditOrderSubmit }: Props) {
     id,
     orderCode,
     total,
-    // address,
     updatedAt,
     createdAt,
     status,
-    // note,
-    // code,
-    // debtStatus,
     employee,
     orderDetails,
   } = order

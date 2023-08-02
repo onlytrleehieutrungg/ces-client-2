@@ -6,7 +6,7 @@ import { Role } from 'src/@types/@ces'
 import LoadingScreen from 'src/components/LoadingScreen'
 import RoleBasedGuard from 'src/guards/RoleBasedGuard'
 import { useDebtDetail } from 'src/hooks/@ces/useDebt'
-import DebtDetails from 'src/sections/@ces/debt/detail'
+import DebtDetails from 'src/sections/@ces/transaction/detail'
 import HeaderBreadcrumbs from '../../../../components/HeaderBreadcrumbs'
 // components
 import Page from '../../../../components/Page'
@@ -44,10 +44,10 @@ export default function DebtDetail() {
           <HeaderBreadcrumbs
             heading="Debt Details"
             links={[
-              { name: 'Dashboard', href: PATH_CES.debt.root },
+              { name: 'Dashboard', href: PATH_CES.transaction.root },
               {
-                name: 'Debt',
-                href: PATH_CES.debt.root,
+                name: 'Transaction',
+                href: PATH_CES.transaction.root,
               },
               { name: `${debtId}` || '' },
             ]}

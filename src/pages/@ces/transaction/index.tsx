@@ -7,50 +7,45 @@ import {
   FormControlLabel,
   IconButton,
   Switch,
-  Tab,
   Table,
   TableBody,
   TableContainer,
   TablePagination,
-  Tabs,
-  Tooltip
+  Tooltip,
 } from '@mui/material'
 import { useRouter } from 'next/router'
-import { useState } from 'react'
-import { Role } from 'src/@types/@ces'
-import { Debt, ReceiptStatus } from 'src/@types/@ces/debt'
+import { useMemo, useState } from 'react'
+import { Params, Role, TransactionHistory } from 'src/@types/@ces'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
 import Iconify from 'src/components/Iconify'
-import LoadingScreen from 'src/components/LoadingScreen'
 import Page from 'src/components/Page'
 import Scrollbar from 'src/components/Scrollbar'
 import {
   TableEmptyRows,
   TableHeadCustom,
   TableNoData,
-  TableSelectedActions
+  TableSelectedActions,
 } from 'src/components/table'
 import RoleBasedGuard from 'src/guards/RoleBasedGuard'
-import { useCompanyDebt } from 'src/hooks/@ces/useDebt'
-import useAuth from 'src/hooks/useAuth'
+import { usePaymentSystem } from 'src/hooks/@ces/usePayment'
 import useTable, { emptyRows, getComparator } from 'src/hooks/useTable'
 import useTabs from 'src/hooks/useTabs'
 import Layout from 'src/layouts'
 import { PATH_CES } from 'src/routes/paths'
-import DebtTableRow from 'src/sections/@ces/debt/DebtTableRow'
-import DebtTableToolbar from 'src/sections/@ces/debt/DebtTableToolbar'
+import TransactionTableRow from 'src/sections/@ces/transaction/TransactionTableRow'
+import TransactionTableToolbar from 'src/sections/@ces/transaction/TransactionTableToolbar'
+import LoadingTable from 'src/utils/loadingTable'
 
 // ----------------------------------------------------------------------
 
 const STATUS_OPTIONS = ['all', 'new', 'paid']
-
+const FILTER_OPTIONS = ['descending', 'ascending']
 const ROLE_OPTIONS = ['supplier', 'shipper']
-
 const TABLE_HEAD = [
-  { id: 'comapany?.name', label: 'Company ', align: 'left' },
+  { id: 'companyName', label: 'Company', align: 'left' },
   { id: 'total', label: 'Total', align: 'left' },
-  { id: 'name', label: 'Note', align: 'left' },
-  { id: 'status', label: 'Status', align: 'left' },
+  { id: 'type', label: 'Type', align: 'left' },
+  { id: 'createdAt', label: 'Created At', align: 'left' },
   { id: '' },
 ]
 
@@ -79,12 +74,14 @@ export default function OrderPage() {
   } = useTable()
 
   const { push } = useRouter()
-  const { user } = useAuth()
-  console.log(user)
-  const companyId = user?.companyId.toString()
+  const [params, setParams] = useState<Partial<Params>>()
 
-  const { data, isLoading } = useCompanyDebt({ id: companyId })
-  const tableData: Debt[] = data?.data ?? []
+  const [timeoutName, setTimeoutName] = useState<any>()
+  const [filterAttribute, setFilterAttribute] = useState('')
+  const [filterOptions, setFilterOptions] = useState('')
+  const { data, isLoading } = usePaymentSystem({ params })
+
+  const tableData: TransactionHistory[] = data?.data ?? []
 
   const [filterName, setFilterName] = useState('')
 
@@ -92,12 +89,45 @@ export default function OrderPage() {
 
   const { currentTab: filterStatus, onChangeTab: onChangeFilterStatus } = useTabs('all')
 
+  useMemo(
+    () =>
+      setParams({
+        Page: page + 1,
+        Size: rowsPerPage,
+        Sort: filterAttribute,
+        Order: filterOptions,
+      }),
+    [filterAttribute, filterOptions, page, rowsPerPage]
+  )
+
+  const filterNameFuction = (value: string) => {
+    setParams({ Page: page + 1, Size: rowsPerPage, Name: value })
+  }
+  const handleFilterOptions = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFilterOptions(event.target.value)
+  }
+  const handleFilterAttribute = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFilterAttribute(event.target.value)
+  }
+  const handleClearFilter = () => {
+    setFilterAttribute('')
+    setFilterName('')
+    setFilterOptions('')
+  }
+
   const handleFilterName = (filterName: string) => {
     setFilterName(filterName)
-    setPage(0)
-  }
-  console.log(filterStatus)
 
+    if (timeoutName) {
+      clearTimeout(timeoutName)
+    }
+
+    const newTimeoutname = setTimeout(() => {
+      filterNameFuction(filterName)
+    }, 300)
+
+    setTimeoutName(newTimeoutname)
+  }
   const handleFilterStatus = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFilterStatus(event.target.value)
   }
@@ -115,27 +145,25 @@ export default function OrderPage() {
   })
 
   const denseHeight = dense ? 52 : 72
-  if (isLoading) {
-    return <LoadingScreen />
-  }
+
   const isNotFound =
     (!dataFiltered.length && !!filterName) ||
     (!dataFiltered.length && !!filterStatus) ||
     (!dataFiltered.length && !!filterStt)
   const handleViewRow = (id: string) => {
-    push(PATH_CES.debt.detail(id))
+    // push(PATH_CES.tra.detail(id))
   }
 
   return (
-    <RoleBasedGuard hasContent roles={[Role['Enterprise Admin']]}>
-      <Page title="Debt: List">
+    <RoleBasedGuard hasContent>
+      <Page title="Transaction: List">
         <Container>
           <HeaderBreadcrumbs
-            heading="Debt List"
+            heading="Transaction List"
             links={[{ name: 'Dashboard', href: '' }, { name: 'Debt', href: '' }, { name: 'List' }]}
           />
           <Card>
-            <Tabs
+            {/* <Tabs
               allowScrollButtonsMobile
               variant="scrollable"
               scrollButtons="auto"
@@ -146,17 +174,23 @@ export default function OrderPage() {
               {STATUS_OPTIONS.map((tab) => (
                 <Tab disableRipple key={tab} label={tab} value={tab} />
               ))}
-            </Tabs>
+            </Tabs> */}
 
-            <Divider />
-            <DebtTableToolbar
+            <TransactionTableToolbar
               filterName={filterName}
               filterStatus={filterStt}
               onFilterName={handleFilterName}
               onFilterStatus={handleFilterStatus}
               optionsStatus={ROLE_OPTIONS}
+              filterOptions={filterOptions}
+              filterAttribute={filterAttribute}
+              optionsSort={TABLE_HEAD}
+              optionsOrderBy={FILTER_OPTIONS}
+              onFilterAttribute={handleFilterAttribute}
+              onFilterOptions={handleFilterOptions}
+              handleClearFilter={handleClearFilter}
             />
-
+            <LoadingTable isValidating={isLoading} />
             <Scrollbar>
               <TableContainer sx={{ minWidth: 800, position: 'relative' }}>
                 {selected.length > 0 && (
@@ -195,20 +229,19 @@ export default function OrderPage() {
                       )
                     }
                   />
-
+                  <Divider />
                   <TableBody>
-                    {dataFiltered
-                      .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                      .map((row) => (
-                        <DebtTableRow
-                          key={row.id}
-                          row={row}
-                          selected={selected.includes(row.id)}
-                          onSelectRow={() => onSelectRow(row.id)}
-                          onViewRow={() => handleViewRow(row.id)}
-                          onDeleteRow={() => handleViewRow(row.id)}
-                        />
-                      ))}
+                    {dataFiltered.map((row) => (
+                      <TransactionTableRow
+                        key={row.id}
+                        row={row}
+                        isValidating={isLoading}
+                        selected={selected.includes(row.id)}
+                        onSelectRow={() => onSelectRow(row.id)}
+                        onViewRow={() => handleViewRow(row.id)}
+                        onDeleteRow={() => handleViewRow(row.id)}
+                      />
+                    ))}
 
                     <TableEmptyRows
                       height={denseHeight}
@@ -223,9 +256,9 @@ export default function OrderPage() {
 
             <Box sx={{ position: 'relative' }}>
               <TablePagination
-                rowsPerPageOptions={[5, 10, 25]}
+                rowsPerPageOptions={[5, 10]}
                 component="div"
-                count={dataFiltered.length}
+                count={data?.metaData?.total}
                 rowsPerPage={rowsPerPage}
                 page={page}
                 onPageChange={onChangePage}
@@ -254,43 +287,11 @@ function applySortFilter({
   filterStt,
   filterStatus,
 }: {
-  tableData: Debt[]
+  tableData: TransactionHistory[]
   comparator: (a: any, b: any) => number
   filterName: string
   filterStatus: string
   filterStt: string
 }) {
-  const stabilizedThis = tableData.map((el, index) => [el, index] as const)
-  function mapStatus(status: number) {
-    const rs = Object.values(ReceiptStatus)
-    return rs[status].toLocaleLowerCase()
-  }
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0])
-    if (order !== 0) return order
-    return a[1] - b[1]
-  })
-
-  tableData = stabilizedThis.map((el) => el[0])
-
-  if (filterName) {
-    tableData = tableData.filter(
-      (item: Record<string, any>) =>
-        item?.company.name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
-    )
-  }
-
-  if (filterStt !== 'supplier') {
-    tableData = tableData.filter((item: Record<string, any>) => {
-      item.status === filterStt
-    })
-  }
-
-  if (filterStatus !== 'all') {
-    tableData = tableData.filter(
-      (item: Record<string, any>) => mapStatus(item.status) === filterStatus
-    )
-  }
-
   return tableData
 }

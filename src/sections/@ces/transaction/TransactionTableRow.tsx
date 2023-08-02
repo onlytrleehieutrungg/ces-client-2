@@ -2,11 +2,12 @@ import { Avatar, Checkbox, MenuItem, TableCell, TableRow, Typography } from '@mu
 // @mui
 import { useTheme } from '@mui/material/styles'
 import { useState } from 'react'
-import { Debt } from 'src/@types/@ces'
+import { Debt, TransactionHistory } from 'src/@types/@ces'
 import { ReceiptStatus } from 'src/@types/@ces/debt'
 import Iconify from 'src/components/Iconify'
 import Label from 'src/components/Label'
 import { TableMoreMenu } from 'src/components/table'
+import { fDateVN } from 'src/utils/formatTime'
 // @types
 
 // components
@@ -14,23 +15,25 @@ import { TableMoreMenu } from 'src/components/table'
 // ------------------------------------------------------d----------------
 
 type Props = {
-  row: Debt
+  row: TransactionHistory
   selected: boolean
   onViewRow: VoidFunction
   onSelectRow: VoidFunction
   onDeleteRow: VoidFunction
+  isValidating?: boolean
 }
 
-export default function DebtTableRow({
+export default function TransactionTableRow({
   row,
   selected,
   onViewRow,
   onSelectRow,
   onDeleteRow,
+  isValidating,
 }: Props) {
   const theme = useTheme()
 
-  const { name, total, company, status } = row
+  const { companyName, total, type, status, createdAt } = row
 
   const [openMenu, setOpenMenuActions] = useState<HTMLElement | null>(null)
 
@@ -45,32 +48,23 @@ export default function DebtTableRow({
     const rs = Object.values(ReceiptStatus)
     return rs[status]
   }
+
+  if (isValidating) {
+    return null
+  }
   return (
     <TableRow hover selected={selected}>
       <TableCell padding="checkbox">
         <Checkbox checked={selected} onClick={onSelectRow} />
       </TableCell>
 
-      <TableCell align="left">{company?.name}</TableCell>
+      <TableCell align="left">{companyName}</TableCell>
       <TableCell align="left" sx={{ textTransform: 'capitalize' }}>
         {total}
       </TableCell>
-      <TableCell align="left">{name}</TableCell>
+      <TableCell align="left">{type === 3 ? 'ZALOPAY' : 'VNPAY'}</TableCell>
 
-      <TableCell align="left">
-        {' '}
-        <Label
-          variant={theme.palette.mode === 'light' ? 'ghost' : 'filled'}
-          color={
-            (mapStatus(status) === 'New' && 'info') ||
-            (mapStatus(status) === 'Paid' && 'primary') ||
-            'default'
-          }
-          sx={{ textTransform: 'capitalize' }}
-        >
-          {mapStatus(status)}
-        </Label>
-      </TableCell>
+      <TableCell align="left">{fDateVN(createdAt)}</TableCell>
 
       <TableCell align="right">
         <TableMoreMenu

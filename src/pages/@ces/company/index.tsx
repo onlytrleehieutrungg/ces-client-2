@@ -91,14 +91,13 @@ export default function CompanyPage() {
   // const { user } = useAuth()
 
   // const roleOptions = user?.role === Role['System Admin'] ? ROLE_OPTIONS_SA : ROLE_OPTIONS_EA
-  const statusOptions = ACCOUNT_STATUS_OPTIONS_SA
   const [params, setParams] = useState<Partial<Params>>()
   const [timeoutName, setTimeoutName] = useState<any>()
   const [filterAttribute, setFilterAttribute] = useState('')
   const [filterOptions, setFilterOptions] = useState('')
   const { enqueueSnackbar } = useSnackbar()
 
-  const { data, isValidating, isLoading } = useCompanyList({ params })
+  const { data, isLoading } = useCompanyList({ params })
   useMemo(
     () =>
       setParams({
@@ -160,7 +159,7 @@ export default function CompanyPage() {
       try {
         const rs = await debtApi.create(id)
         if (rs.data) {
-          push(PATH_CES.debt.detail(rs?.data?.id))
+          push(PATH_CES.transaction.detail(rs?.data?.id))
           enqueueSnackbar('Create successful')
         } else {
           enqueueSnackbar('This company has no debt', { variant: 'warning' })

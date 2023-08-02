@@ -55,12 +55,12 @@ const navConfig = [
         icon: ICONS.analytics,
         roles: [Role['System Admin']],
       },
-      // {
-      //   title: 'debt',
-      //   path: PATH_CES.debt.root,
-      //   icon: ICONS.invoice,
-      //   roles: [Role['System Admin']],
-      // },
+      {
+        title: 'transaction',
+        path: PATH_CES.transaction.root,
+        icon: ICONS.invoice,
+        roles: [Role['System Admin'], Role['Enterprise Admin']],
+      },
       {
         title: 'benefit',
         path: PATH_CES.benefit.root,

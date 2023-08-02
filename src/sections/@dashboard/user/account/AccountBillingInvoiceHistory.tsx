@@ -6,6 +6,8 @@ import LoadingTable from 'src/utils/loadingTable'
 import { fCurrency } from '../../../../utils/formatNumber'
 import { fDateVN } from '../../../../utils/formatTime'
 import Iconify from 'src/components/Iconify'
+import { useRouter } from 'next/router'
+import { PATH_CES } from 'src/routes/paths'
 
 // ----------------------------------------------------------------------
 
@@ -15,6 +17,8 @@ type Props = {
 }
 
 export default function AccountBillingInvoiceHistory({ Transactions, isLoading }: Props) {
+  const { push } = useRouter()
+
   return (
     <Stack spacing={3} alignItems="flex-end">
       <Typography variant="subtitle1" sx={{ width: 1 }}>
@@ -39,7 +43,11 @@ export default function AccountBillingInvoiceHistory({ Transactions, isLoading }
           ))
         )}
       </Stack>
-      <Button size="small" endIcon={<Iconify icon={'eva:arrow-ios-forward-fill'} />}>
+      <Button
+        size="small"
+        endIcon={<Iconify icon={'eva:arrow-ios-forward-fill'} />}
+        onClick={() => push(PATH_CES.transaction.root)}
+      >
         View all history
       </Button>
     </Stack>
