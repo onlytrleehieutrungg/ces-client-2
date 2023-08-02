@@ -48,7 +48,7 @@ const STATUS_OPTIONS = ['all', 'new', 'ready', 'shipping', 'complete', 'cancel']
 const ROLE_OPTIONS = ['supplier', 'shipper']
 
 const FILTER_OPTIONS = ['descending', 'ascending']
-
+const ORDER_TYPE = ['monthly orders', 'all orders']
 const TABLE_HEAD = [
   { id: 'ordercode', label: 'Order Code', align: 'left' },
   { id: 'total', label: 'Total', align: 'left' },
@@ -83,7 +83,8 @@ export default function OrderPage() {
     onChangeRowsPerPage,
   } = useTable()
   const { user } = useAuth()
-
+  const role = user?.role
+  const compId = user?.companyId
   const { push } = useRouter()
 
   const [params, setParams] = useState<Partial<Params>>()
@@ -95,6 +96,7 @@ export default function OrderPage() {
   const [filterOptions, setFilterOptions] = useState('')
   const [timeoutName, setTimeoutName] = useState<any>()
   const [filterName, setFilterName] = useState('')
+  const [orderValueType, setOrderValueType] = useState('monthly orders')
 
   useEffect(() => {
     const statusIndex = getStatusIndex(filterStatus)
@@ -118,6 +120,10 @@ export default function OrderPage() {
 
   const handleFilterOptions = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFilterOptions(event.target.value)
+  }
+
+  const handleOrderType = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setOrderValueType(event.target.value)
   }
   const handleFilterAttribute = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFilterAttribute(event.target.value)
@@ -162,6 +168,7 @@ export default function OrderPage() {
     comparator: getComparator(order, orderBy),
     filterOptions,
     filterStt,
+    orderValueType,
     filterAttribute,
     filterStatus,
   })
@@ -171,6 +178,7 @@ export default function OrderPage() {
     (!dataFiltered.length && !!filterOptions) ||
     (!dataFiltered.length && !!filterStatus) ||
     (!dataFiltered.length && !!filterStt) ||
+    (!dataFiltered.length && !!orderValueType) ||
     (!dataFiltered.length && !!filterAttribute)
   const handleViewRow = (id: string) => {
     push(PATH_CES.order.detail(id))
@@ -199,6 +207,8 @@ export default function OrderPage() {
             </Tabs>
             <Divider />
             <OrderTableToolbar
+              orderValueType={orderValueType}
+              orderType={role == 3 ? ORDER_TYPE : null}
               filterName={filterName}
               filterOptions={filterOptions}
               filterStatus={filterStt}
@@ -210,6 +220,7 @@ export default function OrderPage() {
               onFilterStatus={handleFilterStatus}
               optionsStatus={ROLE_OPTIONS}
               onFilterName={handleFilterName}
+              handleOrderType={handleOrderType}
               handleClearFilter={handleClearFilter}
             />
             <LoadingTable isValidating={isLoading} />
@@ -308,6 +319,7 @@ function applySortFilter({
   comparator,
   filterOptions,
   filterAttribute,
+  orderValueType,
   filterStt,
   filterStatus,
 }: {
@@ -315,6 +327,7 @@ function applySortFilter({
   comparator: (a: any, b: any) => number
   filterStatus: string
   filterOptions: string
+  orderValueType: string
   filterAttribute: string
   filterStt: string
 }) {

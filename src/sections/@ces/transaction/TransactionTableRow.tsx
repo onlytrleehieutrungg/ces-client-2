@@ -33,7 +33,7 @@ export default function TransactionTableRow({
 }: Props) {
   const theme = useTheme()
 
-  const { companyName, total, type, status, createdAt } = row
+  const { description, companyName, total, type, status, createdAt } = row
 
   const [openMenu, setOpenMenuActions] = useState<HTMLElement | null>(null)
 
@@ -58,7 +58,7 @@ export default function TransactionTableRow({
         <Checkbox checked={selected} onClick={onSelectRow} />
       </TableCell>
 
-      <TableCell align="left">{companyName}</TableCell>
+      <TableCell align="left">{description}</TableCell>
       <TableCell align="left" sx={{ textTransform: 'capitalize' }}>
         {total}
       </TableCell>

@@ -27,7 +27,10 @@ export default function AccountBilling({ cards, addressBook, invoices, payload }
   const accountId = data?.id
   const compId = data?.companyId.toString()
   // const { data: orders, isLoading } = useOrderByCompanyId({ companyId: compId })
-  const { data: payments, isLoading: isPaymentLoading } = usePayment({ companyId: compId })
+  const { data: payments, isLoading: isPaymentLoading } = usePayment({
+    companyId: compId,
+    params: { PaymentType: '1', Sort: 'createdAt', Order: 'desc', Page: 1, Size: 10 },
+  })
 
   payload = {
     used: usedPayload,

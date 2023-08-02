@@ -14,11 +14,9 @@ export const paymentApi = {
     companyId: string,
     params: Partial<Params>
   ): Promise<BaseResponse<TransactionHistory[]>> =>
-    axiosClient.get(
-      `/transaction?page=1&size=10&paymentType=1&companyId=${companyId}&Sort=CreatedAt&Order=desc`
-    ),
+    axiosClient.get(`/transaction?companyId=${companyId}`, { params }),
   satransaction: (params: Partial<Params>): Promise<BaseResponse<TransactionHistory[]>> =>
-    axiosClient.get(`/transaction?paymentType=1`, { params }),
+    axiosClient.get(`/transaction`, { params }),
   orders: (companyId: string): Promise<AxiosResponse<MonthlyOrder>> =>
     axiosClient.get(`/payment/total-order/${companyId}`),
 }

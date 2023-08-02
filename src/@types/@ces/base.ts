@@ -12,7 +12,10 @@ export type Params = {
   Page: number
   Size: number
   Sort: string
+  PaymentType: string
+  Type: string
   Order: string
+  CompanyId: string
   OrderCode: string
   CategoryId: string
 }

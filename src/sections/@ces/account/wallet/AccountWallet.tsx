@@ -50,8 +50,9 @@ export default function AccountWallet({ currentUser, mutate, accountId, companyI
 
   const { user } = useAuth()
   const { data: accountDetails } = useAccountDetails({ id: `${accountId}` })
-  const { data: payments, isLoading: isPaymentLoading } = usePayment({ companyId: companyId })
   const { data: receivedBenefit } = useProjectByAccountId({ id: `${accountId}` })
+  const { data: payments, isLoading: isPaymentLoading } = usePayment({ companyId: companyId })
+
   const theme = useTheme()
 
   const handleClickOpen = (wallet: WalletData) => {

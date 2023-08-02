@@ -7,10 +7,12 @@ import {
   FormControlLabel,
   IconButton,
   Switch,
+  Tab,
   Table,
   TableBody,
   TableContainer,
   TablePagination,
+  Tabs,
   Tooltip,
 } from '@mui/material'
 import { useRouter } from 'next/router'
@@ -27,7 +29,8 @@ import {
   TableSelectedActions,
 } from 'src/components/table'
 import RoleBasedGuard from 'src/guards/RoleBasedGuard'
-import { usePaymentSystem } from 'src/hooks/@ces/usePayment'
+import { usePayment, usePaymentSystem } from 'src/hooks/@ces/usePayment'
+import useAuth from 'src/hooks/useAuth'
 import useTable, { emptyRows, getComparator } from 'src/hooks/useTable'
 import useTabs from 'src/hooks/useTabs'
 import Layout from 'src/layouts'
@@ -38,11 +41,11 @@ import LoadingTable from 'src/utils/loadingTable'
 
 // ----------------------------------------------------------------------
 
-const STATUS_OPTIONS = ['all', 'new', 'paid']
+const STATUS_OPTIONS = ['paid', 'transfer']
 const FILTER_OPTIONS = ['descending', 'ascending']
 const ROLE_OPTIONS = ['supplier', 'shipper']
 const TABLE_HEAD = [
-  { id: 'companyName', label: 'Company', align: 'left' },
+  { id: 'description', label: 'Description', align: 'left' },
   { id: 'total', label: 'Total', align: 'left' },
   { id: 'type', label: 'Type', align: 'left' },
   { id: 'createdAt', label: 'Created At', align: 'left' },
@@ -74,12 +77,13 @@ export default function OrderPage() {
   } = useTable()
 
   const { push } = useRouter()
+  const { user } = useAuth()
+  const compId = user?.companyId.toString()
   const [params, setParams] = useState<Partial<Params>>()
-
   const [timeoutName, setTimeoutName] = useState<any>()
   const [filterAttribute, setFilterAttribute] = useState('')
   const [filterOptions, setFilterOptions] = useState('')
-  const { data, isLoading } = usePaymentSystem({ params })
+  const { data, isLoading } = usePayment({ companyId: compId, params })
 
   const tableData: TransactionHistory[] = data?.data ?? []
 
@@ -87,19 +91,28 @@ export default function OrderPage() {
 
   const [filterStt, setFilterStatus] = useState('supplier')
 
-  const { currentTab: filterStatus, onChangeTab: onChangeFilterStatus } = useTabs('all')
+  const { currentTab: filterStatus, onChangeTab: onChangeFilterStatus } = useTabs('paid')
 
-  useMemo(
-    () =>
+  useMemo(() => {
+    if (filterStatus === 'paid') {
+      setParams({
+        PaymentType: '1',
+        Sort: filterAttribute == '' ? 'createdAt' : filterAttribute,
+        Order: filterOptions == '' ? 'desc' : filterOptions,
+        Page: page + 1,
+        Size: rowsPerPage,
+      })
+    } else {
       setParams({
         Page: page + 1,
         Size: rowsPerPage,
+        Type: '4',
         Sort: filterAttribute == '' ? 'createdAt' : filterAttribute,
         Order: filterOptions == '' ? 'desc' : filterOptions,
-      }),
-    [filterAttribute, filterOptions, page, rowsPerPage]
-  )
-
+      })
+    }
+  }, [filterAttribute, filterOptions, filterStatus, page, rowsPerPage])
+  console.log(filterStatus)
   const filterNameFuction = (value: string) => {
     setParams({ Page: page + 1, Size: rowsPerPage, Name: value })
   }
@@ -114,7 +127,6 @@ export default function OrderPage() {
     setFilterName('')
     setFilterOptions('')
   }
-
   const handleFilterName = (filterName: string) => {
     setFilterName(filterName)
 
@@ -163,7 +175,7 @@ export default function OrderPage() {
             links={[{ name: 'Dashboard', href: '' }, { name: 'Debt', href: '' }, { name: 'List' }]}
           />
           <Card>
-            {/* <Tabs
+            <Tabs
               allowScrollButtonsMobile
               variant="scrollable"
               scrollButtons="auto"
@@ -174,7 +186,7 @@ export default function OrderPage() {
               {STATUS_OPTIONS.map((tab) => (
                 <Tab disableRipple key={tab} label={tab} value={tab} />
               ))}
-            </Tabs> */}
+            </Tabs>
 
             <TransactionTableToolbar
               filterName={filterName}
