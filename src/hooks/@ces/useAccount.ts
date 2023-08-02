@@ -13,8 +13,8 @@ export function useAccountList({ options, params }: UseAccountProps) {
     ['account-list', params],
     () => accountApi.getAll(params!),
     {
-      dedupingInterval: 10 * 1000, // 10s
-      revalidateOnFocus: false,
+      // dedupingInterval: 10 * 1000, // 10s
+      // revalidateOnFocus: false,
       // keepPreviousData: true,
       // fallbackData: {
       //   code: 0,

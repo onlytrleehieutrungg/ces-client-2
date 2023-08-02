@@ -43,7 +43,7 @@ export function useCategoryDetails({ id, options }: UseCategoryProps) {
     {
       refreshInterval: 0,
       revalidateOnFocus: false,
-      dedupingInterval: 10 * 1000, // 10s
+      // dedupingInterval: 10 * 1000, // 10s
       keepPreviousData: true,
       fallbackData: {
         code: 0,
