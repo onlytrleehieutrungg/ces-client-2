@@ -99,14 +99,19 @@ export default function OrderPage() {
   useEffect(() => {
     const statusIndex = getStatusIndex(filterStatus)
     if (statusIndex === -1) {
-      setParams({ Page: page + 1, Size: rowsPerPage, Sort: filterAttribute, Order: filterOptions })
+      setParams({
+        Page: page + 1,
+        Size: rowsPerPage,
+        Sort: filterAttribute == '' ? 'createdAt' : filterAttribute,
+        Order: filterOptions == '' ? 'desc' : filterOptions,
+      })
     } else {
       setParams({
         Page: page + 1,
         Size: rowsPerPage,
         Status: statusIndex,
-        Sort: filterAttribute,
-        Order: filterOptions,
+        Sort: filterAttribute == '' ? 'createdAt' : filterAttribute,
+        Order: filterOptions == '' ? 'desc' : filterOptions,
       })
     }
   }, [page, rowsPerPage, filterStatus, filterAttribute, filterOptions])

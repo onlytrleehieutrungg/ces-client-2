@@ -94,8 +94,8 @@ export default function AccountTable({}: Props) {
       setParams({
         Page: page + 1,
         Size: rowsPerPage,
-        Sort: filterAttribute,
-        Order: filterOptions,
+        Sort: filterAttribute == '' ? 'createdAt' : filterAttribute,
+        Order: filterOptions == '' ? 'desc' : filterOptions,
       }),
     [filterAttribute, filterOptions, page, rowsPerPage]
   )

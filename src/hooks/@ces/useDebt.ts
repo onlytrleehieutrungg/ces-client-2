@@ -11,7 +11,7 @@ type UseDebtProps = {
 }
 export function useDebt({ params = { Page: 1 }, options }: UseDebtProps) {
   const { data, error, mutate, isLoading } = useSWR(
-    ['/order', params],
+    ['/debt', params],
     () => debtApi.getAll(params!),
     {
       // revalidateOnFocus: false,dERR

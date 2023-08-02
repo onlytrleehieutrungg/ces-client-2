@@ -34,8 +34,9 @@ export default function ProductEditPage() {
     try {
       await productApi.update(`${productId}`, payload)
       enqueueSnackbar('Update success!')
-      push(PATH_CES.product.root)
       mutateList()
+      push(PATH_CES.product.root)
+
       mutate()
     } catch (error) {
       enqueueSnackbar('Update failed!', { variant: 'error' })

@@ -1,13 +1,23 @@
 // @mui
-import { IconButton, InputAdornment, MenuItem, Stack, TextField, Tooltip } from '@mui/material'
+import {
+  Autocomplete,
+  IconButton,
+  InputAdornment,
+  MenuItem,
+  Stack,
+  TextField,
+  Tooltip,
+} from '@mui/material'
 import Iconify from 'src/components/Iconify'
 import { debounce } from 'lodash'
+import { Category } from 'src/@types/@ces'
+import { useState } from 'react'
 // components
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  filterName?: string
+  filterName: string
   onFilterName: (value: string) => void
   optionsSort: {
     id: string
@@ -15,11 +25,14 @@ type Props = {
     align?: string
   }[]
   optionsOrderBy: string[]
+  cate: Category[]
+  filterCate: string
   filterOptions: string
   filterAttribute: string
   onFilterAttribute: (event: React.ChangeEvent<HTMLInputElement>) => void
   onFilterOptions: (event: React.ChangeEvent<HTMLInputElement>) => void
   handleClearFilter: () => void
+  handleFilterCate: (value: string | null) => void
 }
 
 export default function ProductTableToolbar({
@@ -30,12 +43,21 @@ export default function ProductTableToolbar({
   onFilterAttribute,
   optionsOrderBy,
   filterAttribute,
+  handleFilterCate,
+  filterCate,
   optionsSort,
   handleClearFilter,
+  cate,
 }: Props) {
   // const debounceFilterName = debounce((event) => {
   //   onFilterName(event)
   // }, 1000)
+  const [inputValue, setInputValue] = useState('')
+  function cateNameValue(id: string) {
+    const selectedOption = cate.find((option) => option.id === id)
+    const cateName = selectedOption ? selectedOption.name : null
+    return cateName
+  }
   return (
     <Stack
       direction="row"
@@ -59,6 +81,25 @@ export default function ProductTableToolbar({
             </InputAdornment>
           ),
         }}
+      />
+      <Autocomplete
+        fullWidth
+        value={cateNameValue(filterCate)}
+        onChange={(event: any, newValue: string | null) => {
+          const selectedOption = cate.find((option) => option.name === newValue)
+          const selectedId = selectedOption ? selectedOption.id : null
+          handleFilterCate(selectedId)
+        }}
+        inputValue={inputValue}
+        onInputChange={(event, newInputValue) => {
+          setInputValue(newInputValue)
+        }}
+        options={cate?.map((option) => option.name)}
+        sx={{
+          maxWidth: { sm: 240 },
+          textTransform: 'capitalize',
+        }}
+        renderInput={(params) => <TextField {...params} label={'Category'} />}
       />
       <TextField
         fullWidth

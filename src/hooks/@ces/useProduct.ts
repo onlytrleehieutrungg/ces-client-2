@@ -12,15 +12,6 @@ export function useProduct({ params, options }: UseProductProps) {
     ['/product', params],
     () => productApi.getAll(params!),
     {
-      revalidateOnFocus: false,
-      dedupingInterval: 60 * 1000 * 10, // 10p
-      keepPreviousData: true,
-      fallbackData: {
-        code: 0,
-        message: '',
-        metaData: null,
-        data: [],
-      },
       ...options,
     }
   )

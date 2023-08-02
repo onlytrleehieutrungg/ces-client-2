@@ -105,8 +105,8 @@ export default function CategoryPage() {
       setParams({
         Page: page + 1,
         Size: rowsPerPage,
-        Sort: filterAttribute,
-        Order: filterOptions,
+        Sort: filterAttribute == '' ? 'createdAt' : filterAttribute,
+        Order: filterOptions == '' ? 'desc' : filterOptions,
       }),
     [filterAttribute, filterOptions, page, rowsPerPage]
   )
@@ -156,7 +156,7 @@ export default function CategoryPage() {
   const handleFilterAttribute = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFilterAttribute(event.target.value)
   }
-  const handleEditRow = (id: number) => {
+  const handleEditRow = (id: string) => {
     push(PATH_CES.category.edit(paramCase(id.toString())))
   }
 

@@ -14,7 +14,7 @@ import {
   TableContainer,
   TablePagination,
   Tabs,
-  Tooltip
+  Tooltip,
 } from '@mui/material'
 import { paramCase } from 'change-case'
 import NextLink from 'next/link'
@@ -30,7 +30,7 @@ import {
   TableEmptyRows,
   TableHeadCustom,
   TableNoData,
-  TableSelectedActions
+  TableSelectedActions,
 } from 'src/components/table'
 import RoleBasedGuard from 'src/guards/RoleBasedGuard'
 import { useBenefitList } from 'src/hooks/@ces'
@@ -115,14 +115,19 @@ export default function BenefitPage() {
     const statusIndex = getStatusIndex(filterStatus)
 
     if (statusIndex === -1) {
-      setParams({ Page: page + 1, Size: rowsPerPage, Sort: filterAttribute, Order: filterOptions })
+      setParams({
+        Page: page + 1,
+        Size: rowsPerPage,
+        Sort: filterAttribute == '' ? 'createdAt' : filterAttribute,
+        Order: filterOptions == '' ? 'desc' : filterOptions,
+      })
     } else {
       setParams({
         Page: page + 1,
         Size: rowsPerPage,
         Status: statusIndex,
-        Sort: filterAttribute,
-        Order: filterOptions,
+        Sort: filterAttribute == '' ? 'createdAt' : filterAttribute,
+        Order: filterOptions == '' ? 'desc' : filterOptions,
       })
     }
   }, [filterAttribute, filterStatus, filterOptions, page, rowsPerPage])

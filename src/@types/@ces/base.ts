@@ -14,6 +14,7 @@ export type Params = {
   Sort: string
   Order: string
   OrderCode: string
+  CategoryId: string
 }
 
 export type Paging = {

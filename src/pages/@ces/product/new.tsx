@@ -9,6 +9,7 @@ import { productApi } from 'src/api-client/product'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
 import Page from 'src/components/Page'
 import RoleBasedGuard from 'src/guards/RoleBasedGuard'
+import { useProduct } from 'src/hooks/@ces'
 import Layout from 'src/layouts'
 import { PATH_CES } from 'src/routes/paths'
 import ProductNewEditForm from 'src/sections/@ces/product/ProductNewEditForm'
@@ -25,11 +26,13 @@ export default function ProductCreatePage() {
   const { push } = useRouter()
   const [file, setFile] = useState<File>()
   const [loading, setLoading] = useState(false)
+  const { mutate: mutateList } = useProduct({})
   const handleCreateProductSubmit = async (payload: ProductPayload) => {
     try {
       await productApi.create(payload)
       // await create(payload)
       enqueueSnackbar('Create success!')
+      mutateList()
       push(PATH_CES.product.root)
     } catch (error) {
       enqueueSnackbar('Create failed!')

@@ -12,14 +12,14 @@ import {
   TableBody,
   TableContainer,
   TablePagination,
-  Tooltip
+  Tooltip,
 } from '@mui/material'
 import { paramCase } from 'change-case'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 import { useSnackbar } from 'notistack'
 import { useMemo, useState } from 'react'
-import { Params, Role } from 'src/@types/@ces'
+import { Category, Params, Role } from 'src/@types/@ces'
 import { Product } from 'src/@types/@ces/product'
 import { productApi } from 'src/api-client/product'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
@@ -30,9 +30,10 @@ import {
   TableEmptyRows,
   TableHeadCustom,
   TableNoData,
-  TableSelectedActions
+  TableSelectedActions,
 } from 'src/components/table'
 import RoleBasedGuard from 'src/guards/RoleBasedGuard'
+import { useCategoryList } from 'src/hooks/@ces'
 import { useProduct } from 'src/hooks/@ces/useProduct'
 import useTable, { emptyRows, getComparator } from 'src/hooks/useTable'
 import useTabs from 'src/hooks/useTabs'
@@ -87,11 +88,13 @@ export default function ProductPage() {
   const [timeoutName, setTimeoutName] = useState<any>()
   const [filterAttribute, setFilterAttribute] = useState('')
   const [filterOptions, setFilterOptions] = useState('')
+  const [filterCate, setFilterCate] = useState<string>('')
 
   const [params, setParams] = useState<Partial<Params>>()
 
   const { data, mutate, isLoading } = useProduct({ params })
-
+  const { data: cate } = useCategoryList({})
+  const categories: Category[] = cate?.data ?? []
   const tableData: Product[] = data?.data ?? []
 
   const { currentTab: filterStatus, onChangeTab: onChangeFilterStatus } = useTabs('all')
@@ -103,10 +106,11 @@ export default function ProductPage() {
       setParams({
         Page: page + 1,
         Size: rowsPerPage,
-        Sort: filterAttribute,
-        Order: filterOptions,
+        Sort: filterAttribute == '' ? 'createdAt' : filterAttribute,
+        Order: filterOptions == '' ? 'desc' : filterOptions,
+        CategoryId: filterCate,
       }),
-    [filterAttribute, filterOptions, page, rowsPerPage]
+    [filterAttribute, filterOptions, page, rowsPerPage, filterCate]
   )
 
   const filterNameFuction = (value: string) => {
@@ -118,10 +122,15 @@ export default function ProductPage() {
   const handleFilterAttribute = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFilterAttribute(event.target.value)
   }
+  const handleFilterCate = (value: string | null) => {
+    setFilterCate(value!)
+  }
+
   const handleClearFilter = () => {
     setFilterAttribute('')
     setFilterName('')
     setFilterOptions('')
+    setFilterCate('')
   }
 
   const handleFilterName = (filterName: string) => {
@@ -141,7 +150,7 @@ export default function ProductPage() {
   //1 func: nhận 1 biến nếu timeout true thì clear nó
 
   const handleDeleteRow = (id: string) => {
-    confirmDialog('Do you really want to delete this product ?', async () => {
+    confirmDialog('Do you really want to delete this product?', async () => {
       try {
         await productApi.delete(id)
         mutate()
@@ -206,6 +215,9 @@ export default function ProductPage() {
               onFilterAttribute={handleFilterAttribute}
               onFilterOptions={handleFilterOptions}
               handleClearFilter={handleClearFilter}
+              cate={categories}
+              handleFilterCate={handleFilterCate}
+              filterCate={filterCate}
             />
             <LoadingTable isValidating={isLoading} />
             <Scrollbar>

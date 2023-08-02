@@ -13,16 +13,6 @@ export function useCategoryList({ options, params }: UseCategoryProps) {
     ['category', params],
     () => categoryApi.getAll(params!),
     {
-      refreshInterval: 0,
-      revalidateOnFocus: false,
-      dedupingInterval: 10 * 1000, // 10s
-      keepPreviousData: true,
-      fallbackData: {
-        code: 0,
-        message: '',
-        metaData: null,
-        data: [],
-      },
       ...options,
     }
   )
