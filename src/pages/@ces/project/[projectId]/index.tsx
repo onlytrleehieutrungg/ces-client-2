@@ -15,7 +15,6 @@ import Layout from 'src/layouts'
 import { PATH_CES } from 'src/routes/paths'
 import ProjectMember from 'src/sections/@ces/project/members/ProjectMember'
 import { confirmDialog } from 'src/utils/confirmDialog'
-import { useState } from 'react'
 import { useSnackbar } from 'notistack'
 
 // ----------------------------------------------------------------------
@@ -28,7 +27,7 @@ ProjectDetails.getLayout = function getLayout(page: React.ReactElement) {
 
 export default function ProjectDetails() {
   const { themeStretch } = useSettings()
-  const [loading, setLoading] = useState(false)
+
   const { currentTab, onChangeTab } = useTabs('members')
 
   const { enqueueSnackbar } = useSnackbar()
@@ -78,14 +77,14 @@ export default function ProjectDetails() {
 
   return (
     <RoleBasedGuard hasContent roles={[Role['Enterprise Admin']]}>
-      <Page title="Project: Project Settings">
+      <Page title="Group Benefit: Group Benefit Settings">
         <Container maxWidth={themeStretch ? false : 'lg'}>
           <HeaderBreadcrumbs
-            heading="Project"
+            heading="Group Benefit"
             links={[
               { name: 'Dashboard', href: PATH_CES.root },
-              { name: 'Project', href: PATH_CES.project.root },
-              { name: 'Project Details' },
+              { name: 'Group Benefit', href: PATH_CES.project.root },
+              { name: 'Group Benefit Details' },
             ]}
             action={
               <Button
@@ -130,7 +129,4 @@ export default function ProjectDetails() {
       </Page>
     </RoleBasedGuard>
   )
-}
-function enqueueSnackbar(arg0: string) {
-  throw new Error('Function not implemented.')
 }

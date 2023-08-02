@@ -10,7 +10,7 @@ type UsePaymentProps = {
 }
 export function usePayment({ params, options, companyId }: UsePaymentProps) {
   const { data, error, mutate, isLoading } = useSWR(
-    ['/transaction-wallet', params],
+    ['/transaction-ea-wallet', params],
     () => paymentApi.eatransaction(companyId!, params!),
     {
       // revalidateOnFocus: false,
@@ -35,7 +35,7 @@ export function usePayment({ params, options, companyId }: UsePaymentProps) {
 
 export function usePaymentSystem({ params, options, companyId }: UsePaymentProps) {
   const { data, error, mutate, isLoading } = useSWR(
-    ['/transaction-wallet', params],
+    ['/transaction-sa-wallet', params],
     () => paymentApi.satransaction(params!),
     {
       // revalidateOnFocus: false,

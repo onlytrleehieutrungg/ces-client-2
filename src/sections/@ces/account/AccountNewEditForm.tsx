@@ -3,19 +3,10 @@ import * as Yup from 'yup'
 // next
 // form
 import { yupResolver } from '@hookform/resolvers/yup'
-import { Controller, useForm } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 // @mui
-import { DatePicker, LoadingButton } from '@mui/lab'
-import {
-  Box,
-  Card,
-  Grid,
-  IconButton,
-  InputAdornment,
-  Stack,
-  TextField,
-  Typography,
-} from '@mui/material'
+import { LoadingButton } from '@mui/lab'
+import { Box, Card, Grid, IconButton, InputAdornment, Stack, Typography } from '@mui/material'
 // utils
 import { fData } from '../../../utils/formatNumber'
 // routes
@@ -33,7 +24,7 @@ import {
 } from 'src/@types/@ces/account'
 import Iconify from 'src/components/Iconify'
 import useAuth from 'src/hooks/useAuth'
-import { fDateParam, fDateVN } from 'src/utils/formatTime'
+import uploadImageAccount from 'src/utils/uploadImageAccount'
 import Label from '../../../components/Label'
 import {
   FormProvider,
@@ -41,17 +32,23 @@ import {
   RHFTextField,
   RHFUploadAvatar,
 } from '../../../components/hook-form'
-import uploadImageAccount from 'src/utils/uploadImageAccount'
+import { fDateParam } from 'src/utils/formatTime'
 
 // ----------------------------------------------------------------------
 
 type Props = {
+  isDetail?: boolean
   isEdit?: boolean
   currentUser?: AccountData
   onSubmit?: (payload: AccountPayload) => void
 }
 
-export default function AccountNewEditForm({ isEdit = false, currentUser, onSubmit }: Props) {
+export default function AccountNewEditForm({
+  isEdit = false,
+  currentUser,
+  onSubmit,
+  isDetail,
+}: Props) {
   const [showPassword, setShowPassword] = useState(false)
   const { user } = useAuth()
 
@@ -79,8 +76,8 @@ export default function AccountNewEditForm({ isEdit = false, currentUser, onSubm
           is: Role['Enterprise Admin'],
           then: Yup.object().shape({
             name: Yup.string().required('Company Name is required'),
-            expiredDate: Yup.string().required('Expired Date is required'),
-            limits: Yup.number().required('Limit is required'),
+            // expiredDate: Yup.string().required('Expired Date is required'),
+            // limits: Yup.number().required('Limit is required'),
           }),
         }),
       })
@@ -117,7 +114,7 @@ export default function AccountNewEditForm({ isEdit = false, currentUser, onSubm
         : undefined,
       password: '',
       // companyId: null,
-      // company: null,
+      // company
     }),
     [currentUser, user]
   )
@@ -130,7 +127,7 @@ export default function AccountNewEditForm({ isEdit = false, currentUser, onSubm
   const {
     reset,
     watch,
-    control,
+    // control,
     setValue,
     handleSubmit,
     formState: { isSubmitting },
@@ -153,14 +150,16 @@ export default function AccountNewEditForm({ isEdit = false, currentUser, onSubm
     console.log(payload)
     if (
       payload.role === Role['Enterprise Admin'] &&
-      payload.company &&
-      payload.company.expiredDate
+      payload.company
+      // &&
+      // payload.company.expiredDate
     ) {
       payload = {
         ...payload,
         company: {
           ...payload.company,
-          expiredDate: fDateParam(payload.company.expiredDate),
+          limits: 0,
+          expiredDate: fDateParam(Date.now()),
           imageUrl: payload.imageUrl,
           address: payload.address,
         },
@@ -202,6 +201,7 @@ export default function AccountNewEditForm({ isEdit = false, currentUser, onSubm
 
             <Box sx={{ mb: 5 }}>
               <RHFUploadAvatar
+                disabled={isDetail}
                 name="imageUrl"
                 accept="image/*"
                 maxSize={3145728}
@@ -266,9 +266,9 @@ export default function AccountNewEditForm({ isEdit = false, currentUser, onSubm
                 gridTemplateColumns: { xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)' },
               }}
             >
-              <RHFTextField name="name" label="Name" />
-              <RHFTextField name="email" label="Email Address" disabled={isEdit} />
-              {!isEdit && (
+              <RHFTextField name="name" label="Name" disabled={isDetail} />
+              <RHFTextField name="email" label="Email Address" disabled={isEdit || isDetail} />
+              {!isEdit && !isDetail && (
                 <RHFTextField
                   name="password"
                   label="Password"
@@ -284,12 +284,12 @@ export default function AccountNewEditForm({ isEdit = false, currentUser, onSubm
                   }}
                 />
               )}
-              <RHFTextField name="phone" label="Phone Number" />
+              <RHFTextField name="phone" label="Phone Number" disabled={isDetail} />
               {!(user?.role == Role['Enterprise Admin']) && (
-                <RHFTextField name="address" label="Address" />
+                <RHFTextField name="address" label="Address" disabled={isDetail} />
               )}
               {/* <RHFTextField name="address" label="Address" /> */}
-              <RHFSelect name="status" label="Status" placeholder="Status">
+              <RHFSelect name="status" label="Status" placeholder="Status" disabled={isDetail}>
                 <option value={undefined} />
                 {statusList.map((option) => (
                   <option key={option.code} value={option.code}>
@@ -298,7 +298,12 @@ export default function AccountNewEditForm({ isEdit = false, currentUser, onSubm
                 ))}
               </RHFSelect>
               {!(user?.role == Role['Enterprise Admin']) && (
-                <RHFSelect name="role" label="Role" placeholder="Role" disabled={isEdit}>
+                <RHFSelect
+                  name="role"
+                  label="Role"
+                  placeholder="Role"
+                  disabled={isEdit || isDetail}
+                >
                   <option value={undefined} />
                   {roleList?.map((option) => (
                     <option key={option.code} value={option.code}>
@@ -310,12 +315,13 @@ export default function AccountNewEditForm({ isEdit = false, currentUser, onSubm
               <Box />
               {watchShowCompany == Role['Enterprise Admin'] && !isEdit && (
                 <>
-                  <RHFTextField name="company.name" label="Company Name" />
-                  <Controller
+                  <RHFTextField name="company.name" label="Company Name" disabled={isDetail} />
+                  {/* <Controller
                     name="company.expiredDate"
                     control={control}
                     render={({ field, fieldState: { error } }) => (
                       <DatePicker
+                        disabled={isDetail}
                         disablePast
                         inputFormat="dd/MM/yyyy"
                         label="Expired date"
@@ -335,21 +341,23 @@ export default function AccountNewEditForm({ isEdit = false, currentUser, onSubm
                       />
                     )}
                   />
-                  {/* <RHFTextField
-                    name="company.expiredDate"
-                    label="Company Expired Date"
-                    type="date"
-                  /> */}
 
-                  <RHFTextField name="company.limits" label="Limit" type="number" />
+                  <RHFTextField
+                    name="company.limits"
+                    label="Limit"
+                    type="number"
+                    disabled={isDetail}
+                  /> */}
                 </>
               )}
             </Box>
 
             <Stack alignItems="flex-end" sx={{ mt: 3 }}>
-              <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-                {!isEdit ? 'Create User' : 'Save Changes'}
-              </LoadingButton>
+              {!isDetail && (
+                <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
+                  {!isEdit ? 'Create User' : 'Save Changes'}
+                </LoadingButton>
+              )}
             </Stack>
           </Card>
         </Grid>

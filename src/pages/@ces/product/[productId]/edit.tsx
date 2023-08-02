@@ -10,7 +10,7 @@ import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
 import LoadingScreen from 'src/components/LoadingScreen'
 import Page from 'src/components/Page'
 import RoleBasedGuard from 'src/guards/RoleBasedGuard'
-import { useProductDetail } from 'src/hooks/@ces/useProduct'
+import { useProduct, useProductDetail } from 'src/hooks/@ces/useProduct'
 import Layout from 'src/layouts'
 import { PATH_CES } from 'src/routes/paths'
 import ProductNewEditForm from 'src/sections/@ces/product/ProductNewEditForm'
@@ -25,6 +25,7 @@ export default function ProductEditPage() {
   const { query, push } = useRouter()
   const { enqueueSnackbar } = useSnackbar()
   const { productId } = query
+  const { mutate: mutateList } = useProduct({})
   const { data, isLoading, mutate } = useProductDetail({ id: `${productId}` })
   if (isLoading) {
     return <LoadingScreen />
@@ -34,7 +35,8 @@ export default function ProductEditPage() {
       await productApi.update(`${productId}`, payload)
       enqueueSnackbar('Update success!')
       push(PATH_CES.product.root)
-      mutate();
+      mutateList()
+      mutate()
     } catch (error) {
       enqueueSnackbar('Update failed!', { variant: 'error' })
     }

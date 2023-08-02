@@ -18,7 +18,7 @@ import {
   Tabs,
   Tooltip,
 } from '@mui/material'
-import { paramCase } from 'change-case'
+import { capitalCase, paramCase } from 'change-case'
 import { useRouter } from 'next/router'
 import { useSnackbar } from 'notistack'
 import { useMemo, useState } from 'react'
@@ -40,6 +40,7 @@ import { confirmDialog } from 'src/utils/confirmDialog'
 import AccountNewEditForm from './AccountNewEditForm'
 import AccountTableRowCustom from './AccountTableRowCustom'
 import AccountTableToolbar from './AccountTableToolbar'
+import AccountWallet from './wallet/AccountWallet'
 
 // ----------------------------------------------------------------------
 
@@ -449,13 +450,54 @@ type AccountDetailsProps = {
 function AccountDetails({ handleClose, id }: AccountDetailsProps) {
   const { data } = useAccountDetails({ id: id })
   const account = data?.data
+  const { currentTab, onChangeTab } = useTabs('general')
+
+  const ACCOUNT_TABS = [
+    {
+      value: 'general',
+      icon: <Iconify icon={'ic:round-account-box'} width={20} height={20} />,
+      component: <AccountNewEditForm currentUser={account} isDetail/>,
+    },
+    {
+      value: 'wallet',
+      icon: <Iconify icon={'ic:round-receipt'} width={20} height={20} />,
+      component: <AccountWallet accountId={`${account?.id}`} />,
+    },
+  ]
 
   return (
     <Dialog fullWidth maxWidth="lg" open onClose={handleClose}>
       <DialogTitle>Employee Details</DialogTitle>
 
-      <DialogContent>
-        {account ? <AccountNewEditForm isEdit currentUser={account} /> : <div>Loading...</div>}
+      <DialogContent sx={{ mt: 1 }}>
+        <Tabs
+          allowScrollButtonsMobile
+          variant="scrollable"
+          scrollButtons="auto"
+          value={currentTab}
+          onChange={onChangeTab}
+        >
+          {ACCOUNT_TABS.map((tab) => (
+            <Tab
+              disableRipple
+              key={tab.value}
+              label={capitalCase(tab.value)}
+              icon={tab.icon}
+              value={tab.value}
+            />
+          ))}
+        </Tabs>
+
+        <Box sx={{ mb: 5 }} />
+
+        {!account ? (
+          <>Loading...</>
+        ) : (
+          ACCOUNT_TABS.map((tab) => {
+            const isMatched = tab.value === currentTab
+            return isMatched && <Box key={tab.value}>{tab.component}</Box>
+          })
+        )}
       </DialogContent>
 
       <DialogActions>

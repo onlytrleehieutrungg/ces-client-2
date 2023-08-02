@@ -25,6 +25,18 @@ export function useProjectList({ params, options }: UseProjectProps) {
       ...options,
     }
   )
+
+  return {
+    data,
+    error,
+    mutate,
+    isValidating,
+    isLoading,
+    // create,
+    // update,
+    // remove,
+    // addMember,
+  }
 }
 
 export function useProjectDetails({ id, options }: UseProjectProps) {

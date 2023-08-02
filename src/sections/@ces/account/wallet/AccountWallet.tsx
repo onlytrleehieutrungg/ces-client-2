@@ -23,7 +23,7 @@ import { walletApi } from 'src/api-client'
 import { FormProvider, RHFSelect } from 'src/components/hook-form'
 import Image from 'src/components/Image'
 import { useAccountDetails, useBenefitList } from 'src/hooks/@ces'
-import { usePayment, usePaymentSystem } from 'src/hooks/@ces/usePayment'
+import { usePayment } from 'src/hooks/@ces/usePayment'
 import useAuth from 'src/hooks/useAuth'
 import { AccountBillingInvoiceHistory } from 'src/sections/@dashboard/user/account'
 import { confirmDialog } from 'src/utils/confirmDialog'
@@ -118,7 +118,7 @@ export default function AccountWallet({ currentUser, mutate, accountId, companyI
 
   return (
     <Grid container spacing={3}>
-      <Grid item xs={12} md={8}>
+      <Grid item xs={12} md={7}>
         <Stack spacing={3}>
           {accountDetails?.data?.wallets &&
             accountDetails?.data?.wallets.map((wallet) => (
@@ -170,27 +170,29 @@ export default function AccountWallet({ currentUser, mutate, accountId, companyI
             ))}
         </Stack>
       </Grid>
-      <Grid item xs={12} md={8}>
-        <Stack spacing={3}>
-          <Card sx={{ p: 3 }}>
-            <Stack spacing={2} alignItems="flex-end">
-              <Typography variant="h6" sx={{ width: 1, color: theme.palette.primary.main }}>
-                Currently Receiving Benefits (***TODO***)
-              </Typography>
+      {user?.role == Role['Enterprise Admin'] && (
+        <Grid item xs={12} md={8}>
+          <Stack spacing={3}>
+            <Card sx={{ p: 3 }}>
+              <Stack spacing={2} alignItems="flex-end">
+                <Typography variant="h6" sx={{ width: 1, color: theme.palette.primary.main }}>
+                  Currently Receiving Benefits (***TODO***)
+                </Typography>
 
-              <Stack spacing={2} sx={{ width: 1 }}>
-                <Stack direction="column" spacing={1}>
-                  {benefitList?.data?.map((x, index) => (
-                    <Typography key={x.id} variant="body1">
-                      {index + 1}. {x.name} ({fCurrency(x.unitPrice)}đ)
-                    </Typography>
-                  ))}
+                <Stack spacing={2} sx={{ width: 1 }}>
+                  <Stack direction="column" spacing={1}>
+                    {benefitList?.data?.map((x, index) => (
+                      <Typography key={x.id} variant="body1">
+                        {index + 1}. {x.name} ({fCurrency(x.unitPrice)}đ)
+                      </Typography>
+                    ))}
+                  </Stack>
                 </Stack>
               </Stack>
-            </Stack>
-          </Card>
-        </Stack>
-      </Grid>
+            </Card>
+          </Stack>
+        </Grid>
+      )}
 
       <Dialog open={openWallet} onClose={handleClose} fullWidth>
         <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
@@ -228,7 +230,7 @@ export default function AccountWallet({ currentUser, mutate, accountId, companyI
         </FormProvider>
       </Dialog>
 
-      <Grid item xs={12} md={4}>
+      <Grid item xs={12} md={5}>
         {user?.role == Role['System Admin'] && (
           <AccountBillingInvoiceHistory
             Transactions={payments?.data}

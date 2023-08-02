@@ -18,8 +18,9 @@ import useTabs from '../../../hooks/useTabs'
 import Layout from '../../../layouts'
 // routes
 import { PATH_DASHBOARD } from '../../../routes/paths'
-import { AccountBilling, AccountGeneral } from '../../../sections/@dashboard/user/account'
+import { AccountBilling } from '../../../sections/@dashboard/user/account'
 // _mock_
+import AccountNewEditForm from 'src/sections/@ces/account/AccountNewEditForm'
 import { _userAddressBook, _userInvoices, _userPayment } from '../../../_mock'
 
 // ----------------------------------------------------------------------
@@ -51,7 +52,7 @@ export default function UserAccount() {
     {
       value: 'general',
       icon: <Iconify icon={'ic:round-account-box'} width={20} height={20} />,
-      component: <AccountGeneral />,
+      component: <AccountNewEditForm isEdit currentUser={data} />,
     },
   ]
   if (data?.role == 3) {

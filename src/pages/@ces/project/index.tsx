@@ -11,13 +11,11 @@ import {
   FormControlLabel,
   IconButton,
   Switch,
-  Tab,
   Table,
   TableBody,
   TableContainer,
   TablePagination,
-  Tabs,
-  Tooltip,
+  Tooltip
 } from '@mui/material'
 import { paramCase } from 'change-case'
 import { useRouter } from 'next/router'
@@ -183,13 +181,13 @@ export default function ProjectPage() {
 
   return (
     <RoleBasedGuard hasContent roles={[Role['Enterprise Admin']]}>
-      <Page title="Project: List">
+      <Page title="Group Benefit: List">
         <Container maxWidth={themeStretch ? false : 'lg'}>
           <HeaderBreadcrumbs
-            heading="Project List"
+            heading="Group Benefit List"
             links={[
               { name: 'Dashboard', href: '' },
-              { name: 'Project', href: '' },
+              { name: 'Group Benefit', href: '' },
               { name: 'List' },
             ]}
             action={

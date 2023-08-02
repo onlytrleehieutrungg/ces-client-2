@@ -61,6 +61,7 @@ export default function CompanyDetails() {
       icon: <Iconify icon={'ic:round-receipt'} width={20} height={20} />,
       component: (
         <AccountWallet
+          companyId={`${companyId}`}
           accountId={data?.data?.contactPersonId}
           // currentUser={accountDetails?.data}
           mutate={mutate}

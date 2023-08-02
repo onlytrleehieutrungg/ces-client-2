@@ -1,10 +1,11 @@
 // @mui
-import { Stack, Typography } from '@mui/material'
+import { Button, Stack, Typography } from '@mui/material'
 import { TransactionHistory } from 'src/@types/@ces'
 import LoadingTable from 'src/utils/loadingTable'
 // utils
 import { fCurrency } from '../../../../utils/formatNumber'
 import { fDateVN } from '../../../../utils/formatTime'
+import Iconify from 'src/components/Iconify'
 
 // ----------------------------------------------------------------------
 
@@ -27,18 +28,20 @@ export default function AccountBillingInvoiceHistory({ Transactions, isLoading }
         ) : (
           Transactions?.map((x) => (
             <Stack key={x.id} direction="row" justifyContent="space-between" sx={{ width: 1 }}>
-              <Typography variant="body2" sx={{ minWidth: 100 }}>
+              <Typography flex={1} variant="body2">
                 {fDateVN(x.createdAt)}
               </Typography>
-              <Typography variant="body2">{fCurrency(x.total)}đ</Typography>
-              <Typography>{x.type == 3 ? 'ZALOPAY' : 'VNPAY'}</Typography>
+              <Typography flex={1} variant="body2">
+                {fCurrency(x.total)}đ
+              </Typography>
+              <Typography flex={1}>{x.type == 3 ? 'ZALOPAY' : 'VNPAY'}</Typography>
             </Stack>
           ))
         )}
       </Stack>
-      {/* <Button size="small" endIcon={<Iconify icon={'eva:arrow-ios-forward-fill'} />}>
-        All history
-      </Button> */}
+      <Button size="small" endIcon={<Iconify icon={'eva:arrow-ios-forward-fill'} />}>
+        View all history
+      </Button>
     </Stack>
   )
 }

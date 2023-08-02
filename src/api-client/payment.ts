@@ -21,6 +21,6 @@ export const paymentApi = {
     axiosClient.get(
       `/transaction/wallet-transaction?page=1&size=10&paymentType=1&Sort=CreatedAt&Order=desc`
     ),
-  orders: (companyId: number): Promise<AxiosResponse<MonthlyOrder>> =>
+  orders: (companyId: string): Promise<AxiosResponse<MonthlyOrder>> =>
     axiosClient.get(`/payment/total-order/${companyId}`),
 }

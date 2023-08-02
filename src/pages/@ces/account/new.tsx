@@ -34,7 +34,11 @@ export default function AccountCreatePage() {
       await accountApi.create(payload)
 
       enqueueSnackbar('Create success!')
-      push(PATH_CES.account.root)
+      if (payload.company) {
+        push(PATH_CES.company.root)
+      } else {
+        push(PATH_CES.account.root)
+      }
     } catch (error) {
       enqueueSnackbar('Create failed!', {})
       console.error(error)

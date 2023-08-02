@@ -2,11 +2,10 @@
 import { Card, Grid, Stack, useTheme } from '@mui/material'
 import { AccountData, PaymentPayload } from 'src/@types/@ces'
 import { useMe } from 'src/hooks/@ces'
-import { useOrderByCompanyId, usePayment } from 'src/hooks/@ces/usePayment'
+import { usePayment } from 'src/hooks/@ces/usePayment'
 // @types
 import { CreditCard, UserAddressBook, UserInvoice } from '../../../../@types/user'
 import AccountBillingInvoiceHistory from './AccountBillingInvoiceHistory'
-import AccountOrderHistory from './AccountOrderHistory'
 import BalanceAnalytic from './balanceAnalytic'
 import UsedAnalytic from './usedAnalytic'
 
@@ -27,7 +26,7 @@ export default function AccountBilling({ cards, addressBook, invoices, payload }
   const limit = data?.wallets.map((u) => u?.limits)[0]
   const accountId = data?.id
   const compId = data?.companyId.toString()
-  const { data: orders, isLoading } = useOrderByCompanyId({ companyId: compId })
+  // const { data: orders, isLoading } = useOrderByCompanyId({ companyId: compId })
   const { data: payments, isLoading: isPaymentLoading } = usePayment({ companyId: compId })
 
   payload = {
@@ -39,7 +38,7 @@ export default function AccountBilling({ cards, addressBook, invoices, payload }
 
   return (
     <Grid container spacing={5}>
-      <Grid item xs={12} md={8}>
+      <Grid item xs={12} md={7}>
         <Stack spacing={2}>
           <Card sx={{ mb: 1 }}>
             <BalanceAnalytic
@@ -61,11 +60,11 @@ export default function AccountBilling({ cards, addressBook, invoices, payload }
           </Card>
         </Stack>
 
-        <Card sx={{ mt: 5 }}>
+        {/* <Card sx={{ mt: 5 }}>
           <AccountOrderHistory order={orders?.data} isLoading={isLoading} />
-        </Card>
+        </Card> */}
       </Grid>
-      <Grid item xs={12} md={4}>
+      <Grid item xs={12} md={5}>
         <AccountBillingInvoiceHistory Transactions={payments?.data} isLoading={isPaymentLoading} />
       </Grid>
     </Grid>

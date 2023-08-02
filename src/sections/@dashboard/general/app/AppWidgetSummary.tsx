@@ -1,11 +1,11 @@
 // @mui
-import { alpha, useTheme, styled } from '@mui/material/styles';
-import { Box, Card, Typography, Stack, CardProps } from '@mui/material';
+import { alpha, useTheme, styled } from '@mui/material/styles'
+import { Box, Card, Typography, Stack, CardProps } from '@mui/material'
 // utils
-import { fNumber, fPercent } from '../../../../utils/formatNumber';
+import { fNumber, fPercent } from '../../../../utils/formatNumber'
 // components
-import Iconify from '../../../../components/Iconify';
-import ReactApexChart from '../../../../components/chart';
+import Iconify from '../../../../components/Iconify'
+import ReactApexChart from '../../../../components/chart'
 
 // ----------------------------------------------------------------------
 
@@ -18,16 +18,16 @@ const IconWrapperStyle = styled('div')(({ theme }) => ({
   justifyContent: 'center',
   color: theme.palette.success.main,
   backgroundColor: alpha(theme.palette.success.main, 0.16),
-}));
+}))
 
 // ----------------------------------------------------------------------
 
 interface Props extends CardProps {
-  title: string;
-  total: number;
-  percent: number;
-  chartColor: string;
-  chartData: number[];
+  title: string
+  total: number
+  percent?: number
+  chartColor: string
+  chartData: number[]
 }
 
 export default function AppWidgetSummary({
@@ -39,7 +39,7 @@ export default function AppWidgetSummary({
   sx,
   ...other
 }: Props) {
-  const theme = useTheme();
+  const theme = useTheme()
 
   const chartOptions = {
     colors: [chartColor],
@@ -55,33 +55,38 @@ export default function AppWidgetSummary({
       },
       marker: { show: false },
     },
-  };
+  }
 
   return (
     <Card sx={{ display: 'flex', alignItems: 'center', p: 3, ...sx }} {...other}>
       <Box sx={{ flexGrow: 1 }}>
         <Typography variant="subtitle2">{title}</Typography>
 
-        <Stack direction="row" alignItems="center" spacing={1} sx={{ mt: 2, mb: 1 }}>
-          <IconWrapperStyle
-            sx={{
-              ...(percent < 0 && {
-                color: 'error.main',
-                bgcolor: alpha(theme.palette.error.main, 0.16),
-              }),
-            }}
-          >
-            <Iconify
-              width={16}
-              height={16}
-              icon={percent >= 0 ? 'eva:trending-up-fill' : 'eva:trending-down-fill'}
-            />
-          </IconWrapperStyle>
-          <Typography component="span" variant="subtitle2">
-            {percent > 0 && '+'}
-            {fPercent(percent)}
-          </Typography>
-        </Stack>
+        {percent ? (
+          <Stack direction="row" alignItems="center" spacing={1} sx={{ mt: 2, mb: 1 }}>
+            <IconWrapperStyle
+              sx={{
+                ...(percent < 0 && {
+                  color: 'error.main',
+                  bgcolor: alpha(theme.palette.error.main, 0.16),
+                }),
+              }}
+            >
+              <Iconify
+                width={16}
+                height={16}
+                icon={percent >= 0 ? 'eva:trending-up-fill' : 'eva:trending-down-fill'}
+              />
+            </IconWrapperStyle>
+
+            <Typography component="span" variant="subtitle2">
+              {percent > 0 && '+'}
+              {fPercent(percent)}
+            </Typography>
+          </Stack>
+        ) : (
+          <Box sx={{ mt: 2, mb: 1 }} />
+        )}
 
         <Typography variant="h3">{fNumber(total)}</Typography>
       </Box>
@@ -94,5 +99,5 @@ export default function AppWidgetSummary({
         height={36}
       />
     </Card>
-  );
+  )
 }
