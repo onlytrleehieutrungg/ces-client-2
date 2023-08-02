@@ -13,6 +13,7 @@ import { FormProvider, RHFTextField, RHFUploadAvatar } from '../../../components
 // routes
 // utils
 import { fData } from '../../../utils/formatNumber'
+import { fDateParam } from 'src/utils/formatTime'
 
 // ----------------------------------------------------------------------
 
@@ -71,6 +72,8 @@ export default function CompanyNewEditForm({ isEdit = false, currentUser, onSubm
   }, [isEdit, currentUser])
 
   const handleFormSubmit = async (payload: CompanyPayload) => {
+    const formatExp = fDateParam(payload.expiredDate)
+    payload.expiredDate = formatExp
     await onSubmit?.(payload)
   }
   //------------------------IMAGE UPLOAD------------------------

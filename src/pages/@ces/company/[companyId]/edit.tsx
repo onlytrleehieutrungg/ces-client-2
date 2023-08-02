@@ -24,11 +24,13 @@ export default function ProductEditPage() {
   const { query, push } = useRouter()
   const { enqueueSnackbar } = useSnackbar()
   const { companyId } = query
+
   const { data, mutate } = useCompanyDetails({ id: `${companyId}` })
 
   const handleEditCompanySubmit = async (payload: CompanyPayload) => {
     try {
       await companyApi.update(`${companyId}`, payload)
+      // mutateList()
       mutate()
       enqueueSnackbar('Update success!')
       push(PATH_CES.company.root)

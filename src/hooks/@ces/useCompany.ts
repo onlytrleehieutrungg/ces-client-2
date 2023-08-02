@@ -13,8 +13,8 @@ export function useCompanyList({ options, params }: UseCompanyProps) {
     ['company-list', params],
     () => companyApi.getAll(params!),
     {
-      revalidateOnFocus: false,
-      dedupingInterval: 60 * 60 * 1000, // 3600s = 1h
+      // revalidateOnFocus: false,
+      // dedupingInterval: 60 * 60 * 1000, // 3600s = 1h
       // keepPreviousData: true,
       // fallbackData: {
       //   code: 0,

@@ -161,7 +161,7 @@ export default function AccountNewEditForm({
         company: {
           ...payload.company,
           limits: 0,
-          expiredDate: fDateParam(Date.now()),
+          expiredDate: fDateParam(payload.company.expiredDate || Date.now()),
           imageUrl: payload.imageUrl,
           address: payload.address,
         },
