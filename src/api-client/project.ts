@@ -39,4 +39,8 @@ export const projectApi = {
   transferMoney(id: string) {
     return axiosClient.post(`/group/${id}/employees`)
   },
+
+  getByAccountId(id: string): Promise<BaseResponse<ProjectData[]>> {
+    return axiosClient.get(`/group/get-by-employee/${id}`)
+  },
 }

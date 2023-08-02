@@ -83,7 +83,7 @@ const navConfig = [
         title: 'order',
         path: PATH_CES.order.root,
         icon: ICONS.invoice,
-        roles: [Role['Supplier Admin']],
+        roles: [Role['Supplier Admin'], Role['Enterprise Admin']],
       },
       {
         title: 'product',

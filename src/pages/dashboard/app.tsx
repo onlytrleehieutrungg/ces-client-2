@@ -13,7 +13,7 @@ import Page from '../../components/Page'
 import { AppWidgetSummary } from '../../sections/@dashboard/general/app'
 // assets
 import { Role } from 'src/@types/@ces'
-import { useMe, useReportEA, useReportSA } from 'src/hooks/@ces'
+import { useReportEA, useReportSA } from 'src/hooks/@ces'
 import { useOrderByCompanyId } from 'src/hooks/@ces/usePayment'
 import AppOrder from 'src/sections/@dashboard/general/app/@ces/AppOrder'
 
@@ -29,9 +29,8 @@ export default function GeneralApp() {
   const { user } = useAuth()
 
   const theme = useTheme()
-  const { data } = useMe({})
-  const compId = data?.companyId.toString()
-  const { data: orders, isLoading } = useOrderByCompanyId({ companyId: compId })
+
+  const { data: orders } = useOrderByCompanyId({ companyId: user?.companyId?.toString() })
   const { themeStretch } = useSettings()
   const { data: reportSAData } = useReportSA({ disabled: user?.role !== Role['System Admin'] })
   const { data: reportEAData } = useReportEA({ disabled: user?.role !== Role['Enterprise Admin'] })
@@ -88,7 +87,7 @@ export default function GeneralApp() {
               </Grid>
               <Grid item xs={12} md={6}>
                 <AppWidgetSummary
-                  title="Total end user"
+                  title="Total End User"
                   total={reportSAData?.data?.employeeCount || 0}
                   chartColor={theme.palette.chart.yellow[0]}
                   chartData={[8, 9, 31, 8, 16, 37, 8, 33, 46, 31]}
@@ -160,21 +159,26 @@ export default function GeneralApp() {
             />
           </Grid> */}
 
-          {user?.role == Role['Enterprise Admin'] && (
-            <Grid item xs={12} lg={12}>
-              <AppOrder
-                title="Order in month"
-                tableData={orders.data.orders.slice(0, 5)}
-                tableLabels={[
-                  { id: 'orderCode', label: 'Order Code' },
-                  { id: 'employeeName', label: 'Employee' },
-                  { id: 'Date', label: 'Date' },
-                  { id: '', label: 'Total' },
-                  { id: '' },
-                ]}
-              />
-            </Grid>
-          )}
+          {user?.role == Role['Enterprise Admin'] &&
+            orders.data &&
+            orders?.data?.orders?.length > 0 && (
+              <Grid item xs={12} lg={12}>
+                <AppOrder
+                  // title={`Order in month (${orders.data.orders.length})`}
+                  title={`Top order in month`}
+                  tableData={
+                    orders?.data?.orders?.sort((x, y) => y.total - x.total).slice(0, 5) || []
+                  }
+                  tableLabels={[
+                    { id: 'orderCode', label: 'Order Code' },
+                    { id: 'employeeName', label: 'Employee' },
+                    { id: 'Date', label: 'Date' },
+                    { id: '', label: 'Total' },
+                    { id: '' },
+                  ]}
+                />
+              </Grid>
+            )}
 
           {/* <Grid item xs={12} md={6} lg={4}>
             <AppTopRelated title="Top Related Applications" list={_appRelated} />

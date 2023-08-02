@@ -59,7 +59,7 @@ export function usePaymentSystem({ params, options, companyId }: UsePaymentProps
 }
 export function useOrderByCompanyId({ params, options, companyId }: UsePaymentProps) {
   const { data, error, mutate, isLoading } = useSWR(
-    ['/order-wallet', params],
+    companyId == undefined ? null : ['/order-wallet', params],
     () => paymentApi.orders(companyId!),
     {
       // revalidateOnFocus: false,

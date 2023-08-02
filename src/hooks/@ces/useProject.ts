@@ -57,3 +57,23 @@ export function useProjectDetails({ id, options }: UseProjectProps) {
     mutate,
   }
 }
+
+
+export function useProjectByAccountId({ id, options }: UseProjectProps) {
+  const { data, error, mutate } = useSWR(['project-accountId', id], () => projectApi.getByAccountId(id!), {
+    // keepPreviousData: true,
+    // fallbackData: {
+    //   code: 0,
+    //   message: '',
+    //   metaData: null,
+    //   data: {},
+    // },
+    ...options,
+  })
+
+  return {
+    data,
+    error,
+    mutate,
+  }
+}

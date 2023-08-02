@@ -32,6 +32,7 @@ import {
 } from 'src/components/table'
 import RoleBasedGuard from 'src/guards/RoleBasedGuard'
 import { useOrder } from 'src/hooks/@ces/useOrder'
+import useAuth from 'src/hooks/useAuth'
 import useTable, { emptyRows, getComparator } from 'src/hooks/useTable'
 import useTabs from 'src/hooks/useTabs'
 import Layout from 'src/layouts'
@@ -81,6 +82,7 @@ export default function OrderPage() {
     onChangePage,
     onChangeRowsPerPage,
   } = useTable()
+  const { user } = useAuth()
 
   const { push } = useRouter()
 
@@ -170,7 +172,7 @@ export default function OrderPage() {
   }
 
   return (
-    <RoleBasedGuard hasContent roles={[Role['Supplier Admin']]}>
+    <RoleBasedGuard hasContent roles={[Role['Supplier Admin'], Role['Enterprise Admin']]}>
       <Page title="Order: List">
         <Container>
           <HeaderBreadcrumbs

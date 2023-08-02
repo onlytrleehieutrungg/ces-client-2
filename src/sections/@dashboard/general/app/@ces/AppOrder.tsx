@@ -27,6 +27,8 @@ import Scrollbar from 'src/components/Scrollbar'
 import Label from 'src/components/Label'
 import { Order } from 'src/@types/@ces'
 import { fDateVN } from 'src/utils/formatTime'
+import { PATH_CES } from 'src/routes/paths'
+import { useRouter } from 'next/router'
 
 // ----------------------------------------------------------------------
 
@@ -46,6 +48,8 @@ interface Props extends CardProps {
 }
 
 export default function AppOrder({ title, subheader, tableData, tableLabels, ...other }: Props) {
+  const { push } = useRouter()
+
   return (
     <Card {...other}>
       <CardHeader title={title} subheader={subheader} sx={{ mb: 3 }} />
@@ -71,6 +75,9 @@ export default function AppOrder({ title, subheader, tableData, tableLabels, ...
           size="small"
           color="inherit"
           endIcon={<Iconify icon={'eva:arrow-ios-forward-fill'} />}
+          onClick={() => {
+            push(PATH_CES.order.root)
+          }}
         >
           View All
         </Button>

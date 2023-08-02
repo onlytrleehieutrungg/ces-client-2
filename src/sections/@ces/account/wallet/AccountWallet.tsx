@@ -22,7 +22,7 @@ import { AccountData, Role, UpdateWalletBalancePayLoad, WalletData } from 'src/@
 import { walletApi } from 'src/api-client'
 import { FormProvider, RHFSelect } from 'src/components/hook-form'
 import Image from 'src/components/Image'
-import { useAccountDetails, useBenefitList } from 'src/hooks/@ces'
+import { useAccountDetails, useBenefitList, useProjectByAccountId } from 'src/hooks/@ces'
 import { usePayment } from 'src/hooks/@ces/usePayment'
 import useAuth from 'src/hooks/useAuth'
 import { AccountBillingInvoiceHistory } from 'src/sections/@dashboard/user/account'
@@ -46,12 +46,12 @@ export default function AccountWallet({ currentUser, mutate, accountId, companyI
   const [openWallet, setOpenWallet] = useState(false)
   const [currentWallet, setCurrentWallet] = useState<WalletData>()
   const [loading, setLoading] = useState(false)
+  const { data: benefitList } = useBenefitList({})
 
   const { user } = useAuth()
-  const { data: benefitList } = useBenefitList({})
   const { data: accountDetails } = useAccountDetails({ id: `${accountId}` })
   const { data: payments, isLoading: isPaymentLoading } = usePayment({ companyId: companyId })
-
+  const { data: receivedBenefit } = useProjectByAccountId({ id: `${accountId}` })
   const theme = useTheme()
 
   const handleClickOpen = (wallet: WalletData) => {
@@ -170,29 +170,31 @@ export default function AccountWallet({ currentUser, mutate, accountId, companyI
             ))}
         </Stack>
       </Grid>
-      {user?.role == Role['Enterprise Admin'] && (
-        <Grid item xs={12} md={8}>
-          <Stack spacing={3}>
-            <Card sx={{ p: 3 }}>
-              <Stack spacing={2} alignItems="flex-end">
-                <Typography variant="h6" sx={{ width: 1, color: theme.palette.primary.main }}>
-                  Currently Receiving Benefits (***TODO***)
-                </Typography>
+      {user?.role == Role['Enterprise Admin'] &&
+        receivedBenefit?.data &&
+        receivedBenefit.data.length > 0 && (
+          <Grid item xs={12} md={7}>
+            <Stack spacing={3}>
+              <Card sx={{ p: 3 }}>
+                <Stack spacing={2} alignItems="flex-end">
+                  <Typography variant="h6" sx={{ width: 1, color: theme.palette.primary.main }}>
+                    Currently Receiving Benefits
+                  </Typography>
 
-                <Stack spacing={2} sx={{ width: 1 }}>
-                  <Stack direction="column" spacing={1}>
-                    {benefitList?.data?.map((x, index) => (
-                      <Typography key={x.id} variant="body1">
-                        {index + 1}. {x.name} ({fCurrency(x.unitPrice)}đ)
-                      </Typography>
-                    ))}
+                  <Stack spacing={2} sx={{ width: 1 }}>
+                    <Stack direction="column" spacing={1}>
+                      {receivedBenefit?.data?.map((x, index) => (
+                        <Typography key={x.id} variant="body1">
+                          {index + 1}. {x.name.replace('Group ', '')}
+                        </Typography>
+                      ))}
+                    </Stack>
                   </Stack>
                 </Stack>
-              </Stack>
-            </Card>
-          </Stack>
-        </Grid>
-      )}
+              </Card>
+            </Stack>
+          </Grid>
+        )}
 
       <Dialog open={openWallet} onClose={handleClose} fullWidth>
         <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
