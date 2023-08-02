@@ -33,6 +33,7 @@ import {
   RHFUploadAvatar,
 } from '../../../components/hook-form'
 import { fDateParam } from 'src/utils/formatTime'
+import { useRouter } from 'next/router'
 
 // ----------------------------------------------------------------------
 
@@ -51,6 +52,7 @@ export default function AccountNewEditForm({
 }: Props) {
   const [showPassword, setShowPassword] = useState(false)
   const { user } = useAuth()
+  const { pathname } = useRouter()
 
   const NewUserSchema = isEdit
     ? Yup.object().shape({
@@ -297,7 +299,7 @@ export default function AccountNewEditForm({
                   </option>
                 ))}
               </RHFSelect>
-              {!(user?.role == Role['Enterprise Admin']) && (
+              {pathname !== '/dashboard/user/account' && !(user?.role == Role['Enterprise Admin']) && (
                 <RHFSelect
                   name="role"
                   label="Role"

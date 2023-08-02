@@ -38,6 +38,7 @@ export default function UserNewEditForm({ isEdit = false, currentUser, onSubmit 
     () => ({
       name: currentUser?.name || '',
       description: currentUser?.description || '',
+      imageUrl: currentUser?.imageUrl,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [currentUser]

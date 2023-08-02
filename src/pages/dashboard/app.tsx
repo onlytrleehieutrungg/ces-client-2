@@ -1,5 +1,5 @@
 // @mui
-import { Container, Grid } from '@mui/material'
+import { Button, Container, Grid } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 // hooks
 import useAuth from '../../hooks/useAuth'
@@ -10,12 +10,13 @@ import Layout from '../../layouts'
 // components
 import Page from '../../components/Page'
 // sections
-import { AppWidgetSummary } from '../../sections/@dashboard/general/app'
+import { AppWelcome, AppWidgetSummary } from '../../sections/@dashboard/general/app'
 // assets
 import { Role } from 'src/@types/@ces'
 import { useReportEA, useReportSA } from 'src/hooks/@ces'
 import { useOrderByCompanyId } from 'src/hooks/@ces/usePayment'
 import AppOrder from 'src/sections/@dashboard/general/app/@ces/AppOrder'
+import { SeoIllustration } from 'src/assets'
 
 // ----------------------------------------------------------------------
 
@@ -38,23 +39,24 @@ export default function GeneralApp() {
     <Page title="General: App">
       <Container maxWidth={themeStretch ? false : 'xl'}>
         <Grid container spacing={3}>
-          {/* <Grid item xs={12} md={8}>
-            <AppWelcome
-              title={`Welcome back! \n ${user?.name}`}
-              description="If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything."
-              img={
-                <SeoIllustration
-                  sx={{
-                    p: 3,
-                    width: 360,
-                    margin: { xs: 'auto', md: 'inherit' },
-                  }}
-                />
-              }
-              action={<Button variant="contained">Go Now</Button>}
-            />
-          </Grid> */}
-
+          {user?.role == Role['Supplier Admin'] && (
+            <Grid item xs={12} md={12}>
+              <AppWelcome
+                title={`Welcome back! \n ${user?.name}`}
+                description="Supplier Admin"
+                img={
+                  <SeoIllustration
+                    sx={{
+                      p: 3,
+                      width: 360,
+                      margin: { xs: 'auto', md: 'inherit' },
+                    }}
+                  />
+                }
+                // action={<Button variant="contained">Go Now</Button>}
+              />
+            </Grid>
+          )}
           {/* <Grid item xs={12} md={4}>
             <AppFeatured list={_appFeatured} />
           </Grid> */}
