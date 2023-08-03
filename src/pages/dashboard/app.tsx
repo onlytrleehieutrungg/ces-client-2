@@ -65,7 +65,7 @@ export default function GeneralApp() {
             <>
               <Grid item xs={12} md={6}>
                 <AppWidgetSummary
-                  title="Total Revenue"
+                  title="Total revenue"
                   total={reportSAData?.data?.totalRevenue || 0}
                   chartColor={theme.palette.primary.main}
                   chartData={[5, 18, 12, 51, 68, 11, 39, 37, 27, 20]}
@@ -73,7 +73,7 @@ export default function GeneralApp() {
               </Grid>
               <Grid item xs={12} md={6}>
                 <AppWidgetSummary
-                  title="Total Company Used"
+                  title="Total company used"
                   total={reportSAData?.data?.totalCompanyUsed || 0}
                   chartColor={theme.palette.chart.blue[0]}
                   chartData={[20, 41, 63, 33, 28, 35, 50, 46, 11, 26]}
@@ -81,7 +81,7 @@ export default function GeneralApp() {
               </Grid>
               <Grid item xs={12} md={6}>
                 <AppWidgetSummary
-                  title="Total Company"
+                  title="Total company"
                   total={reportSAData?.data?.companyCount || 0}
                   chartColor={theme.palette.chart.red[0]}
                   chartData={[8, 9, 31, 8, 16, 37, 8, 33, 46, 31]}
@@ -89,7 +89,7 @@ export default function GeneralApp() {
               </Grid>
               <Grid item xs={12} md={6}>
                 <AppWidgetSummary
-                  title="Total End User"
+                  title="Total end user"
                   total={reportSAData?.data?.employeeCount || 0}
                   chartColor={theme.palette.chart.yellow[0]}
                   chartData={[8, 9, 31, 8, 16, 37, 8, 33, 46, 31]}
