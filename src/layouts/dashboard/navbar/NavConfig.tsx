@@ -52,19 +52,14 @@ const navConfig = [
       {
         title: 'company',
         path: PATH_CES.company.root,
-        icon: ICONS.analytics,
+        icon: ICONS.project,
         roles: [Role['System Admin']],
       },
-      {
-        title: 'transaction',
-        path: PATH_CES.transaction.root,
-        icon: ICONS.invoice,
-        roles: [Role['System Admin'], Role['Enterprise Admin']],
-      },
+
       {
         title: 'benefit',
         path: PATH_CES.benefit.root,
-        icon: ICONS.invoice,
+        icon: ICONS.blog,
         roles: [Role['Enterprise Admin']],
       },
       {
@@ -73,6 +68,13 @@ const navConfig = [
         icon: ICONS.project,
         roles: [Role['Enterprise Admin']],
       },
+      {
+        title: 'transaction',
+        path: PATH_CES.transaction.root,
+        icon: ICONS.banking,
+        roles: [Role['System Admin'], Role['Enterprise Admin']],
+      },
+
       // {
       //   title: 'Debt',
       //   path: PATH_CES.eaDebt.root,
@@ -86,15 +88,15 @@ const navConfig = [
         roles: [Role['Supplier Admin'], Role['Enterprise Admin']],
       },
       {
-        title: 'product',
-        path: PATH_CES.product.root,
-        icon: ICONS.ecommerce,
-        roles: [Role['Supplier Admin']],
-      },
-      {
         title: 'category',
         path: PATH_CES.category.root,
         icon: ICONS.menuItem,
+        roles: [Role['Supplier Admin']],
+      },
+      {
+        title: 'product',
+        path: PATH_CES.product.root,
+        icon: ICONS.ecommerce,
         roles: [Role['Supplier Admin']],
       },
     ],
