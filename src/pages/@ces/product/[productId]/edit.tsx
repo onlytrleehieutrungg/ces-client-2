@@ -1,18 +1,19 @@
 // ----------------------------------------------------------------------
 
-import { Container } from '@mui/material'
+import { Box, Container, Tab, Tabs } from '@mui/material'
+import { capitalCase } from 'change-case'
 import { useRouter } from 'next/router'
 import { useSnackbar } from 'notistack'
 import { Role } from 'src/@types/@ces'
 import { ProductPayload } from 'src/@types/@ces/product'
 import { productApi } from 'src/api-client/product'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
-import LoadingScreen from 'src/components/LoadingScreen'
+import Iconify from 'src/components/Iconify'
 import Page from 'src/components/Page'
 import RoleBasedGuard from 'src/guards/RoleBasedGuard'
-import { useProduct, useProductDetail } from 'src/hooks/@ces/useProduct'
+import { useProductDetail } from 'src/hooks/@ces/useProduct'
+import useTabs from 'src/hooks/useTabs'
 import Layout from 'src/layouts'
-import { PATH_CES } from 'src/routes/paths'
 import ProductNewEditForm from 'src/sections/@ces/product/ProductNewEditForm'
 
 ProductEditPage.getLayout = function getLayout(page: React.ReactElement) {
@@ -22,26 +23,41 @@ ProductEditPage.getLayout = function getLayout(page: React.ReactElement) {
 // ----------------------------------------------------------------------
 
 export default function ProductEditPage() {
-  const { query, push } = useRouter()
+  const { query } = useRouter()
   const { enqueueSnackbar } = useSnackbar()
   const { productId } = query
-  const { mutate: mutateList } = useProduct({})
-  const { data, isLoading, mutate } = useProductDetail({ id: `${productId}` })
-  if (isLoading) {
-    return <LoadingScreen />
-  }
+  const { currentTab, onChangeTab } = useTabs('general')
+
+  const { data, mutate } = useProductDetail({ id: `${productId}` })
+  // if (isLoading) {
+  //   return <LoadingScreen />
+  // }
   const handleEditProductSubmit = async (payload: ProductPayload) => {
     try {
       await productApi.update(`${productId}`, payload)
       enqueueSnackbar('Update success!')
-      mutateList()
-      push(PATH_CES.product.root)
 
       mutate()
     } catch (error) {
       enqueueSnackbar('Update failed!', { variant: 'error' })
     }
   }
+
+  const ACCOUNT_TABS = [
+    {
+      value: 'general',
+      icon: <Iconify icon={'ic:round-account-box'} width={20} height={20} />,
+      component: (
+        <ProductNewEditForm isEdit currentUser={data?.data} onSubmit={handleEditProductSubmit} />
+      ),
+    },
+    {
+      value: 'discount',
+      icon: <Iconify icon={'ic:round-receipt'} width={20} height={20} />,
+      component: <></>,
+    },
+  ]
+
   return (
     <RoleBasedGuard hasContent roles={[Role['Supplier Admin']]}>
       <Page title="Product: Edit Product">
@@ -54,13 +70,43 @@ export default function ProductEditPage() {
               { name: data?.data?.name },
             ]}
           />
-          {data && (
+
+          <Tabs
+            allowScrollButtonsMobile
+            variant="scrollable"
+            scrollButtons="auto"
+            value={currentTab}
+            onChange={onChangeTab}
+          >
+            {ACCOUNT_TABS.map((tab) => (
+              <Tab
+                disableRipple
+                key={tab.value}
+                label={capitalCase(tab.value)}
+                icon={tab.icon}
+                value={tab.value}
+              />
+            ))}
+          </Tabs>
+
+          <Box sx={{ mb: 5 }} />
+
+          {!data ? (
+            <>Loading...</>
+          ) : (
+            ACCOUNT_TABS.map((tab) => {
+              const isMatched = tab.value === currentTab
+              return isMatched && <Box key={tab.value}>{tab.component}</Box>
+            })
+          )}
+
+          {/* {data && (
             <ProductNewEditForm
               isEdit
               currentUser={data?.data}
               onSubmit={handleEditProductSubmit}
             />
-          )}
+          )} */}
         </Container>
       </Page>
     </RoleBasedGuard>

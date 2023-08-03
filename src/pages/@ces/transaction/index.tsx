@@ -15,7 +15,6 @@ import {
   Tabs,
   Tooltip,
 } from '@mui/material'
-import { useRouter } from 'next/router'
 import { useMemo, useState } from 'react'
 import { Params, Role, TransactionHistory } from 'src/@types/@ces'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
@@ -34,7 +33,6 @@ import useAuth from 'src/hooks/useAuth'
 import useTable, { emptyRows, getComparator } from 'src/hooks/useTable'
 import useTabs from 'src/hooks/useTabs'
 import Layout from 'src/layouts'
-import { PATH_CES } from 'src/routes/paths'
 import TransactionTableRow from 'src/sections/@ces/transaction/TransactionTableRow'
 import TransactionTableToolbar from 'src/sections/@ces/transaction/TransactionTableToolbar'
 import LoadingTable from 'src/utils/loadingTable'
@@ -76,16 +74,19 @@ export default function OrderPage() {
     onChangeRowsPerPage,
   } = useTable()
 
-  const { push } = useRouter()
+  // const { push } = useRouter()
   const { user } = useAuth()
-  const compId = user?.companyId.toString()
+  const compId = user?.companyId?.toString()
   const [params, setParams] = useState<Partial<Params>>()
   const [timeoutName, setTimeoutName] = useState<any>()
   const [filterAttribute, setFilterAttribute] = useState('')
   const [filterOptions, setFilterOptions] = useState('')
   const { data, isLoading } = usePayment({ companyId: compId, params })
+  const { data: paymentSAData } = usePaymentSystem({ params })
 
-  const tableData: TransactionHistory[] = data?.data ?? []
+  const DATA = user?.role == Role['Enterprise Admin'] ? data : paymentSAData
+  const tableData: TransactionHistory[] =
+    user?.role == Role['Enterprise Admin'] ? data?.data || [] : paymentSAData?.data || []
 
   const [filterName, setFilterName] = useState('')
 
@@ -270,7 +271,7 @@ export default function OrderPage() {
               <TablePagination
                 rowsPerPageOptions={[5, 10]}
                 component="div"
-                count={data?.metaData?.total}
+                count={DATA?.metaData?.total}
                 rowsPerPage={rowsPerPage}
                 page={page}
                 onPageChange={onChangePage}

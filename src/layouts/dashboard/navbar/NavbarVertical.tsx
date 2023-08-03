@@ -12,7 +12,6 @@ import cssStyles from '../../../utils/cssStyles'
 // config
 import { NAVBAR } from '../../../config'
 // components
-import Logo from '../../../components/Logo'
 import Scrollbar from '../../../components/Scrollbar'
 import { NavSectionVertical } from '../../../components/nav-section'
 //
@@ -74,8 +73,8 @@ export default function NavbarVertical({ isOpenSidebar, onCloseSidebar }: Props)
         }}
       >
         <Stack direction="row" alignItems="center" justifyContent="space-between">
-          <Logo />
-
+          {/* <Logo /> */}
+          <Box />
           {isDesktop && !isCollapse && (
             <CollapseButton onToggleCollapse={onToggleCollapse} collapseClick={collapseClick} />
           )}
