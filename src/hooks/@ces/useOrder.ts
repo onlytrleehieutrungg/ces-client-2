@@ -13,6 +13,7 @@ export function useOrder({ params, options }: UseOrderProps) {
     ['/order', params],
     () => orderApi.getAll(params!),
     {
+      refreshInterval: 5000,
       ...options,
     }
   )
