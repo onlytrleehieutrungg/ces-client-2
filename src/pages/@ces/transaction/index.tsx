@@ -39,7 +39,6 @@ import LoadingTable from 'src/utils/loadingTable'
 
 // ----------------------------------------------------------------------
 
-const STATUS_OPTIONS = ['paid', 'transfer']
 const FILTER_OPTIONS = ['descending', 'ascending']
 const ROLE_OPTIONS = ['supplier', 'shipper']
 const TABLE_HEAD = [
@@ -83,7 +82,7 @@ export default function OrderPage() {
   const [filterOptions, setFilterOptions] = useState('')
   const { data, isLoading } = usePayment({ companyId: compId, params })
   const { data: paymentSAData } = usePaymentSystem({ params })
-
+  const STATUS_OPTIONS = user?.role == Role['Enterprise Admin'] ? ['paid', 'transfer'] : ['paid']
   const DATA = user?.role == Role['Enterprise Admin'] ? data : paymentSAData
   const tableData: TransactionHistory[] =
     user?.role == Role['Enterprise Admin'] ? data?.data || [] : paymentSAData?.data || []
