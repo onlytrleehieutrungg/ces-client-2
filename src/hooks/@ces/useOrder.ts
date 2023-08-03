@@ -7,6 +7,7 @@ type UseOrderProps = {
   params?: Partial<Params>
   options?: SWRConfiguration
   id?: string
+  companyId?: string
 }
 export function useOrder({ params, options }: UseOrderProps) {
   const { data, error, mutate, isLoading, isValidating } = useSWR(
@@ -26,7 +27,24 @@ export function useOrder({ params, options }: UseOrderProps) {
     isLoading,
   }
 }
+export function useOrderCompId({ params, options, companyId }: UseOrderProps) {
+  const { data, error, mutate, isLoading, isValidating } = useSWR(
+    ['/orderCompId', params],
+    () => orderApi.getAllByCompId(params!, companyId!),
+    {
+      refreshInterval: 5000,
+      ...options,
+    }
+  )
 
+  return {
+    data,
+    error,
+    isValidating,
+    mutate,
+    isLoading,
+  }
+}
 export function useOrderDetail({ id, options }: UseOrderProps) {
   const { data, error, mutate, isLoading, isValidating } = useSWR(
     ['order-detail', id],

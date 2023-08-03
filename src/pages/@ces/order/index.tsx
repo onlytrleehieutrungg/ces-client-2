@@ -31,7 +31,8 @@ import {
   TableSelectedActions,
 } from 'src/components/table'
 import RoleBasedGuard from 'src/guards/RoleBasedGuard'
-import { useOrder } from 'src/hooks/@ces/useOrder'
+import { useOrder, useOrderCompId } from 'src/hooks/@ces/useOrder'
+import { useOrderByCompanyId } from 'src/hooks/@ces/usePayment'
 import useAuth from 'src/hooks/useAuth'
 import useTable, { emptyRows, getComparator } from 'src/hooks/useTable'
 import useTabs from 'src/hooks/useTabs'
@@ -84,12 +85,15 @@ export default function OrderPage() {
   } = useTable()
   const { user } = useAuth()
   const role = user?.role
-  const compId = user?.companyId
+
+  const compId = user?.companyId?.toString()
   const { push } = useRouter()
 
   const [params, setParams] = useState<Partial<Params>>()
   const { data, isValidating, isLoading, mutate } = useOrder({ params })
-  const tableData: Order[] = data?.data ?? []
+  const { data: orders } = useOrderByCompanyId({ companyId: user?.companyId?.toString(), params })
+  const { data: compOrder } = useOrderCompId({ companyId: compId, params })
+
   const [filterStt, setFilterStatus] = useState('supplier')
   const { currentTab: filterStatus, onChangeTab: onChangeFilterStatus } = useTabs('all')
   const [filterAttribute, setFilterAttribute] = useState('')
@@ -97,6 +101,21 @@ export default function OrderPage() {
   const [timeoutName, setTimeoutName] = useState<any>()
   const [filterName, setFilterName] = useState('')
   const [orderValueType, setOrderValueType] = useState('monthly orders')
+
+  const tableData: Order[] =
+    role != 3
+      ? data?.data ?? []
+      : orderValueType == 'monthly orders'
+      ? orders?.data.orders ?? []
+      : compOrder?.data ?? []
+  const total =
+    role != 3
+      ? data?.metaData?.total || []
+      : orderValueType == 'monthly orders'
+      ? orders?.data?.orders?.length ?? []
+      : compOrder?.metaData?.total ?? []
+
+  console.log({ tableData, total })
 
   useEffect(() => {
     const statusIndex = getStatusIndex(filterStatus)
@@ -292,7 +311,7 @@ export default function OrderPage() {
               <TablePagination
                 rowsPerPageOptions={[5, 10]}
                 component="div"
-                count={data?.metaData?.total}
+                count={total}
                 rowsPerPage={rowsPerPage}
                 page={page}
                 onPageChange={onChangePage}
