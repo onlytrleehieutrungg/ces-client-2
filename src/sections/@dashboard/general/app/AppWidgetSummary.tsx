@@ -60,7 +60,7 @@ export default function AppWidgetSummary({
   return (
     <Card sx={{ display: 'flex', alignItems: 'center', p: 3, ...sx }} {...other}>
       <Box sx={{ flexGrow: 1 }}>
-        <Typography variant="subtitle2">{title}</Typography>
+        <Typography variant="h6">{title}</Typography>
 
         {percent ? (
           <Stack direction="row" alignItems="center" spacing={1} sx={{ mt: 2, mb: 1 }}>

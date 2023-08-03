@@ -110,7 +110,7 @@ export default function GeneralApp() {
               </Grid>
               <Grid item xs={12} md={6}>
                 <AppWidgetSummary
-                  title="Total Order Complete"
+                  title="Total order complete"
                   total={reportEAData?.data?.orderCount || 0}
                   chartColor={theme.palette.chart.blue[0]}
                   chartData={[20, 41, 63, 33, 28, 35, 50, 46, 11, 26]}
@@ -161,26 +161,24 @@ export default function GeneralApp() {
             />
           </Grid> */}
 
-          {user?.role == Role['Enterprise Admin'] &&
-            orders.data &&
-            orders?.data?.orders?.length > 0 && (
-              <Grid item xs={12} lg={12}>
-                <AppOrder
-                  // title={`Order in month (${orders.data.orders.length})`}
-                  title={`Top order in month`}
-                  tableData={
-                    orders?.data?.orders?.sort((x, y) => y.total - x.total).slice(0, 5) || []
-                  }
-                  tableLabels={[
-                    { id: 'orderCode', label: 'Order Code' },
-                    { id: 'employeeName', label: 'Employee' },
-                    { id: 'Date', label: 'Date' },
-                    { id: '', label: 'Total' },
-                    { id: '' },
-                  ]}
-                />
-              </Grid>
-            )}
+          {user?.role == Role['Enterprise Admin'] && orders.data && (
+            <Grid item xs={12} lg={12}>
+              <AppOrder
+                // title={`Order in month (${orders.data.orders.length})`}
+                title={`Monthly orders`}
+                tableData={
+                  orders?.data?.orders?.sort((x, y) => y.total - x.total).slice(0, 5) || []
+                }
+                tableLabels={[
+                  { id: 'orderCode', label: 'Order Code' },
+                  { id: 'employeeName', label: 'Employee' },
+                  { id: 'Date', label: 'Date' },
+                  { id: '', label: 'Total' },
+                  { id: '' },
+                ]}
+              />
+            </Grid>
+          )}
 
           {/* <Grid item xs={12} md={6} lg={4}>
             <AppTopRelated title="Top Related Applications" list={_appRelated} />

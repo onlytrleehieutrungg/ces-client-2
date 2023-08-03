@@ -15,6 +15,7 @@ import {
   CardProps,
   CardHeader,
   TableContainer,
+  Typography,
 } from '@mui/material'
 // utils
 import { fCurrency } from '../../../../../utils/formatNumber'
@@ -67,7 +68,14 @@ export default function AppOrder({ title, subheader, tableData, tableLabels, ...
           </Table>
         </TableContainer>
       </Scrollbar>
-
+      {tableData.length === 0 && (
+        <Box
+          height={'400px'}
+          sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+        >
+          <Typography>No order</Typography>
+        </Box>
+      )}
       <Divider />
 
       <Box sx={{ p: 2, textAlign: 'right' }}>
