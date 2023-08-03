@@ -90,9 +90,12 @@ export default function OrderPage() {
   const { push } = useRouter()
 
   const [params, setParams] = useState<Partial<Params>>()
-  const { data, isValidating, isLoading, mutate } = useOrder({ params })
-  const { data: orders } = useOrderByCompanyId({ companyId: user?.companyId?.toString(), params })
-  const { data: compOrder } = useOrderCompId({ companyId: compId, params })
+  const { data, isValidating, isLoading: supLoading, mutate } = useOrder({ params })
+  const { data: orders, isLoading: monthLoading } = useOrderByCompanyId({
+    companyId: user?.companyId?.toString(),
+    params,
+  })
+  const { data: compOrder, isLoading: eaLoading } = useOrderCompId({ companyId: compId, params })
 
   const [filterStt, setFilterStatus] = useState('supplier')
   const { currentTab: filterStatus, onChangeTab: onChangeFilterStatus } = useTabs('all')
@@ -242,7 +245,15 @@ export default function OrderPage() {
               handleOrderType={handleOrderType}
               handleClearFilter={handleClearFilter}
             />
-            <LoadingTable isValidating={isLoading} />
+            <LoadingTable
+              isValidating={
+                role != 3
+                  ? supLoading
+                  : orderValueType == 'monthly orders'
+                  ? monthLoading
+                  : eaLoading
+              }
+            />
 
             <Scrollbar>
               <TableContainer sx={{ minWidth: 800, position: 'relative' }}>
