@@ -27,6 +27,7 @@ import { fDateVN } from 'src/utils/formatTime'
 // components
 import Label from '../../../../components/Label'
 import Scrollbar from '../../../../components/Scrollbar'
+import { LoadingButton } from '@mui/lab'
 
 // ----------------------------------------------------------------------
 
@@ -46,6 +47,8 @@ type Props = {
 
 export default function OrderDetails({ order, handleEditOrderSubmit }: Props) {
   const theme = useTheme()
+
+  const [loading, setLoading] = useState(false)
   const [changeStatus, setChangeStatus] = useState(false)
   const [statusValue, setStatusValue] = useState<number>()
   // const { query, push } = useRouter()
@@ -55,22 +58,15 @@ export default function OrderDetails({ order, handleEditOrderSubmit }: Props) {
   const rs = Object.values(Status).filter((value) => typeof value === 'string')
   const rsu = Object.values(UpdateOrderStatus).filter((value) => typeof value === 'string')
 
-  const {
-    id,
-    orderCode,
-    total,
-    updatedAt,
-    createdAt,
-    status,
-    employee,
-    orderDetails,
-  } = order
+  const { id, orderCode, total, updatedAt, createdAt, status, employee, orderDetails } = order
 
   const handleUpdateStatus = () => {
     setChangeStatus(!changeStatus)
   }
-  const handleUpdate = () => {
-    handleEditOrderSubmit(id, status + 1)
+  const handleUpdate = async () => {
+    setLoading(true)
+    await handleEditOrderSubmit(id, status + 1)
+    setLoading(false)
     // setChangeStatus(!changeStatus)
   }
   console.log(rsu[status])
@@ -152,7 +148,8 @@ export default function OrderDetails({ order, handleEditOrderSubmit }: Props) {
                 ''
               )}
 
-              <Button
+              <LoadingButton
+                loading={loading}
                 variant="contained"
                 color={changeStatus ? 'inherit' : 'primary'}
                 disabled={rsu[status] === undefined ? true : false}
@@ -160,7 +157,7 @@ export default function OrderDetails({ order, handleEditOrderSubmit }: Props) {
                 onClick={handleUpdate}
               >
                 {status == 1 ? 'Ready' : status == 2 ? 'Shipping' : 'Update'}
-              </Button>
+              </LoadingButton>
             </Stack>
           </Grid>
 
