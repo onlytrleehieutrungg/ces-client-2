@@ -1,14 +1,14 @@
 import { useState } from 'react'
 // @mui
+import { Checkbox, MenuItem, Stack, TableCell, TableRow, Typography } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
-import { Checkbox, TableRow, TableCell, Typography, MenuItem } from '@mui/material'
 import { AccountData } from 'src/@types/@ces/account'
+import Avatar from 'src/components/Avatar'
+import Iconify from 'src/components/Iconify'
 import Label from 'src/components/Label'
 import { TableMoreMenu } from 'src/components/table'
-import Iconify from 'src/components/Iconify'
 import createAvatar from 'src/utils/createAvatar'
-import Avatar from 'src/components/Avatar'
-import { fDateVN } from 'src/utils/formatTime'
+import { fDateVN, fTime } from 'src/utils/formatTime'
 // @types
 // import { UserManager } from '../../../../@types/user';
 // // components
@@ -75,15 +75,35 @@ export default function CompanyEmployeeTableRow({
         <Avatar src={imageUrl} alt={name} sx={{ mr: 2 }}>
           {createAvatar(name).name}
         </Avatar>
+        <Stack direction={'column'}>
+          <Typography variant="inherit" noWrap sx={{ color: 'text.primary' }}>
+            {name}
+          </Typography>
+          <Typography variant="inherit" noWrap sx={{ color: 'text.secondary' }}>
+            {email}
+          </Typography>
+        </Stack>
+      </TableCell>
 
-        <Typography variant="subtitle2" noWrap>
-          {name}
+      <TableCell align="left">{phone === 'string' ? '' : phone}</TableCell>
+
+      <TableCell align="left">
+        <Typography variant="inherit" noWrap sx={{ color: 'text.primary' }}>
+          {fDateVN(createdAt)}
+        </Typography>
+        <Typography variant="inherit" noWrap sx={{ color: 'text.secondary' }}>
+          {fTime(createdAt)}
         </Typography>
       </TableCell>
 
-      <TableCell align="left">{email}</TableCell>
-
-      <TableCell align="left">{phone === 'string' ? '' : phone}</TableCell>
+      <TableCell align="left">
+        <Typography variant="inherit" noWrap sx={{ color: 'text.primary' }}>
+          {fDateVN(updatedAt)}
+        </Typography>
+        <Typography variant="inherit" noWrap sx={{ color: 'text.secondary' }}>
+          {fTime(updatedAt)}
+        </Typography>
+      </TableCell>
 
       <TableCell align="left">
         <Label
@@ -94,9 +114,6 @@ export default function CompanyEmployeeTableRow({
           {status === 1 ? 'Active' : status === 2 ? 'In Active' : 'Deleted'}
         </Label>
       </TableCell>
-
-      <TableCell align="left">{fDateVN(createdAt)}</TableCell>
-      <TableCell align="left">{fDateVN(updatedAt)}</TableCell>
 
       <TableCell
         align="right"

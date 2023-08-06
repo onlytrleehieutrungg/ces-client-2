@@ -4,7 +4,6 @@ import {
   Button,
   Card,
   Container,
-  Divider,
   FormControlLabel,
   IconButton,
   Switch,
@@ -20,7 +19,7 @@ import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 import { useSnackbar } from 'notistack'
 import { useMemo, useState } from 'react'
-import { ACCOUNT_STATUS_OPTIONS_SA, CompanyData, Params } from 'src/@types/@ces'
+import { CompanyData, Params } from 'src/@types/@ces'
 import { debtApi } from 'src/api-client/debt'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
 import Iconify from 'src/components/Iconify'
@@ -31,6 +30,7 @@ import {
   TableHeadCustom,
   TableNoData,
   TableSelectedActions,
+  TableSkeleton,
 } from 'src/components/table'
 import { useCompanyList } from 'src/hooks/@ces'
 import useSettings from 'src/hooks/useSettings'
@@ -268,7 +268,6 @@ export default function CompanyPage() {
                   }
                 />
               )}
-              <Divider />
 
               <Table size={dense ? 'small' : 'medium'}>
                 <TableHeadCustom
@@ -287,19 +286,23 @@ export default function CompanyPage() {
                 />
 
                 <TableBody>
-                  {dataFiltered.map((row) => (
-                    <CompanyTableRow
-                      key={`${row.id}`}
-                      row={row}
-                      isValidating={isLoading}
-                      selected={selected.includes(`${row.id}`)}
-                      onSelectRow={() => onSelectRow(`${row.id}`)}
-                      onDeleteRow={() => handleDeleteRow(`${row.id}`)}
-                      onEditRow={() => handleEditRow(`${row.id}`)}
-                      onClickRow={() => handleClickRow(`${row.id}`)}
-                      onDueRow={() => handleDueRow(row.id)}
-                    />
-                  ))}
+                  {isLoading
+                    ? Array.from(Array(rowsPerPage)).map((e) => (
+                        <TableSkeleton sx={{ height: denseHeight, px: dense ? 1 : 0 }} key={e} />
+                      ))
+                    : dataFiltered.map((row) => (
+                        <CompanyTableRow
+                          key={`${row.id}`}
+                          row={row}
+                          isValidating={isLoading}
+                          selected={selected.includes(`${row.id}`)}
+                          onSelectRow={() => onSelectRow(`${row.id}`)}
+                          onDeleteRow={() => handleDeleteRow(`${row.id}`)}
+                          onEditRow={() => handleEditRow(`${row.id}`)}
+                          onClickRow={() => handleClickRow(`${row.id}`)}
+                          onDueRow={() => handleDueRow(row.id)}
+                        />
+                      ))}
 
                   <TableEmptyRows
                     height={denseHeight}

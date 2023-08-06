@@ -10,6 +10,9 @@ const withTM = require('next-transpile-modules')([
 ])
 
 module.exports = withTM({
+  images: {
+    domains: ['firebasestorage.googleapis.com']
+  },
   async redirects() {
     return [
       {

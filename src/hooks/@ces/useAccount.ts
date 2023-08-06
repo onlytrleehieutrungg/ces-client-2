@@ -9,20 +9,45 @@ type UseAccountProps = {
   roleId?: string
 }
 
+
+export function useAccountEmployeeCompany({ options, params }: UseAccountProps) {
+  const { data, error, mutate, isValidating, isLoading } = useSWR(
+    ['account-employee-company-list', params],
+    () => accountApi.getAllEmployeeWithCompanyId(params!),
+    {
+      keepPreviousData: true,
+      fallbackData: {
+        code: 0,
+        message: '',
+        metaData: null,
+        data: [],
+      },
+      ...options,
+    }
+  )
+
+
+  return {
+    data,
+    error,
+    mutate,
+    isValidating,
+    isLoading,
+  }
+}
+
 export function useAccountList({ options, params }: UseAccountProps) {
   const { data, error, mutate, isValidating, isLoading } = useSWR(
     ['account-list', params],
     () => accountApi.getAll(params!),
     {
-      // dedupingInterval: 10 * 1000, // 10s
-      // revalidateOnFocus: false,
-      // keepPreviousData: true,
-      // fallbackData: {
-      //   code: 0,
-      //   message: '',
-      //   metaData: null,
-      //   data: [],
-      // },
+      keepPreviousData: true,
+      fallbackData: {
+        code: 0,
+        message: '',
+        metaData: null,
+        data: [],
+      },
       ...options,
     }
   )
@@ -62,20 +87,12 @@ export function useAccountListByRoleId({ options, params, roleId }: UseAccountPr
     mutate,
     isValidating,
     isLoading,
-    // create,
-    // update,
   }
 }
 
 export function useAccountDetails({ id, options }: UseAccountProps) {
   const { data, error, mutate } = useSWR(['account', id], () => accountApi.getById(id!), {
-    // keepPreviousData: true,
-    // fallbackData: {
-    //   code: 0,
-    //   message: '',
-    //   metaData: null,
-    //   data: {},
-    // },
+
     ...options,
   })
 

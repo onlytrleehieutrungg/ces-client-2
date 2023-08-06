@@ -9,7 +9,7 @@ export const orderApi = {
   getAllByCompId(params: Partial<Params>, companyId: string): Promise<BaseResponse<Order[]>> {
     return axiosClient.get(`/order?companyId=${companyId}`, { params })
   },
-  getById(id: string) {
+  getById(id: string): Promise<BaseResponse<Order>> {
     return axiosClient.get(`/order/${id}`)
   },
   create: async (payload: Order) => await axiosClient.post('/order', payload),

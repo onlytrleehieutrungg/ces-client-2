@@ -3,9 +3,9 @@ import Iconify from 'src/components/Iconify'
 type Props = {
   optionsStatus: string[]
   filterName: string
-  filterStatus: string
+  filterStatus?: string
   onFilterName: (value: string) => void
-  onFilterStatus: (event: React.ChangeEvent<HTMLInputElement>) => void
+  onFilterStatus?: (event: React.ChangeEvent<HTMLInputElement>) => void
   optionsSort: {
     id: string
     label?: string

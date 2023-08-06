@@ -17,7 +17,7 @@ import { paramCase } from 'change-case'
 import { useRouter } from 'next/router'
 import { useSnackbar } from 'notistack'
 import { useMemo, useState } from 'react'
-import { AccountData, ACCOUNT_STATUS_OPTIONS_SA, Params, Role } from 'src/@types/@ces'
+import { ACCOUNT_STATUS_OPTIONS_SA, AccountData, Params, Role } from 'src/@types/@ces'
 import { accountApi } from 'src/api-client'
 import Iconify from 'src/components/Iconify'
 import Scrollbar from 'src/components/Scrollbar'
@@ -26,8 +26,9 @@ import {
   TableHeadCustom,
   TableNoData,
   TableSelectedActions,
+  TableSkeleton,
 } from 'src/components/table'
-import { useAccountList } from 'src/hooks/@ces'
+import { useAccountEmployeeCompany } from 'src/hooks/@ces'
 import useAuth from 'src/hooks/useAuth'
 import useTable, { emptyRows, getComparator } from 'src/hooks/useTable'
 import useTabs from 'src/hooks/useTabs'
@@ -40,12 +41,12 @@ import CompanyEmployeeToolbar from './CompanyEmployeeToolbar'
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'name', label: 'name', align: 'left' },
-  { id: 'email', label: 'email', align: 'left' },
-  { id: 'phone', label: 'phone', align: 'left' },
-  { id: 'status', label: 'status', align: 'left' },
+  { id: 'name', label: 'Employee', align: 'left' },
+
+  { id: 'phone', label: 'Phone', align: 'left' },
   { id: 'createdAt', label: 'created at', align: 'left' },
   { id: 'updatedAt', label: 'updated at', align: 'left' },
+  { id: 'status', label: 'status', align: 'left' },
   { id: '' },
 ]
 const FILTER_OPTIONS = ['descending', 'ascending']
@@ -87,7 +88,7 @@ export default function CompanyEmployeeTable({ companyId }: Props) {
   const [timeoutName, setTimeoutName] = useState<any>()
   const [filterAttribute, setFilterAttribute] = useState('')
   const [filterOptions, setFilterOptions] = useState('')
-  const { data, mutate, isValidating, isLoading } = useAccountList({
+  const { data, mutate, isLoading } = useAccountEmployeeCompany({
     params: {
       ...params,
       CompanyId: companyId,
@@ -97,7 +98,6 @@ export default function CompanyEmployeeTable({ companyId }: Props) {
   useMemo(
     () =>
       setParams({
-        ...params,
         Page: page + 1,
         Size: rowsPerPage,
         Sort: filterAttribute == '' ? 'createdAt' : filterAttribute,
@@ -233,19 +233,11 @@ export default function CompanyEmployeeTable({ companyId }: Props) {
                 )
               }
               actions={
-                true ? (
-                  <Tooltip title="Delete">
-                    <IconButton color="primary" onClick={() => handleDeleteRows(selected)}>
-                      <Iconify icon={'eva:trash-2-outline'} />
-                    </IconButton>
-                  </Tooltip>
-                ) : (
-                  <Tooltip title="Add">
-                    <IconButton color="primary" onClick={() => handleDeleteRows(selected)}>
-                      <Iconify icon={'material-symbols:add'} />
-                    </IconButton>
-                  </Tooltip>
-                )
+                <Tooltip title="Delete">
+                  <IconButton color="primary" onClick={() => handleDeleteRows(selected)}>
+                    <Iconify icon={'eva:trash-2-outline'} />
+                  </IconButton>
+                </Tooltip>
               }
             />
           )}
@@ -271,24 +263,29 @@ export default function CompanyEmployeeTable({ companyId }: Props) {
             />
 
             <TableBody>
-              {dataFiltered.map((row) => (
-                <CompanyEmployeeTableRow
-                  key={`${row.id}`}
-                  row={row}
-                  isValidating={isLoading}
-                  selected={selected.includes(`${row.id}`)}
-                  onSelectRow={() => onSelectRow(`${row.id}`)}
-                  onDeleteRow={() => handleDeleteRow(`${row.id}`)}
-                  onEditRow={() => handleEditRow(row.id)}
-                  onClickRow={() => handleClickRow(`${row.id}`)}
+              {isLoading
+                ? Array.from(Array(rowsPerPage)).map((e) => (
+                    <TableSkeleton sx={{ height: denseHeight, px: dense ? 1 : 0 }} key={e} />
+                  ))
+                : dataFiltered.map((row) => (
+                    <CompanyEmployeeTableRow
+                      key={`${row.id}`}
+                      row={row}
+                      isValidating={isLoading}
+                      selected={selected.includes(`${row.id}`)}
+                      onSelectRow={() => onSelectRow(`${row.id}`)}
+                      onDeleteRow={() => handleDeleteRow(`${row.id}`)}
+                      onEditRow={() => handleEditRow(row.id)}
+                      onClickRow={() => handleClickRow(`${row.id}`)}
+                    />
+                  ))}
+
+              {!isLoading && (
+                <TableEmptyRows
+                  height={denseHeight}
+                  emptyRows={emptyRows(page + 1, rowsPerPage, data?.metaData?.total)}
                 />
-              ))}
-
-              <TableEmptyRows
-                height={denseHeight}
-                emptyRows={emptyRows(page, rowsPerPage, accountList.length)}
-              />
-
+              )}
               <TableNoData isNotFound={isNotFound} />
             </TableBody>
           </Table>

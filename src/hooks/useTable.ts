@@ -135,6 +135,14 @@ export function getComparator<Key extends keyof any>(
     : (a, b) => -descendingComparator(a, b, orderBy)
 }
 
+// export function emptyRows(page: number, rowsPerPage: number, arrayLength: number) {
+//   return page > 0 ? 0 : 0
+// }
+
 export function emptyRows(page: number, rowsPerPage: number, arrayLength: number) {
-  return page > 0 ? 0 : 0
+  const lastPage = Math.ceil(arrayLength / rowsPerPage);
+  if (page === lastPage) {
+    return rowsPerPage - (arrayLength % rowsPerPage);
+  }
+  return 0;
 }

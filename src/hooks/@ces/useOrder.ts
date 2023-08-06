@@ -7,6 +7,7 @@ type UseOrderProps = {
   options?: SWRConfiguration
   id?: string
   companyId?: string
+  enable?: boolean
 }
 export function useOrder({ params, options }: UseOrderProps) {
   const { data, error, mutate, isLoading, isValidating } = useSWR(
@@ -46,9 +47,9 @@ export function useOrderCompId({ params, options, companyId }: UseOrderProps) {
     isLoading,
   }
 }
-export function useOrderDetail({ id, options }: UseOrderProps) {
+export function useOrderDetail({ id, options, enable = true }: UseOrderProps) {
   const { data, error, mutate, isLoading, isValidating } = useSWR(
-    ['order-detail', id],
+    enable ? ['order-detail', id] : null,
     () => orderApi.getById(id!),
     {
       keepPreviousData: true,

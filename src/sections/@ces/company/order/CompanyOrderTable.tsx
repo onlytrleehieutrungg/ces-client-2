@@ -1,6 +1,11 @@
 import {
   Box,
+  Button,
   Card,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   Divider,
   FormControlLabel,
   IconButton,
@@ -12,12 +17,13 @@ import {
   TablePagination,
   Tabs,
   Tooltip,
+  Typography,
+  useTheme,
 } from '@mui/material'
-import { paramCase } from 'change-case'
-import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { Order, Params, Status } from 'src/@types/@ces'
 import Iconify from 'src/components/Iconify'
+import Label from 'src/components/Label'
 import Scrollbar from 'src/components/Scrollbar'
 import {
   TableEmptyRows,
@@ -26,12 +32,15 @@ import {
   TableSelectedActions,
   TableSkeleton,
 } from 'src/components/table'
-import { useOrder } from 'src/hooks/@ces'
+import { useOrder, useOrderDetail } from 'src/hooks/@ces'
 import useTable, { emptyRows, getComparator } from 'src/hooks/useTable'
 import useTabs from 'src/hooks/useTabs'
-import { PATH_CES } from 'src/routes/paths'
+import LoadingTable from 'src/utils/loadingTable'
 import CompanyOrderTableRow from './CompanyOrderTableRow'
 import CompanyOrderTableToolbar from './CompanyOrderTableToolbar'
+import { Stack } from '@mui/material'
+import Image from 'next/image'
+import { fCurrency } from 'src/utils/formatNumber'
 
 // ----------------------------------------------------------------------
 
@@ -53,7 +62,6 @@ const TABLE_HEAD = [
 
 type Props = {
   companyId: string
-  any?: any
 }
 export default function CompanyOrderTable({ companyId }: Props) {
   const {
@@ -75,16 +83,8 @@ export default function CompanyOrderTable({ companyId }: Props) {
     onChangeRowsPerPage,
   } = useTable()
 
-  // const compId = user?.companyId?.toString()
-  const { push } = useRouter()
-
   const [params, setParams] = useState<Partial<Params>>()
-  const {
-    data,
-    isValidating,
-    isLoading: supLoading,
-    mutate,
-  } = useOrder({
+  const { data, isLoading } = useOrder({
     params: {
       ...params,
       CompanyId: companyId,
@@ -163,7 +163,7 @@ export default function CompanyOrderTable({ companyId }: Props) {
   }
 
   const handleClickRow = (id: string) => {
-    push(PATH_CES.order.detail(paramCase(id)))
+    // push(PATH_CES.order.detail(paramCase(id)))
   }
 
   const dataFiltered = applySortFilter({
@@ -183,12 +183,22 @@ export default function CompanyOrderTable({ companyId }: Props) {
     (!dataFiltered.length && !!filterStt) ||
     (!dataFiltered.length && !!orderValueType) ||
     (!dataFiltered.length && !!filterAttribute)
+
+  const [open, setOpen] = useState(false)
+  const [orderId, setOrderId] = useState('')
+
   const handleViewRow = (id: string) => {
-    push(PATH_CES.order.detail(id))
+    setOpen(true)
+    setOrderId(id)
+  }
+
+  const handleClose = () => {
+    setOpen(false)
   }
 
   return (
     <Card>
+      {open && <OrderDetails handleClose={handleClose} id={orderId} />}
       <Tabs
         allowScrollButtonsMobile
         variant="scrollable"
@@ -219,7 +229,7 @@ export default function CompanyOrderTable({ companyId }: Props) {
         handleOrderType={handleOrderType}
         handleClearFilter={handleClearFilter}
       />
-      {/* <LoadingTable isValidating={supLoading} /> */}
+      <LoadingTable isValidating={isLoading} />
 
       <Scrollbar>
         <TableContainer sx={{ minWidth: 800, position: 'relative' }}>
@@ -261,7 +271,7 @@ export default function CompanyOrderTable({ companyId }: Props) {
             />
 
             <TableBody>
-              {supLoading
+              {isLoading
                 ? Array.from(Array(rowsPerPage)).map((e) => (
                     <TableSkeleton sx={{ height: denseHeight, px: dense ? 1 : 0 }} key={e} />
                   ))
@@ -269,7 +279,6 @@ export default function CompanyOrderTable({ companyId }: Props) {
                     <CompanyOrderTableRow
                       key={row.id}
                       row={row}
-                      isValidating={isValidating}
                       selected={selected.includes(row.id)}
                       onSelectRow={() => onSelectRow(row.id)}
                       onViewRow={() => handleViewRow(row.id)}
@@ -277,12 +286,14 @@ export default function CompanyOrderTable({ companyId }: Props) {
                     />
                   ))}
 
-              <TableEmptyRows
-                height={denseHeight}
-                emptyRows={emptyRows(page, rowsPerPage, tableData.length)}
-              />
+              {!isLoading && (
+                <TableEmptyRows
+                  height={denseHeight}
+                  emptyRows={emptyRows(page + 1, rowsPerPage, data?.metaData?.total)}
+                />
+              )}
 
-              <TableNoData isNotFound={isNotFound && !supLoading} />
+              <TableNoData isNotFound={isNotFound && !isLoading} />
             </TableBody>
           </Table>
         </TableContainer>
@@ -329,4 +340,107 @@ function applySortFilter({
   filterStt: string
 }) {
   return tableData
+}
+
+// ----------------------------------------------------------------
+
+type OrderDetailsProps = {
+  id?: string
+  handleClose: any
+}
+
+function OrderDetails({ handleClose, id }: OrderDetailsProps) {
+  const { data, isLoading } = useOrderDetail({
+    id,
+  })
+  const theme = useTheme()
+
+  const rs = Object.values(Status).filter((value) => typeof value === 'string')
+
+  const orderDetails = data?.data
+
+  return (
+    <Dialog fullWidth maxWidth="md" open onClose={handleClose}>
+      <DialogTitle>
+        <Stack direction={'row'} spacing={2} alignItems={'start'}>
+          <Typography variant="inherit"> {data.data?.orderCode} </Typography>
+
+          <Label
+            variant={theme.palette.mode === 'light' ? 'ghost' : 'ghost'}
+            color={
+              (orderDetails?.status === 1 && 'primary') ||
+              (orderDetails?.status === 2 && 'warning') ||
+              (orderDetails?.status === 3 && 'info') ||
+              (orderDetails?.status === 4 && 'success') ||
+              (orderDetails?.status === 5 && 'error') ||
+              'default'
+            }
+          >
+            {rs[orderDetails!.status]}
+          </Label>
+        </Stack>
+
+        {/* <Typography variant="body2"> </Typography> */}
+      </DialogTitle>
+      <DialogContent sx={{ mt: 2 }}>
+        <Typography variant="subtitle1">Details</Typography>
+        {orderDetails?.orderDetails?.map((e) => (
+          <Box key={e.productId} my={2}>
+            <Stack spacing={10} direction={'row'} alignItems={'center'}>
+              <Stack flex={1} direction={'row'} spacing={2}>
+                <Box>
+                  <Image
+                    style={{
+                      borderRadius: 8,
+                    }}
+                    alt={e.productId}
+                    src={e.product.imageUrl}
+                    height={50}
+                    width={50}
+                    objectFit="cover"
+                  />
+                </Box>
+
+                <Box>
+                  <Typography variant="body1">{e.product.name}</Typography>
+                  <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                    {e.product.id}
+                  </Typography>
+                </Box>
+              </Stack>
+              <Typography variant="body1">x{e.quantity}</Typography>
+              <Typography variant="body1">{fCurrency(e.price)}</Typography>
+            </Stack>
+            <Divider sx={{ borderStyle: 'dashed', mt: 0.5 }} />
+          </Box>
+        ))}
+        <Stack direction={'row'} justifyContent={'flex-end'} spacing={10}>
+          <Stack alignItems={'flex-end'} spacing={2}>
+            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+              Subtotal
+            </Typography>
+            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+              Fee
+            </Typography>
+            <Typography variant="body1" sx={{ color: 'text.primary' }}>
+              Total
+            </Typography>
+          </Stack>
+          <Stack alignItems={'flex-end'} spacing={2}>
+            <Typography variant="body2">
+              {fCurrency(orderDetails?.total ? orderDetails?.total - 5000 : 0)}
+            </Typography>
+            <Typography variant="body2">{fCurrency(5000)}</Typography>
+            <Typography variant="body1" sx={{ color: 'text.primary' }}>
+              {fCurrency(orderDetails?.total || 0)}
+            </Typography>
+          </Stack>
+        </Stack>
+      </DialogContent>
+
+      <DialogActions>
+        <Button onClick={handleClose}>Close</Button>
+      </DialogActions>
+    </Dialog>
+  )
 }

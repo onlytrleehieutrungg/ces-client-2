@@ -1,4 +1,4 @@
-import { Checkbox, MenuItem, TableCell, TableRow, Typography } from '@mui/material'
+import { Checkbox, MenuItem, Stack, TableCell, TableRow, Typography } from '@mui/material'
 // @mui
 import { useTheme } from '@mui/material/styles'
 import { useState } from 'react'
@@ -13,13 +13,12 @@ type Props = {
   selected: boolean
   onSelectRow: VoidFunction
   onViewRow: VoidFunction
-  isValidating?: boolean
+
   onClickRow?: VoidFunction
 }
 
 export default function CompanyOrderTableRow({
   row,
-  isValidating,
   selected,
   onSelectRow,
   onViewRow,
@@ -27,7 +26,7 @@ export default function CompanyOrderTableRow({
 }: Props) {
   const theme = useTheme()
 
-  const { total, orderCode, createdAt, updatedAt, status } = row
+  const { total, orderCode, createdAt, updatedAt, status, employee } = row
 
   const [openMenu, setOpenMenuActions] = useState<HTMLElement | null>(null)
 
@@ -63,13 +62,18 @@ export default function CompanyOrderTableRow({
 
       <TableCell align="left">{orderCode}</TableCell>
 
-      <TableCell align="left">
-        <Typography variant="inherit" noWrap sx={{ color: 'text.primary' }}>
-          {row.employee.account.name}
-        </Typography>
-        <Typography variant="inherit" noWrap sx={{ color: 'text.secondary' }}>
-          {row.employee.account.email}
-        </Typography>
+      <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
+        {/* <Avatar src={employee.account.imageUrl} alt={employee.account.name} sx={{ mr: 2 }}>
+          {createAvatar(employee.account.name).name}
+        </Avatar> */}
+        <Stack direction={'column'}>
+          <Typography variant="inherit" noWrap sx={{ color: 'text.primary' }}>
+            {employee.account.name}
+          </Typography>
+          <Typography variant="inherit" noWrap sx={{ color: 'text.secondary' }}>
+            {employee.account.email}
+          </Typography>
+        </Stack>
       </TableCell>
 
       <TableCell align="left" sx={{ textTransform: 'capitalize' }}>

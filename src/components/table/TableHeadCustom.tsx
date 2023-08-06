@@ -1,5 +1,5 @@
 // @mui
-import { Theme } from '@mui/material/styles';
+import { Theme } from '@mui/material/styles'
 import {
   Box,
   SxProps,
@@ -8,7 +8,7 @@ import {
   TableCell,
   TableHead,
   TableSortLabel,
-} from '@mui/material';
+} from '@mui/material'
 
 // ----------------------------------------------------------------------
 
@@ -22,20 +22,20 @@ const visuallyHidden = {
   position: 'absolute',
   whiteSpace: 'nowrap',
   clip: 'rect(0 0 0 0)',
-} as const;
+} as const
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  order?: 'asc' | 'desc';
-  orderBy?: string;
-  headLabel: any[];
-  rowCount?: number;
-  numSelected?: number;
-  onSort?: (id: string) => void;
-  onSelectAllRows?: (checked: boolean) => void;
-  sx?: SxProps<Theme>;
-};
+  order?: 'asc' | 'desc'
+  orderBy?: string
+  headLabel: any[]
+  rowCount?: number
+  numSelected?: number
+  onSort?: (id: string) => void
+  onSelectAllRows?: (checked: boolean) => void
+  sx?: SxProps<Theme>
+}
 
 export default function TableHeadCustom({
   order,
@@ -71,6 +71,7 @@ export default function TableHeadCustom({
           >
             {onSort ? (
               <TableSortLabel
+                disabled
                 hideSortIcon
                 active={orderBy === headCell.id}
                 direction={orderBy === headCell.id ? order : 'asc'}
@@ -92,5 +93,5 @@ export default function TableHeadCustom({
         ))}
       </TableRow>
     </TableHead>
-  );
+  )
 }

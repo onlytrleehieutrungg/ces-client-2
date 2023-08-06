@@ -9,7 +9,7 @@ import {
   TablePagination,
   Tabs,
 } from '@mui/material'
-import { useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Params, TransactionHistory } from 'src/@types/@ces'
 import Scrollbar from 'src/components/Scrollbar'
 import {
@@ -20,12 +20,11 @@ import {
   TableSkeleton,
 } from 'src/components/table'
 import { usePayment } from 'src/hooks/@ces/usePayment'
-import useAuth from 'src/hooks/useAuth'
 import useTable, { emptyRows } from 'src/hooks/useTable'
 import useTabs from 'src/hooks/useTabs'
+import LoadingTable from 'src/utils/loadingTable'
 import CompanyTransactionTableRow from './CompanyTransactionTableRow'
 import CompanyTransactionTableToolbar from './CompanyTransactionTableToolbar'
-import { Divider } from '@mui/material'
 
 // ----------------------------------------------------------------------
 
@@ -67,9 +66,6 @@ export default function CompanyTransactionTable({ companyId }: Props) {
     onChangeRowsPerPage,
   } = useTable()
 
-  // const { push } = useRouter()
-  const { user } = useAuth()
-
   const [params, setParams] = useState<Partial<Params>>()
   const [timeoutName, setTimeoutName] = useState<any>()
   const [filterAttribute, setFilterAttribute] = useState('')
@@ -80,18 +76,15 @@ export default function CompanyTransactionTable({ companyId }: Props) {
       CompanyId: companyId,
     },
   })
-  // const { data: paymentSAData } = usePaymentSystem({ params })
-  // const STATUS_OPTIONS = user?.role == Role['Enterprise Admin'] ? ['paid', 'transfer'] : ['paid']
+
   const DATA = data
   const tableData: TransactionHistory[] = data?.data || []
 
   const [filterName, setFilterName] = useState('')
 
-  const [filterStt, setFilterStatus] = useState('supplier')
-
   const { currentTab: filterStatus, onChangeTab: onChangeFilterStatus } = useTabs('paid')
 
-  useMemo(() => {
+  useEffect(() => {
     if (filterStatus === 'paid') {
       setParams({
         PaymentType: '1',
@@ -110,7 +103,7 @@ export default function CompanyTransactionTable({ companyId }: Props) {
       })
     }
   }, [filterAttribute, filterOptions, filterStatus, page, rowsPerPage])
-  console.log(filterStatus)
+
   const filterNameFuction = (value: string) => {
     setParams({ Page: page + 1, Size: rowsPerPage, Name: value })
   }
@@ -138,9 +131,9 @@ export default function CompanyTransactionTable({ companyId }: Props) {
 
     setTimeoutName(newTimeoutname)
   }
-  const handleFilterStatus = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setFilterStatus(event.target.value)
-  }
+  // const handleFilterStatus = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   setFilterStatus(event.target.value)
+  // }
 
   const handleDeleteRows = (selected: string[]) => {
     setSelected([])
@@ -156,10 +149,9 @@ export default function CompanyTransactionTable({ companyId }: Props) {
 
   const denseHeight = dense ? 52 : 72
 
-  const isNotFound =
-    (!tableData.length && !!filterName) ||
-    (!tableData.length && !!filterStatus) ||
-    (!tableData.length && !!filterStt)
+  const isNotFound = (!tableData.length && !!filterName) || (!tableData.length && !!filterStatus)
+  //  ||
+  // (!tableData.length && !!filterStt)
   const handleViewRow = (id: string) => {
     // push(PATH_CES.tra.detail(id))
   }
@@ -181,9 +173,7 @@ export default function CompanyTransactionTable({ companyId }: Props) {
 
       <CompanyTransactionTableToolbar
         filterName={filterName}
-        filterStatus={filterStt}
         onFilterName={handleFilterName}
-        onFilterStatus={handleFilterStatus}
         optionsStatus={ROLE_OPTIONS}
         filterOptions={filterOptions}
         filterAttribute={filterAttribute}
@@ -193,7 +183,7 @@ export default function CompanyTransactionTable({ companyId }: Props) {
         onFilterOptions={handleFilterOptions}
         handleClearFilter={handleClearFilter}
       />
-      {/* <LoadingTable isValidating={isLoading} /> */}
+      <LoadingTable isValidating={isLoading} />
 
       <Scrollbar>
         <TableContainer sx={{ minWidth: 800, position: 'relative' }}>
@@ -250,11 +240,12 @@ export default function CompanyTransactionTable({ companyId }: Props) {
                       onDeleteRow={() => handleViewRow(row.id)}
                     />
                   ))}
-
-              <TableEmptyRows
-                height={denseHeight}
-                emptyRows={emptyRows(page, rowsPerPage, tableData.length)}
-              />
+              {!isLoading && (
+                <TableEmptyRows
+                  height={denseHeight}
+                  emptyRows={emptyRows(page + 1, rowsPerPage, data?.metaData?.total)}
+                />
+              )}
 
               <TableNoData isNotFound={isNotFound && !isLoading} />
             </TableBody>
