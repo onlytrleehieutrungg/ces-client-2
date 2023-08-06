@@ -67,7 +67,6 @@ const navConfig = [
         icon: ICONS.project,
         roles: [Role['System Admin']],
       },
-
       {
         title: 'benefit',
         path: PATH_CES.benefit.root,

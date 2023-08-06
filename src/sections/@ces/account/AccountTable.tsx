@@ -17,7 +17,7 @@ import { paramCase } from 'change-case'
 import { useRouter } from 'next/router'
 import { useSnackbar } from 'notistack'
 import { useMemo, useState } from 'react'
-import { AccountData, ACCOUNT_STATUS_OPTIONS_SA, Params, Role } from 'src/@types/@ces'
+import { AccountData, ACCOUNT_STATUS_OPTIONS_SA, BaseResponse, Params, Role } from 'src/@types/@ces'
 import { accountApi } from 'src/api-client'
 import Iconify from 'src/components/Iconify'
 import Scrollbar from 'src/components/Scrollbar'
@@ -54,8 +54,11 @@ const FILTER_OPTIONS = ['descending', 'ascending']
 
 type Props = {
   any?: any
+  data?: BaseResponse<AccountData[]>
+  isLoading: boolean
+  setParams: React.Dispatch<Partial<Params>>
 }
-export default function AccountTable({}: Props) {
+export default function AccountTable({ data, isLoading, setParams }: Props) {
   const {
     dense,
     page,
@@ -83,11 +86,9 @@ export default function AccountTable({}: Props) {
   const statusOptions = ACCOUNT_STATUS_OPTIONS_SA
 
   const { enqueueSnackbar } = useSnackbar()
-  const [params, setParams] = useState<Partial<Params>>()
   const [timeoutName, setTimeoutName] = useState<any>()
   const [filterAttribute, setFilterAttribute] = useState('')
   const [filterOptions, setFilterOptions] = useState('')
-  const { data, mutate, isValidating, isLoading } = useAccountList({ params })
   const accountList = data?.data || []
   useMemo(
     () =>
@@ -141,7 +142,6 @@ export default function AccountTable({}: Props) {
     confirmDialog('Do you really want to delete this account ?', async () => {
       try {
         await accountApi.delete(id)
-        mutate()
         enqueueSnackbar('Delete successful')
       } catch (error) {
         enqueueSnackbar('Delete failed', { variant: 'error' })
