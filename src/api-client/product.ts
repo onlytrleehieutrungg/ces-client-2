@@ -9,7 +9,11 @@ export const productApi = {
   getById(id: string) {
     return axiosClient.get(`/product/${id}`)
   },
+  getBySupplierId(supplierId: string, params: Partial<Params>): Promise<BaseResponse<Product[]>> {
+    return axiosClient.get(`/product?SupplierId=${supplierId}`, { params })
+  },
   create: async (payload: ProductPayload) => await axiosClient.post('/product', payload),
   delete: async (id: string) => await axiosClient.delete(`/product/${id}`),
-  update: async (id: string, payload: ProductPayload) => await axiosClient.put(`/product/${id}`, payload),
+  update: async (id: string, payload: ProductPayload) =>
+    await axiosClient.put(`/product/${id}`, payload),
 }

@@ -6,11 +6,30 @@ type UseProductProps = {
   params?: Partial<Params>
   options?: SWRConfiguration
   id?: string
+  supplierId?: string
 }
 export function useProduct({ params, options }: UseProductProps) {
   const { data, error, mutate, isLoading, isValidating } = useSWR(
     ['/product', params],
     () => productApi.getAll(params!),
+    {
+      ...options,
+    }
+  )
+
+  return {
+    data,
+    error,
+    isValidating,
+    mutate,
+    isLoading,
+  }
+}
+
+export function useProductBySupplierId({ params, options, supplierId }: UseProductProps) {
+  const { data, error, mutate, isLoading, isValidating } = useSWR(
+    ['/product-supplierId', params],
+    () => productApi.getBySupplierId(supplierId!, params!),
     {
       ...options,
     }

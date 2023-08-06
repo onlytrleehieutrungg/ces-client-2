@@ -16,6 +16,8 @@ import { PATH_CES } from 'src/routes/paths'
 import AccountNewEditForm from 'src/sections/@ces/account/AccountNewEditForm'
 import useAuth from 'src/hooks/useAuth'
 import AccountWallet from 'src/sections/@ces/account/wallet/AccountWallet'
+import ProductTableCustom from 'src/sections/@ces/account/ProductTableCustom'
+import CategoryTableCustom from 'src/sections/@ces/account/CategoryTableCustom'
 
 // ----------------------------------------------------------------------
 
@@ -37,6 +39,7 @@ export default function UserAccount() {
   const { accountId } = query
 
   const { data, mutate } = useAccountDetails({ id: `${accountId}` })
+
   const companyId = user?.companyId
   const handleEditAccountSubmit = async (payload: AccountPayload) => {
     try {
@@ -89,6 +92,21 @@ export default function UserAccount() {
             ),
           },
         ]
+
+  if (data?.data?.role == 2) {
+    ACCOUNT_TABS.push(
+      {
+        value: 'product',
+        icon: <Iconify icon={'ic:round-account-box'} width={20} height={20} />,
+        component: <ProductTableCustom supplierId={data?.data.id} />,
+      },
+      {
+        value: 'category',
+        icon: <Iconify icon={'ic:round-account-box'} width={20} height={20} />,
+        component: <CategoryTableCustom supplierId={data?.data.id} />,
+      }
+    )
+  }
 
   return (
     <Page title="User: Account Settings">

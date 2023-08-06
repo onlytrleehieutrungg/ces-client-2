@@ -41,9 +41,17 @@ export const PATH_CES = {
   root: ROOTS_CES,
   account: {
     root: path(ROOTS_CES, '/account'),
+    suroot: path(ROOTS_CES, '/account/supplier-account'),
+    shroot: path(ROOTS_CES, '/account/shipper-account'),
     new: path(ROOTS_CES, '/account/new'),
     edit: (id: string) => path(ROOTS_CES, `/account/${id}/edit`),
     detail: (id: string) => path(ROOTS_CES, `/account/${id}`),
+  },
+  suaccount: {
+    root: path(ROOTS_CES, '/account/supplier-account'),
+  },
+  shaccount: {
+    root: path(ROOTS_CES, '/account/shipper-account'),
   },
   company: {
     root: path(ROOTS_CES, '/company'),

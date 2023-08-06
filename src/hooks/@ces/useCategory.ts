@@ -6,12 +6,31 @@ type UseCategoryProps = {
   params?: Partial<Params>
   options?: SWRConfiguration
   id?: string
+  supplierId?: string
 }
 
 export function useCategoryList({ options, params }: UseCategoryProps) {
   const { data, error, mutate, isLoading, isValidating } = useSWR(
     ['category', params],
     () => categoryApi.getAll(params!),
+    {
+      ...options,
+    }
+  )
+
+  return {
+    data,
+    error,
+    isLoading,
+    mutate,
+    isValidating,
+  }
+}
+
+export function useCategoryListBySupplier({ supplierId, options, params }: UseCategoryProps) {
+  const { data, error, mutate, isLoading, isValidating } = useSWR(
+    ['category-supplierId', params],
+    () => categoryApi.getAllBySupplierId(supplierId!, params!),
     {
       ...options,
     }

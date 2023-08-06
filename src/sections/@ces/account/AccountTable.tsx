@@ -206,10 +206,6 @@ export default function AccountTable({}: Props) {
         onFilterAttribute={handleFilterAttribute}
         onFilterOptions={handleFilterOptions}
         handleClearFilter={handleClearFilter}
-
-        // filterRole={filterRole}
-        // onFilterRole={handleFilterRole}
-        // optionsRole={roleOptions}
       />
       <LoadingTable isValidating={isLoading} />
 
@@ -325,30 +321,5 @@ function applySortFilter({
   filterStatus: string
   filterRole: string
 }) {
-  // const stabilizedThis = tableData.map((el, index) => [el, index] as const)
-
-  // stabilizedThis.sort((a, b) => {
-  //   const order = comparator(a[0], b[0])
-  //   if (order !== 0) return order
-  //   return a[1] - b[1]
-  // })
-
-  // tableData = stabilizedThis.map((el) => el[0])
-
-  // if (filterName) {
-  //   tableData = tableData.filter(
-  //     (item: Record<string, any>) =>
-  //       item.name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
-  //   )
-  // }
-
-  // if (filterStatus !== 'all') {
-  //   tableData = tableData.filter((item: Record<string, any>) => item.status == filterStatus)
-  // }
-
-  // if (filterRole !== 'all') {
-  //   tableData = tableData.filter((item: Record<string, any>) => item.role == filterRole)
-  // }
-
   return tableData
 }

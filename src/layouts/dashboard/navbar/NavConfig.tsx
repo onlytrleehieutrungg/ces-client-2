@@ -50,6 +50,18 @@ const navConfig = [
         roles: [Role['System Admin'], Role['Enterprise Admin']],
       },
       {
+        title: 'supplier',
+        path: PATH_CES.suaccount.root,
+        icon: ICONS.user,
+        roles: [Role['System Admin'], Role['Enterprise Admin']],
+      },
+      {
+        title: 'shipper',
+        path: PATH_CES.shaccount.root,
+        icon: ICONS.user,
+        roles: [Role['System Admin'], Role['Enterprise Admin']],
+      },
+      {
         title: 'company',
         path: PATH_CES.company.root,
         icon: ICONS.project,
@@ -72,32 +84,7 @@ const navConfig = [
         title: 'transaction',
         path: PATH_CES.transaction.root,
         icon: ICONS.banking,
-        roles: [Role['System Admin'], Role['Enterprise Admin']],
-      },
-
-      // {
-      //   title: 'Debt',
-      //   path: PATH_CES.eaDebt.root,
-      //   icon: ICONS.invoice,
-      //   roles: [Role['Enterprise Admin']],
-      // },
-      {
-        title: 'order',
-        path: PATH_CES.order.root,
-        icon: ICONS.invoice,
-        roles: [Role['Supplier Admin'], Role['Enterprise Admin']],
-      },
-      {
-        title: 'category',
-        path: PATH_CES.category.root,
-        icon: ICONS.menuItem,
-        roles: [Role['Supplier Admin']],
-      },
-      {
-        title: 'product',
-        path: PATH_CES.product.root,
-        icon: ICONS.ecommerce,
-        roles: [Role['Supplier Admin']],
+        roles: [Role['System Admin'], Role['Enterprise Admin'], Role['System Admin']],
       },
     ],
   },
