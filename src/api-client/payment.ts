@@ -11,10 +11,10 @@ import axiosClient from './axiosClient'
 export const paymentApi = {
   pay: (payload: PaymentPayload) => axiosClient.post(`/payment`, payload),
   eatransaction: (
-    companyId: string,
+    // companyId: string,
     params: Partial<Params>
   ): Promise<BaseResponse<TransactionHistory[]>> =>
-    axiosClient.get(`/transaction?companyId=${companyId}`, { params }),
+    axiosClient.get(`/transaction`, { params }),
   satransaction: (params: Partial<Params>): Promise<BaseResponse<TransactionHistory[]>> =>
     axiosClient.get(`/transaction`, { params }),
   orders: (companyId: string): Promise<AxiosResponse<MonthlyOrder>> =>
