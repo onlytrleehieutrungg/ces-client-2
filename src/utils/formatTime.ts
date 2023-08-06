@@ -12,6 +12,11 @@ export function fDateVN(date: Date | string | number) {
   else return ''
 }
 
+export function fTime(date: Date | string | number) {
+  if (date) return format(new Date(date), 'hh:mm a')
+  else return ''
+}
+
 export function fDateParam(date: Date | string | number) {
   if (date) return format(new Date(date), 'yyyy-MM-dd')
   else return 'Nah'

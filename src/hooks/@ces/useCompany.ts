@@ -15,7 +15,7 @@ export function useCompanyList({ options, params }: UseCompanyProps) {
     {
       // revalidateOnFocus: false,
       // dedupingInterval: 60 * 60 * 1000, // 3600s = 1h
-      // keepPreviousData: true,
+      keepPreviousData: true,
       // fallbackData: {
       //   code: 0,
       //   message: '',

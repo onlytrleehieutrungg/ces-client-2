@@ -12,6 +12,7 @@ import {
   TableBody,
   TableContainer,
   TablePagination,
+  Tabs,
   Tooltip,
 } from '@mui/material'
 import { paramCase } from 'change-case'
@@ -88,9 +89,6 @@ export default function CompanyPage() {
 
   const { push } = useRouter()
 
-  // const { user } = useAuth()
-
-  // const roleOptions = user?.role === Role['System Admin'] ? ROLE_OPTIONS_SA : ROLE_OPTIONS_EA
   const [params, setParams] = useState<Partial<Params>>()
   const [timeoutName, setTimeoutName] = useState<any>()
   const [filterAttribute, setFilterAttribute] = useState('')
@@ -214,7 +212,7 @@ export default function CompanyPage() {
         />
 
         <Card>
-          {/* <Tabs
+          <Tabs
             allowScrollButtonsMobile
             variant="scrollable"
             scrollButtons="auto"
@@ -222,10 +220,10 @@ export default function CompanyPage() {
             onChange={onChangeFilterStatus}
             sx={{ px: 2, bgcolor: 'background.neutral' }}
           >
-            {statusOptions.map((tab) => (
+            {/* {statusOptions.map((tab) => (
               <Tab disableRipple key={tab.code} label={tab.label} value={tab.code} />
-            ))}
-          </Tabs> */}
+            ))} */}
+          </Tabs>
 
           <CompanyTableToolbar
             filterName={filterName}

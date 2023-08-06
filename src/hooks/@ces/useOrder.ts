@@ -1,6 +1,5 @@
 import { Params } from 'src/@types/@ces'
 import { orderApi } from 'src/api-client/order'
-import { productApi } from 'src/api-client/product'
 import useSWR, { SWRConfiguration } from 'swr'
 
 type UseOrderProps = {
@@ -11,10 +10,12 @@ type UseOrderProps = {
 }
 export function useOrder({ params, options }: UseOrderProps) {
   const { data, error, mutate, isLoading, isValidating } = useSWR(
-    ['/order', params],
+    ['/order-list', params],
     () => orderApi.getAll(params!),
     {
-      refreshInterval: 5000,
+      keepPreviousData: true,
+      revalidateOnFocus: true,
+      // refreshInterval: 5000,
       ...options,
     }
   )

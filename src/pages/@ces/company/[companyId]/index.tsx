@@ -14,7 +14,10 @@ import useTabs from 'src/hooks/useTabs'
 import Layout from 'src/layouts'
 import { PATH_CES } from 'src/routes/paths'
 import AccountWallet from 'src/sections/@ces/account/wallet/AccountWallet'
+import CompanyEmployeeTable from 'src/sections/@ces/company/CompanyEmployeeTable'
 import CompanyNewEditForm from 'src/sections/@ces/company/CompanyNewEditForm'
+import CompanyOrderTable from 'src/sections/@ces/company/order/CompanyOrderTable'
+import CompanyTransactionTable from 'src/sections/@ces/company/transaction/CompanyTransactionTable'
 
 // ----------------------------------------------------------------------
 
@@ -57,8 +60,23 @@ export default function CompanyDetails() {
       ),
     },
     {
+      value: 'account',
+      // icon: <Iconify icon={'ic:round-account-box'} width={20} height={20} />,
+      component: <CompanyEmployeeTable companyId={`${companyId}`} />,
+    },
+    {
+      value: 'order',
+      // icon: <Iconify icon={'ic:round-account-box'} width={20} height={20} />,
+      component: <CompanyOrderTable companyId={`${companyId}`} />,
+    },
+    {
+      value: 'transaction',
+      // icon: <Iconify icon={'ic:round-account-box'} width={20} height={20} />,
+      component: <CompanyTransactionTable companyId={`${companyId}`} />,
+    },
+    {
       value: 'wallet',
-      icon: <Iconify icon={'ic:round-receipt'} width={20} height={20} />,
+      // icon: <Iconify icon={'ic:round-receipt'} width={20} height={20} />,
       component: (
         <AccountWallet
           companyId={`${companyId}`}

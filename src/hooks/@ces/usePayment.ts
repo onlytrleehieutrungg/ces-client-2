@@ -8,10 +8,10 @@ type UsePaymentProps = {
   id?: string
   companyId?: string
 }
-export function usePayment({ params, options, companyId }: UsePaymentProps) {
+export function usePayment({ params, options }: UsePaymentProps) {
   const { data, error, mutate, isLoading } = useSWR(
-    ['/transaction-ea-wallet', params],
-    () => paymentApi.eatransaction(companyId!, params!),
+    ['/transaction-ea', params],
+    () => paymentApi.eatransaction(params!),
     {
       // revalidateOnFocus: false,
       // dedupingInterval: 10 * 1000, // 10s
