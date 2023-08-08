@@ -26,6 +26,7 @@ export type AccountData = {
       account: string
     }
   ]
+  isReceived?: boolean
 }
 
 export type AccountPayload = {

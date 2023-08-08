@@ -8,7 +8,9 @@ import {
   DialogTitle,
   Divider,
   FormControlLabel,
-  IconButton, Stack, Switch,
+  IconButton,
+  Stack,
+  Switch,
   Tab,
   Table,
   TableBody,
@@ -17,7 +19,7 @@ import {
   Tabs,
   Tooltip,
   Typography,
-  useTheme
+  useTheme,
 } from '@mui/material'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
@@ -30,7 +32,7 @@ import {
   TableHeadCustom,
   TableNoData,
   TableSelectedActions,
-  TableSkeleton
+  TableSkeleton,
 } from 'src/components/table'
 import { useOrder, useOrderDetail } from 'src/hooks/@ces'
 import useTable, { emptyRows, getComparator } from 'src/hooks/useTable'

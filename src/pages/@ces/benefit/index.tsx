@@ -1,4 +1,3 @@
-// @mui
 import {
   Box,
   Button,
@@ -21,7 +20,6 @@ import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 import { useMemo, useState } from 'react'
 import { BenefitData, Params, Role } from 'src/@types/@ces'
-import { PROJECT_STATUS_OPTIONS } from 'src/@types/@ces/project'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
 import Iconify from 'src/components/Iconify'
 import Page from 'src/components/Page'
@@ -94,8 +92,6 @@ export default function BenefitPage() {
 
   const { data, isLoading } = useBenefitList({ params })
   const projectList: BenefitData[] = data?.data || []
-
-  const statusList = PROJECT_STATUS_OPTIONS
 
   const [filterName, setFilterName] = useState('')
 

@@ -1,6 +1,11 @@
 import {
   Box,
+  Button,
   Card,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   Divider,
   FormControlLabel,
   IconButton,
@@ -13,12 +18,12 @@ import {
   Tabs,
   Tooltip,
 } from '@mui/material'
-import { paramCase } from 'change-case'
+import { capitalCase, paramCase } from 'change-case'
 import { useRouter } from 'next/router'
 import { useSnackbar } from 'notistack'
 import { useMemo, useState } from 'react'
-import { ACCOUNT_STATUS_OPTIONS_SA, AccountData, Params, Role } from 'src/@types/@ces'
-import { accountApi } from 'src/api-client'
+import { ACCOUNT_STATUS_OPTIONS_SA, Params, Role } from 'src/@types/@ces'
+import { projectApi } from 'src/api-client'
 import Iconify from 'src/components/Iconify'
 import Scrollbar from 'src/components/Scrollbar'
 import {
@@ -28,22 +33,24 @@ import {
   TableSelectedActions,
   TableSkeleton,
 } from 'src/components/table'
-import { useAccountEmployeeCompany } from 'src/hooks/@ces'
+import { useAccountDetails, useProjectListMemberInGroup } from 'src/hooks/@ces'
 import useAuth from 'src/hooks/useAuth'
-import useTable, { emptyRows, getComparator } from 'src/hooks/useTable'
+import useTable, { emptyRows } from 'src/hooks/useTable'
 import useTabs from 'src/hooks/useTabs'
 import { PATH_CES } from 'src/routes/paths'
 import { confirmDialog } from 'src/utils/confirmDialog'
 import LoadingTable from 'src/utils/loadingTable'
-import CompanyEmployeeTableRow from './CompanyEmployeeTableRow'
-import CompanyEmployeeToolbar from './CompanyEmployeeToolbar'
+import AccountNewEditForm from '../../account/AccountNewEditForm'
+import AccountWallet from '../../account/wallet/AccountWallet'
+import BenefitMemberTableRow from './BenefitMemberTableRow'
+import BenefitMemberToolbar from './BenefitMemberToolbar'
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
   { id: 'name', label: 'Employee', align: 'left' },
-
   { id: 'phone', label: 'Phone', align: 'left' },
+  { id: 'isReceived', label: 'Is Received', align: 'center' },
   { id: 'createdAt', label: 'created at', align: 'left' },
   { id: 'updatedAt', label: 'updated at', align: 'left' },
   { id: 'status', label: 'status', align: 'left' },
@@ -54,10 +61,10 @@ const FILTER_OPTIONS = ['descending', 'ascending']
 // ----------------------------------------------------------------------
 
 type Props = {
-  companyId: string
-  any?: any
+  groupId: string
+  benefitId: string
 }
-export default function CompanyEmployeeTable({ companyId }: Props) {
+export default function BenefitMemberTable({ benefitId, groupId }: Props) {
   const {
     dense,
     page,
@@ -67,7 +74,7 @@ export default function CompanyEmployeeTable({ companyId }: Props) {
     // setPage,
     //
     selected,
-    // setSelected,
+    setSelected,
     onSelectRow,
     onSelectAllRows,
     //
@@ -88,11 +95,9 @@ export default function CompanyEmployeeTable({ companyId }: Props) {
   const [timeoutName, setTimeoutName] = useState<any>()
   const [filterAttribute, setFilterAttribute] = useState('')
   const [filterOptions, setFilterOptions] = useState('')
-  const { data, mutate, isLoading } = useAccountEmployeeCompany({
-    params: {
-      ...params,
-      CompanyId: companyId,
-    },
+  const { data, mutate, isLoading } = useProjectListMemberInGroup({
+    id: benefitId,
+    params,
   })
   const accountList = data?.data || []
   useMemo(
@@ -138,55 +143,67 @@ export default function CompanyEmployeeTable({ companyId }: Props) {
     setTimeoutName(newTimeoutname)
   }
 
-  // const handleFilterRole = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   setFilterRole(event.target.value)
-  //   setPage(0)
-  // }
-
-  const handleDeleteRow = (id: string) => {
-    confirmDialog('Do you really want to delete this account ?', async () => {
+  const handleRemoveMemberRow = (id: string) => {
+    confirmDialog('Do you really want to remove this account from group ?', async () => {
       try {
-        await accountApi.delete(id)
+        await projectApi.removeMember({
+          groupId,
+          accountId: [id],
+        })
         mutate()
-        enqueueSnackbar('Delete successful')
-      } catch (error) {
-        enqueueSnackbar('Delete failed', { variant: 'error' })
 
+        enqueueSnackbar('Remove successful')
+      } catch (error) {
+        console.error(error)
+      }
+    })
+  }
+  const handleRemoveMemberAllRows = (selected: string[]) => {
+    confirmDialog('Do you really want to remove all account from group ?', async () => {
+      try {
+        await projectApi.removeMember({
+          groupId,
+          accountId: [...selected],
+        })
+        mutate()
+        setSelected([])
+        enqueueSnackbar('Remove successful')
+      } catch (error) {
         console.error(error)
       }
     })
   }
 
-  const handleDeleteRows = (selected: string[]) => {
-    console.log('delete all account action', selected)
+  const handleEditRow = (id: string) => {
+    push(PATH_CES.account.detail(paramCase(id)))
   }
 
-  const handleEditRow = (id: string) => {
-    // push(PATH_CES.account.edit(paramCase(id)))
-    push(PATH_CES.account.detail(paramCase(id)))
+  const [open, setOpen] = useState(false)
+  const [accountId, setAccountId] = useState('')
+
+  const handleClickOpen = () => {
+    setOpen(true)
+  }
+
+  const handleClose = () => {
+    setOpen(false)
   }
 
   const handleClickRow = (id: string) => {
-    push(PATH_CES.account.detail(paramCase(id)))
+    setAccountId(id)
+    handleClickOpen()
   }
-
-  const dataFiltered = applySortFilter({
-    tableData: accountList,
-    comparator: getComparator(order, orderBy),
-    filterName,
-    filterRole,
-    filterStatus,
-  })
 
   const denseHeight = dense ? 52 : 72
 
   const isNotFound =
-    (!dataFiltered.length && !!filterName) ||
-    (!dataFiltered.length && !!filterRole) ||
-    (!dataFiltered.length && !!filterStatus)
+    (!accountList.length && !!filterName) ||
+    (!accountList.length && !!filterRole) ||
+    (!accountList.length && !!filterStatus)
 
   return (
     <Card>
+      {open && <AccountDetails id={accountId} handleClose={handleClose} />}
       <Tabs
         allowScrollButtonsMobile
         variant="scrollable"
@@ -202,7 +219,7 @@ export default function CompanyEmployeeTable({ companyId }: Props) {
 
       <Divider />
 
-      <CompanyEmployeeToolbar
+      <BenefitMemberToolbar
         filterName={filterName}
         onFilterName={handleFilterName}
         filterOptions={filterOptions}
@@ -234,7 +251,7 @@ export default function CompanyEmployeeTable({ companyId }: Props) {
               }
               actions={
                 <Tooltip title="Delete">
-                  <IconButton color="primary" onClick={() => handleDeleteRows(selected)}>
+                  <IconButton color="primary" onClick={() => handleRemoveMemberAllRows(selected)}>
                     <Iconify icon={'eva:trash-2-outline'} />
                   </IconButton>
                 </Tooltip>
@@ -267,14 +284,14 @@ export default function CompanyEmployeeTable({ companyId }: Props) {
                 ? Array.from(Array(rowsPerPage)).map((e) => (
                     <TableSkeleton sx={{ height: denseHeight, px: dense ? 1 : 0 }} key={e} />
                   ))
-                : dataFiltered.map((row) => (
-                    <CompanyEmployeeTableRow
+                : accountList.map((row) => (
+                    <BenefitMemberTableRow
                       key={`${row.id}`}
                       row={row}
                       isValidating={isLoading}
                       selected={selected.includes(`${row.id}`)}
                       onSelectRow={() => onSelectRow(`${row.id}`)}
-                      onDeleteRow={() => handleDeleteRow(`${row.id}`)}
+                      onRemoveMemberRow={() => handleRemoveMemberRow(row.id)}
                       onEditRow={() => handleEditRow(row.id)}
                       onClickRow={() => handleClickRow(`${row.id}`)}
                     />
@@ -315,43 +332,67 @@ export default function CompanyEmployeeTable({ companyId }: Props) {
 
 // ----------------------------------------------------------------------
 
-function applySortFilter({
-  tableData,
-  comparator,
-  filterName,
-  filterStatus,
-  filterRole,
-}: {
-  tableData: AccountData[]
-  comparator: (a: any, b: any) => number
-  filterName: string
-  filterStatus: string
-  filterRole: string
-}) {
-  // const stabilizedThis = tableData.map((el, index) => [el, index] as const)
+type AccountDetailsProps = {
+  id: string
+  handleClose: any
+}
 
-  // stabilizedThis.sort((a, b) => {
-  //   const order = comparator(a[0], b[0])
-  //   if (order !== 0) return order
-  //   return a[1] - b[1]
-  // })
+function AccountDetails({ handleClose, id }: AccountDetailsProps) {
+  const { data } = useAccountDetails({ id })
+  const account = data?.data
+  const { currentTab, onChangeTab } = useTabs('general')
 
-  // tableData = stabilizedThis.map((el) => el[0])
+  const ACCOUNT_TABS = [
+    {
+      value: 'general',
+      icon: <Iconify icon={'ic:round-account-box'} width={20} height={20} />,
+      component: <AccountNewEditForm currentUser={account} isDetail />,
+    },
+    {
+      value: 'wallet',
+      icon: <Iconify icon={'ic:round-receipt'} width={20} height={20} />,
+      component: <AccountWallet accountId={`${account?.id}`} />,
+    },
+  ]
 
-  // if (filterName) {
-  //   tableData = tableData.filter(
-  //     (item: Record<string, any>) =>
-  //       item.name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
-  //   )
-  // }
+  return (
+    <Dialog fullWidth maxWidth="lg" open onClose={handleClose}>
+      <DialogTitle>Employee Details</DialogTitle>
 
-  // if (filterStatus !== 'all') {
-  //   tableData = tableData.filter((item: Record<string, any>) => item.status == filterStatus)
-  // }
+      <DialogContent sx={{ mt: 1 }}>
+        <Tabs
+          allowScrollButtonsMobile
+          variant="scrollable"
+          scrollButtons="auto"
+          value={currentTab}
+          onChange={onChangeTab}
+        >
+          {ACCOUNT_TABS.map((tab) => (
+            <Tab
+              disableRipple
+              key={tab.value}
+              label={capitalCase(tab.value)}
+              icon={tab.icon}
+              value={tab.value}
+            />
+          ))}
+        </Tabs>
 
-  // if (filterRole !== 'all') {
-  //   tableData = tableData.filter((item: Record<string, any>) => item.role == filterRole)
-  // }
+        <Box sx={{ mb: 5 }} />
 
-  return tableData
+        {!account ? (
+          <>Loading...</>
+        ) : (
+          ACCOUNT_TABS.map((tab) => {
+            const isMatched = tab.value === currentTab
+            return isMatched && <Box key={tab.value}>{tab.component}</Box>
+          })
+        )}
+      </DialogContent>
+
+      <DialogActions>
+        <Button onClick={handleClose}>Close</Button>
+      </DialogActions>
+    </Dialog>
+  )
 }

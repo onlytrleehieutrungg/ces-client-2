@@ -1,4 +1,5 @@
 import {
+  AccountData,
   AddProjectMemberPayload,
   BaseResponse,
   Params,
@@ -26,6 +27,34 @@ export const projectApi = {
 
   update(id: string, payload: ProjectPayload) {
     return axiosClient.put(`/group/${id}`, payload)
+  },
+
+  getAllMemberInGroup(
+    benefitId: string,
+    params: Partial<Params>
+  ): Promise<BaseResponse<AccountData[]>> {
+    return axiosClient.get(`/group/${benefitId}/employees`, { params })
+  },
+
+  getAllMemberNotInGroup(
+    benefitId: string,
+    params: Partial<Params>
+  ): Promise<
+    BaseResponse<
+      {
+        id: string
+        companyId: number
+        accountId: string
+        supplierName: string
+        supplierAddress: string
+        status: number
+        createdAt: string
+        updatedAt: string
+        account: AccountData
+      }[]
+    >
+  > {
+    return axiosClient.get(`/group/employees-not-in-group/${benefitId}`, { params })
   },
 
   addMember(payload: AddProjectMemberPayload) {

@@ -40,27 +40,6 @@ export type ProjectData = {
       employeeGroupMappings: any[]
     }
   }[]
-
-  // groupAccount: {
-  //   id: string
-  //   groupId: string
-  //   accountId: string
-  //   account: {
-  //     id: string
-  //     name: string
-  //     email: string
-  //     address: string
-  //     phone: string
-  //     updatedAt: string
-  //     createdAt: string
-  //     imageUrl: string
-  //     status: number
-  //     roleId: number
-  //     companyId: number
-  //     wallets: any
-  //   }
-  //   group: null
-  // }[]
 }
 
 export type ProjectPayload = {
@@ -78,7 +57,6 @@ export type AddProjectMemberPayload = {
 export enum ProjectStatus {
   'Active' = 1,
   'In Active' = 2,
-  // 'Deleted' = 3,
 }
 
 const filterStatusOptions = (filterFn: (value: ProjectStatus) => boolean) =>

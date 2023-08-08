@@ -13,15 +13,7 @@ export function useProjectList({ params, options }: UseProjectProps) {
     ['project-list', params],
     () => projectApi.getAll(params!),
     {
-      // revalidateOnFocus: false,
-      // dedupingInterval: 10 * 1000, // 10s
-      // keepPreviousData: true,
-      // fallbackData: {
-      //   code: 0,
-      //   message: '',
-      //   metaData: null,
-      //   data: [],
-      // },
+      keepPreviousData: true,
       ...options,
     }
   )
@@ -32,22 +24,12 @@ export function useProjectList({ params, options }: UseProjectProps) {
     mutate,
     isValidating,
     isLoading,
-    // create,
-    // update,
-    // remove,
-    // addMember,
   }
 }
 
 export function useProjectDetails({ id, options }: UseProjectProps) {
   const { data, error, mutate } = useSWR(['project', id], () => projectApi.getById(id!), {
-    // keepPreviousData: true,
-    // fallbackData: {
-    //   code: 0,
-    //   message: '',
-    //   metaData: null,
-    //   data: {},
-    // },
+    keepPreviousData: true,
     ...options,
   })
 
@@ -58,21 +40,54 @@ export function useProjectDetails({ id, options }: UseProjectProps) {
   }
 }
 
-
 export function useProjectByAccountId({ id, options }: UseProjectProps) {
-  const { data, error, mutate } = useSWR(['project-accountId', id], () => projectApi.getByAccountId(id!), {
-    // keepPreviousData: true,
-    // fallbackData: {
-    //   code: 0,
-    //   message: '',
-    //   metaData: null,
-    //   data: {},
-    // },
-    ...options,
-  })
+  const { data, error, mutate } = useSWR(
+    ['project-accountId', id],
+    () => projectApi.getByAccountId(id!),
+    {
+      keepPreviousData: true,
+      ...options,
+    }
+  )
 
   return {
     data,
+    error,
+    mutate,
+  }
+}
+
+export function useProjectListMemberInGroup({ id, options, params }: UseProjectProps) {
+  const { data, isLoading, error, mutate } = useSWR(
+    ['list-member-in-group', { id, params }],
+    () => projectApi.getAllMemberInGroup(id!, params!),
+    {
+      keepPreviousData: true,
+      ...options,
+    }
+  )
+
+  return {
+    data,
+    isLoading,
+    error,
+    mutate,
+  }
+}
+
+export function useProjectListMemberNotInGroup({ id, options, params }: UseProjectProps) {
+  const { data, isLoading, error, mutate } = useSWR(
+    ['list-member-not-in-group', { id, params }],
+    () => projectApi.getAllMemberNotInGroup(id!, params!),
+    {
+      keepPreviousData: true,
+      ...options,
+    }
+  )
+
+  return {
+    data,
+    isLoading,
     error,
     mutate,
   }
