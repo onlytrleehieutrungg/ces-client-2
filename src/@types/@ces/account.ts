@@ -26,6 +26,19 @@ export type AccountData = {
       account: string
     }
   ]
+  employees?: [
+    {
+      id: string
+      companyId: string
+      accountId: string
+      supplierName: string
+      supplierAddress: string
+      status: number
+      createdAt: string
+      updatedAt: string
+      account: string
+    }
+  ]
 }
 
 export type AccountPayload = {

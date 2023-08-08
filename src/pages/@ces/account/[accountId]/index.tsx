@@ -18,6 +18,8 @@ import useAuth from 'src/hooks/useAuth'
 import AccountWallet from 'src/sections/@ces/account/wallet/AccountWallet'
 import ProductTableCustom from 'src/sections/@ces/account/ProductTableCustom'
 import CategoryTableCustom from 'src/sections/@ces/account/CategoryTableCustom'
+import EmployeeOrderCustom from 'src/sections/@ces/account/EmployeeOrderCustom'
+import EmployeeTransactionTable from 'src/sections/@ces/account/transaction/EmployeeTransactionTable'
 
 // ----------------------------------------------------------------------
 
@@ -41,6 +43,7 @@ export default function UserAccount() {
   const { data, mutate } = useAccountDetails({ id: `${accountId}` })
 
   const companyId = user?.companyId
+  const empId = data?.data?.employees?.[0]?.id
   const handleEditAccountSubmit = async (payload: AccountPayload) => {
     try {
       await accountApi.update(`${accountId}`, payload)
@@ -78,6 +81,16 @@ export default function UserAccount() {
               />
             ),
           },
+          {
+            value: 'order',
+            icon: <Iconify icon={'ic:round-account-box'} width={20} height={20} />,
+            component: <EmployeeOrderCustom employeeId={empId} />,
+          },
+          {
+            value: 'transaction',
+            // icon: <Iconify icon={'ic:round-account-box'} width={20} height={20} />,
+            component: <EmployeeTransactionTable employeeId={`${accountId}`} />,
+          },
         ]
       : [
           {
@@ -92,6 +105,21 @@ export default function UserAccount() {
             ),
           },
         ]
+
+  if (data?.data?.role == 2) {
+    ACCOUNT_TABS.push(
+      {
+        value: 'product',
+        icon: <Iconify icon={'ic:round-account-box'} width={20} height={20} />,
+        component: <ProductTableCustom supplierId={data?.data.id} />,
+      },
+      {
+        value: 'category',
+        icon: <Iconify icon={'ic:round-account-box'} width={20} height={20} />,
+        component: <CategoryTableCustom supplierId={data?.data.id} />,
+      }
+    )
+  }
 
   if (data?.data?.role == 2) {
     ACCOUNT_TABS.push(
