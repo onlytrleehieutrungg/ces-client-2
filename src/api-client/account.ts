@@ -12,7 +12,7 @@ export const accountApi = {
     return axiosClient.get(`/account`, { params })
   },
   getAllByRoleId(roleId: string, params: Partial<Params>): Promise<BaseResponse<AccountData[]>> {
-    return axiosClient.get(`/account?role=${roleId}`, { params })
+    return axiosClient.get(`/account?Role=${roleId}`, { params })
   },
   getAllEmployeeWithCompanyId(params: Partial<Params>): Promise<BaseResponse<AccountData[]>> {
     return axiosClient.get(`/account/employee-by-company-id`, { params })

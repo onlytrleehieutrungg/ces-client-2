@@ -8,6 +8,7 @@ type UseOrderProps = {
   id?: string
   companyId?: string
   enable?: boolean
+  supplierId?: string
 }
 export function useOrder({ params, options }: UseOrderProps) {
   const { data, error, mutate, isLoading, isValidating } = useSWR(
@@ -17,6 +18,26 @@ export function useOrder({ params, options }: UseOrderProps) {
       keepPreviousData: true,
       revalidateOnFocus: true,
       // refreshInterval: 5000,
+      ...options,
+    }
+  )
+
+  return {
+    data,
+    error,
+    isValidating,
+    mutate,
+    isLoading,
+  }
+}
+
+export function useOrderBySupplierId({ params, options, supplierId }: UseOrderProps) {
+  const { data, error, mutate, isLoading, isValidating } = useSWR(
+    ['/orderSupId', params],
+    () => orderApi.getAllBySupplierId(params!, supplierId!),
+    {
+      keepPreviousData: true,
+      revalidateOnFocus: true,
       ...options,
     }
   )

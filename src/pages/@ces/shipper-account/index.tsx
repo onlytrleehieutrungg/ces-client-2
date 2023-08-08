@@ -23,7 +23,6 @@ AccountPage.getLayout = function getLayout(page: React.ReactElement) {
 export default function AccountPage() {
   const { themeStretch } = useSettings()
   const [params, setParams] = useState<Partial<Params>>()
-
   const { data, isLoading } = useAccountListByRoleId({ roleId: '5', params })
 
   return (
@@ -40,7 +39,7 @@ export default function AccountPage() {
             </NextLink>
           }
         />
-        <AccountTable data={data} isLoading={isLoading} setParams={setParams} />
+        <AccountTable data={data} isLoading={isLoading} setParams={setParams} roleId='5'/>
       </Container>
     </Page>
   )

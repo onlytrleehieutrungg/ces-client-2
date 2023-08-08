@@ -1,8 +1,6 @@
 // @mui
 import {
-  Box,
-  Button,
-  Card,
+  Box, Card,
   Container,
   Divider,
   FormControlLabel,
@@ -12,27 +10,24 @@ import {
   TableBody,
   TableContainer,
   TablePagination,
-  Tooltip,
+  Tooltip
 } from '@mui/material'
 import { paramCase } from 'change-case'
-import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 import { useSnackbar } from 'notistack'
 import { useMemo, useState } from 'react'
-import { Category, Params, Role } from 'src/@types/@ces'
+import { Category, Params } from 'src/@types/@ces'
 import { categoryApi } from 'src/api-client/category'
-import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
 import Iconify from 'src/components/Iconify'
-import Page from 'src/components/Page'
 import Scrollbar from 'src/components/Scrollbar'
 import {
   TableEmptyRows,
   TableHeadCustom,
   TableNoData,
   TableSelectedActions,
+  TableSkeleton
 } from 'src/components/table'
-import RoleBasedGuard from 'src/guards/RoleBasedGuard'
-import { useCategoryList, useCategoryListBySupplier } from 'src/hooks/@ces/useCategory'
+import { useCategoryListBySupplier } from 'src/hooks/@ces/useCategory'
 import useTable, { emptyRows, getComparator } from 'src/hooks/useTable'
 import useTabs from 'src/hooks/useTabs'
 import Layout from 'src/layouts'
@@ -58,7 +53,7 @@ CategoryTableCustom.getLayout = function getLayout(page: React.ReactElement) {
 
 // ----------------------------------------------------------------------
 interface CategoryTableCustomProps {
-  supplierId: string
+  supplierId?: string
 }
 export default function CategoryTableCustom({ supplierId }: CategoryTableCustomProps) {
   const {
@@ -236,22 +231,30 @@ export default function CategoryTableCustom({ supplierId }: CategoryTableCustomP
               />
 
               <TableBody>
-                {dataFiltered.map((row) => (
-                  <CategoryTableRow
-                    key={`${row.id}`}
-                    row={row}
-                    isValidating={isLoading}
-                    selected={selected.includes(`${row.id}`)}
-                    onSelectRow={() => onSelectRow(`${row.id}`)}
-                    onDeleteRow={() => handleDeleteRow(`${row.id}`)}
-                    onEditRow={() => handleEditRow(row.id)}
+                {isLoading
+                  ? Array.from(Array(rowsPerPage)).map((e) => (
+                      <TableSkeleton sx={{ height: denseHeight, px: dense ? 1 : 0 }} key={e} />
+                    ))
+                  : dataFiltered.map((row) => (
+                      <CategoryTableRow
+                        key={`${row.id}`}
+                        row={row}
+                        isValidating={isLoading}
+                        selected={selected.includes(`${row.id}`)}
+                        onSelectRow={() => onSelectRow(`${row.id}`)}
+                        onDeleteRow={() => handleDeleteRow(`${row.id}`)}
+                        onEditRow={() => handleEditRow(row.id)}
+                      />
+                    ))}
+
+                {!isLoading && (
+                  <TableEmptyRows
+                    height={denseHeight}
+                    emptyRows={emptyRows(page + 1, rowsPerPage, data?.metaData?.total)}
                   />
-                ))}
-                <TableEmptyRows
-                  height={denseHeight}
-                  emptyRows={emptyRows(page, rowsPerPage, tableData.length)}
-                />
-                <TableNoData isNotFound={isNotFound} />
+                )}
+
+                <TableNoData isNotFound={isNotFound && !isLoading} />
               </TableBody>
             </Table>
           </TableContainer>
@@ -261,7 +264,7 @@ export default function CategoryTableCustom({ supplierId }: CategoryTableCustomP
           <TablePagination
             rowsPerPageOptions={[5, 10]}
             component="div"
-            count={data?.metaData?.total}
+            count={data?.metaData?.total || 0}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={onChangePage}

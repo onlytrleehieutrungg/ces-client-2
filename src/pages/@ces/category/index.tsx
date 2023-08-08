@@ -12,13 +12,13 @@ import {
   TableBody,
   TableContainer,
   TablePagination,
-  Tooltip,
+  Tooltip
 } from '@mui/material'
 import { paramCase } from 'change-case'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 import { useSnackbar } from 'notistack'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Category, Params, Role } from 'src/@types/@ces'
 import { categoryApi } from 'src/api-client/category'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
@@ -30,9 +30,12 @@ import {
   TableHeadCustom,
   TableNoData,
   TableSelectedActions,
+  TableSkeleton
 } from 'src/components/table'
 import RoleBasedGuard from 'src/guards/RoleBasedGuard'
-import { useCategoryList } from 'src/hooks/@ces/useCategory'
+import { useAccountDetails } from 'src/hooks/@ces'
+import { useCategoryListBySupplier } from 'src/hooks/@ces/useCategory'
+import useAuth from 'src/hooks/useAuth'
 import useTable, { emptyRows, getComparator } from 'src/hooks/useTable'
 import useTabs from 'src/hooks/useTabs'
 import Layout from 'src/layouts'
@@ -82,7 +85,20 @@ export default function CategoryPage() {
 
   const [params, setParams] = useState<Partial<Params>>()
 
-  const { data, mutate, isLoading, isValidating } = useCategoryList({ params })
+  const { user } = useAuth()
+
+  const { data: accounts } = useAccountDetails({ id: `${user?.id}` })
+  const supId = accounts?.data?.suppliers?.[0]?.id
+
+  const { data, mutate, isLoading } = useCategoryListBySupplier({
+    supplierId: supId,
+    params,
+  })
+  useEffect(() => {
+    if (supId) {
+      setParams({ ...params, SupplierId: supId })
+    }
+  }, [supId, params])
 
   const tableData: Category[] = data?.data ?? []
 
@@ -249,22 +265,29 @@ export default function CategoryPage() {
                   />
 
                   <TableBody>
-                    {dataFiltered.map((row) => (
-                      <CategoryTableRow
-                        key={`${row.id}`}
-                        row={row}
-                        isValidating={isLoading}
-                        selected={selected.includes(`${row.id}`)}
-                        onSelectRow={() => onSelectRow(`${row.id}`)}
-                        onDeleteRow={() => handleDeleteRow(`${row.id}`)}
-                        onEditRow={() => handleEditRow(row.id)}
+                    {isLoading
+                      ? Array.from(Array(rowsPerPage)).map((e) => (
+                          <TableSkeleton sx={{ height: denseHeight, px: dense ? 1 : 0 }} key={e} />
+                        ))
+                      : dataFiltered.map((row) => (
+                          <CategoryTableRow
+                            key={`${row.id}`}
+                            row={row}
+                            isValidating={isLoading}
+                            selected={selected.includes(`${row.id}`)}
+                            onSelectRow={() => onSelectRow(`${row.id}`)}
+                            onDeleteRow={() => handleDeleteRow(`${row.id}`)}
+                            onEditRow={() => handleEditRow(row.id)}
+                          />
+                        ))}
+
+                    {!isLoading && (
+                      <TableEmptyRows
+                        height={denseHeight}
+                        emptyRows={emptyRows(page + 1, rowsPerPage, data?.metaData?.total)}
                       />
-                    ))}
-                    <TableEmptyRows
-                      height={denseHeight}
-                      emptyRows={emptyRows(page, rowsPerPage, tableData.length)}
-                    />
-                    <TableNoData isNotFound={isNotFound} />
+                    )}
+                    <TableNoData isNotFound={isNotFound && !isLoading} />
                   </TableBody>
                 </Table>
               </TableContainer>
@@ -274,7 +297,7 @@ export default function CategoryPage() {
               <TablePagination
                 rowsPerPageOptions={[5, 10]}
                 component="div"
-                count={data?.metaData?.total}
+                count={data?.metaData?.total || 0}
                 rowsPerPage={rowsPerPage}
                 page={page}
                 onPageChange={onChangePage}

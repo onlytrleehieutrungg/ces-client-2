@@ -13,6 +13,8 @@ export function useProduct({ params, options }: UseProductProps) {
     ['/product', params],
     () => productApi.getAll(params!),
     {
+      keepPreviousData: true,
+      revalidateOnFocus: true,
       ...options,
     }
   )
@@ -31,6 +33,8 @@ export function useProductBySupplierId({ params, options, supplierId }: UseProdu
     ['/product-supplierId', params],
     () => productApi.getBySupplierId(supplierId!, params!),
     {
+      keepPreviousData: true,
+      revalidateOnFocus: true,
       ...options,
     }
   )

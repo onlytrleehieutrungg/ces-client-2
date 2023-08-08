@@ -85,6 +85,24 @@ const navConfig = [
         icon: ICONS.banking,
         roles: [Role['System Admin'], Role['Enterprise Admin'], Role['System Admin']],
       },
+      {
+        title: 'order',
+        path: PATH_CES.order.root,
+        icon: ICONS.invoice,
+        roles: [Role['Supplier Admin'], Role['Enterprise Admin']],
+      },
+      {
+        title: 'category',
+        path: PATH_CES.category.root,
+        icon: ICONS.menuItem,
+        roles: [Role['Supplier Admin']],
+      },
+      {
+        title: 'product',
+        path: PATH_CES.product.root,
+        icon: ICONS.ecommerce,
+        roles: [Role['Supplier Admin']],
+      },
     ],
   },
   // {

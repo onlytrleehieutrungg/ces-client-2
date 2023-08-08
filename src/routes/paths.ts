@@ -49,9 +49,11 @@ export const PATH_CES = {
   },
   suaccount: {
     root: path(ROOTS_CES, '/supplier-account'),
+    detail: (id: string) => path(ROOTS_CES, `/supplier-account/${id}`),
   },
   shaccount: {
     root: path(ROOTS_CES, '/shipper-account'),
+    detail: (id: string) => path(ROOTS_CES, `/shipper-account/${id}`),
   },
   company: {
     root: path(ROOTS_CES, '/company'),

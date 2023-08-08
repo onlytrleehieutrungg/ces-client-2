@@ -13,6 +13,19 @@ export type AccountData = {
   updatedAt: string
   createdAt: string
   wallets: WalletData[]
+  suppliers?: [
+    {
+      id: string
+      companyId: string
+      accountId: string
+      supplierName: string
+      supplierAddress: string
+      status: number
+      createdAt: string
+      updatedAt: string
+      account: string
+    }
+  ]
 }
 
 export type AccountPayload = {

@@ -13,7 +13,7 @@ import {
   TableContainer,
   TablePagination,
   Tabs,
-  Tooltip,
+  Tooltip
 } from '@mui/material'
 import { paramCase } from 'change-case'
 import { useRouter } from 'next/router'
@@ -29,6 +29,7 @@ import {
   TableHeadCustom,
   TableNoData,
   TableSelectedActions,
+  TableSkeleton
 } from 'src/components/table'
 import RoleBasedGuard from 'src/guards/RoleBasedGuard'
 import { useOrder, useOrderCompId } from 'src/hooks/@ces/useOrder'
@@ -117,8 +118,8 @@ export default function OrderPage() {
       : orderValueType == 'monthly orders'
       ? orders?.data?.orders?.length ?? []
       : compOrder?.metaData?.total ?? []
-
-  console.log({ tableData, total })
+  const issLoading =
+    role != 3 ? supLoading : orderValueType == 'monthly orders' ? monthLoading : eaLoading
 
   useEffect(() => {
     const statusIndex = getStatusIndex(filterStatus)
@@ -245,15 +246,7 @@ export default function OrderPage() {
               handleOrderType={handleOrderType}
               handleClearFilter={handleClearFilter}
             />
-            <LoadingTable
-              isValidating={
-                role != 3
-                  ? supLoading
-                  : orderValueType == 'monthly orders'
-                  ? monthLoading
-                  : eaLoading
-              }
-            />
+            <LoadingTable isValidating={issLoading} />
 
             <Scrollbar>
               <TableContainer sx={{ minWidth: 800, position: 'relative' }}>
@@ -295,24 +288,30 @@ export default function OrderPage() {
                   />
 
                   <TableBody>
-                    {dataFiltered.map((row) => (
-                      <OrderTableRow
-                        key={row.id}
-                        row={row}
-                        isValidating={isValidating}
-                        selected={selected.includes(row.id)}
-                        onSelectRow={() => onSelectRow(row.id)}
-                        onViewRow={() => handleViewRow(row.id)}
-                        onClickRow={() => handleClickRow(row.id)}
+                    {issLoading
+                      ? Array.from(Array(rowsPerPage)).map((e) => (
+                          <TableSkeleton sx={{ height: denseHeight, px: dense ? 1 : 0 }} key={e} />
+                        ))
+                      : dataFiltered.map((row) => (
+                          <OrderTableRow
+                            key={row.id}
+                            row={row}
+                            isValidating={isValidating}
+                            selected={selected.includes(row.id)}
+                            onSelectRow={() => onSelectRow(row.id)}
+                            onViewRow={() => handleViewRow(row.id)}
+                            onClickRow={() => handleClickRow(row.id)}
+                          />
+                        ))}
+
+                    {!issLoading && (
+                      <TableEmptyRows
+                        height={denseHeight}
+                        emptyRows={emptyRows(page + 1, rowsPerPage, total)}
                       />
-                    ))}
+                    )}
 
-                    <TableEmptyRows
-                      height={denseHeight}
-                      emptyRows={emptyRows(page, rowsPerPage, tableData.length)}
-                    />
-
-                    <TableNoData isNotFound={isNotFound} />
+                    <TableNoData isNotFound={isNotFound && !issLoading} />
                   </TableBody>
                 </Table>
               </TableContainer>
@@ -322,7 +321,7 @@ export default function OrderPage() {
               <TablePagination
                 rowsPerPageOptions={[5, 10]}
                 component="div"
-                count={total}
+                count={total | 0}
                 rowsPerPage={rowsPerPage}
                 page={page}
                 onPageChange={onChangePage}
@@ -340,7 +339,6 @@ export default function OrderPage() {
       </Page>
     </RoleBasedGuard>
   )
-
 }
 
 // ----------------------------------------------------------------------

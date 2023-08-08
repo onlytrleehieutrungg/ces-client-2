@@ -18,6 +18,7 @@ export type Params = {
   CompanyId: string
   OrderCode: string
   CategoryId: string
+  SupplierId: string
 }
 
 export type Paging = {

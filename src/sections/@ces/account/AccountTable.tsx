@@ -11,7 +11,7 @@ import {
   TableContainer,
   TablePagination,
   Tabs,
-  Tooltip,
+  Tooltip
 } from '@mui/material'
 import { paramCase } from 'change-case'
 import { useRouter } from 'next/router'
@@ -26,8 +26,8 @@ import {
   TableHeadCustom,
   TableNoData,
   TableSelectedActions,
+  TableSkeleton
 } from 'src/components/table'
-import { useAccountList } from 'src/hooks/@ces'
 import useAuth from 'src/hooks/useAuth'
 import useTable, { emptyRows, getComparator } from 'src/hooks/useTable'
 import useTabs from 'src/hooks/useTabs'
@@ -57,8 +57,9 @@ type Props = {
   data?: BaseResponse<AccountData[]>
   isLoading: boolean
   setParams: React.Dispatch<Partial<Params>>
+  roleId: string
 }
-export default function AccountTable({ data, isLoading, setParams }: Props) {
+export default function AccountTable({ data, isLoading, setParams, roleId }: Props) {
   const {
     dense,
     page,
@@ -98,7 +99,7 @@ export default function AccountTable({ data, isLoading, setParams }: Props) {
         Sort: filterAttribute == '' ? 'createdAt' : filterAttribute,
         Order: filterOptions == '' ? 'desc' : filterOptions,
       }),
-    [filterAttribute, filterOptions, page, rowsPerPage]
+    [filterAttribute, filterOptions, page, rowsPerPage, setParams]
   )
   const [filterName, setFilterName] = useState('')
 
@@ -161,7 +162,13 @@ export default function AccountTable({ data, isLoading, setParams }: Props) {
   }
 
   const handleClickRow = (id: string) => {
-    push(PATH_CES.account.detail(paramCase(id)))
+    const path =
+      roleId == '2'
+        ? PATH_CES.suaccount.detail(paramCase(id))
+        : roleId == '5'
+        ? PATH_CES.shaccount.detail(paramCase(id))
+        : PATH_CES.account.detail(paramCase(id))
+    push(path)
   }
 
   const dataFiltered = applySortFilter({
@@ -261,25 +268,31 @@ export default function AccountTable({ data, isLoading, setParams }: Props) {
             />
 
             <TableBody>
-              {dataFiltered.map((row) => (
-                <AccountTableRow
-                  key={`${row.id}`}
-                  row={row}
-                  isValidating={isLoading}
-                  selected={selected.includes(`${row.id}`)}
-                  onSelectRow={() => onSelectRow(`${row.id}`)}
-                  onDeleteRow={() => handleDeleteRow(`${row.id}`)}
-                  onEditRow={() => handleEditRow(row.id)}
-                  onClickRow={() => handleClickRow(`${row.id}`)}
+              {isLoading
+                ? Array.from(Array(rowsPerPage)).map((e) => (
+                    <TableSkeleton sx={{ height: denseHeight, px: dense ? 1 : 0 }} key={e} />
+                  ))
+                : dataFiltered.map((row) => (
+                    <AccountTableRow
+                      key={`${row.id}`}
+                      row={row}
+                      isValidating={isLoading}
+                      selected={selected.includes(`${row.id}`)}
+                      onSelectRow={() => onSelectRow(`${row.id}`)}
+                      onDeleteRow={() => handleDeleteRow(`${row.id}`)}
+                      onEditRow={() => handleEditRow(row.id)}
+                      onClickRow={() => handleClickRow(`${row.id}`)}
+                    />
+                  ))}
+
+              {!isLoading && (
+                <TableEmptyRows
+                  height={denseHeight}
+                  emptyRows={emptyRows(page + 1, rowsPerPage, data?.metaData?.total)}
                 />
-              ))}
+              )}
 
-              <TableEmptyRows
-                height={denseHeight}
-                emptyRows={emptyRows(page, rowsPerPage, accountList.length)}
-              />
-
-              <TableNoData isNotFound={isNotFound} />
+              <TableNoData isNotFound={isNotFound && !isLoading} />
             </TableBody>
           </Table>
         </TableContainer>
@@ -289,7 +302,7 @@ export default function AccountTable({ data, isLoading, setParams }: Props) {
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={data?.metaData?.total}
+          count={data?.metaData?.total || 0}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={onChangePage}

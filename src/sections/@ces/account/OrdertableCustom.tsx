@@ -1,23 +1,25 @@
 import {
-  Box,
-  Button,
-  Card,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Divider,
-  FormControlLabel,
-  IconButton, Stack, Switch,
-  Tab,
-  Table,
-  TableBody,
-  TableContainer,
-  TablePagination,
-  Tabs,
-  Tooltip,
-  Typography,
-  useTheme
+    Box,
+    Button,
+    Card,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    Divider,
+    FormControlLabel,
+    IconButton,
+    Stack,
+    Switch,
+    Tab,
+    Table,
+    TableBody,
+    TableContainer,
+    TablePagination,
+    Tabs,
+    Tooltip,
+    Typography,
+    useTheme
 } from '@mui/material'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
@@ -26,19 +28,19 @@ import Iconify from 'src/components/Iconify'
 import Label from 'src/components/Label'
 import Scrollbar from 'src/components/Scrollbar'
 import {
-  TableEmptyRows,
-  TableHeadCustom,
-  TableNoData,
-  TableSelectedActions,
-  TableSkeleton
+    TableEmptyRows,
+    TableHeadCustom,
+    TableNoData,
+    TableSelectedActions,
+    TableSkeleton
 } from 'src/components/table'
-import { useOrder, useOrderDetail } from 'src/hooks/@ces'
+import { useOrderBySupplierId, useOrderDetail } from 'src/hooks/@ces'
 import useTable, { emptyRows, getComparator } from 'src/hooks/useTable'
 import useTabs from 'src/hooks/useTabs'
 import { fCurrency } from 'src/utils/formatNumber'
 import LoadingTable from 'src/utils/loadingTable'
-import CompanyOrderTableRow from './CompanyOrderTableRow'
-import CompanyOrderTableToolbar from './CompanyOrderTableToolbar'
+import CompanyOrderTableRow from '../company/order/CompanyOrderTableRow'
+import CompanyOrderTableToolbar from '../company/order/CompanyOrderTableToolbar'
 
 // ----------------------------------------------------------------------
 
@@ -59,9 +61,9 @@ const TABLE_HEAD = [
 // ----------------------------------------------------------------------
 
 type Props = {
-  companyId?: string
+  supplierId?: string
 }
-export default function CompanyOrderTable({ companyId }: Props) {
+export default function OrderTableCustom({ supplierId }: Props) {
   const {
     dense,
     page,
@@ -82,11 +84,10 @@ export default function CompanyOrderTable({ companyId }: Props) {
   } = useTable()
 
   const [params, setParams] = useState<Partial<Params>>()
-  const { data, isLoading } = useOrder({
-    params: {
-      ...params,
-      CompanyId: companyId,
-    },
+
+  const { data: orderSup, isLoading: isOrderLoading } = useOrderBySupplierId({
+    supplierId: supplierId,
+    params,
   })
 
   const [filterStt, setFilterStatus] = useState('supplier')
@@ -97,8 +98,7 @@ export default function CompanyOrderTable({ companyId }: Props) {
   const [filterName, setFilterName] = useState('')
   const [orderValueType, setOrderValueType] = useState('monthly orders')
 
-  const tableData: Order[] = data?.data ?? []
-
+  const tableData: Order[] = orderSup?.data ?? []
   useEffect(() => {
     const statusIndex = getStatusIndex(filterStatus)
     if (statusIndex === -1) {
@@ -227,7 +227,7 @@ export default function CompanyOrderTable({ companyId }: Props) {
         handleOrderType={handleOrderType}
         handleClearFilter={handleClearFilter}
       />
-      <LoadingTable isValidating={isLoading} />
+      <LoadingTable isValidating={isOrderLoading} />
 
       <Scrollbar>
         <TableContainer sx={{ minWidth: 800, position: 'relative' }}>
@@ -269,7 +269,7 @@ export default function CompanyOrderTable({ companyId }: Props) {
             />
 
             <TableBody>
-              {isLoading
+              {isOrderLoading
                 ? Array.from(Array(rowsPerPage)).map((e) => (
                     <TableSkeleton sx={{ height: denseHeight, px: dense ? 1 : 0 }} key={e} />
                   ))
@@ -284,14 +284,14 @@ export default function CompanyOrderTable({ companyId }: Props) {
                     />
                   ))}
 
-              {!isLoading && (
+              {!isOrderLoading && (
                 <TableEmptyRows
                   height={denseHeight}
-                  emptyRows={emptyRows(page + 1, rowsPerPage, data?.metaData?.total)}
+                  emptyRows={emptyRows(page + 1, rowsPerPage, orderSup?.metaData?.total)}
                 />
               )}
 
-              <TableNoData isNotFound={isNotFound && !isLoading} />
+              <TableNoData isNotFound={isNotFound && !isOrderLoading} />
             </TableBody>
           </Table>
         </TableContainer>
@@ -301,7 +301,7 @@ export default function CompanyOrderTable({ companyId }: Props) {
         <TablePagination
           rowsPerPageOptions={[5, 10]}
           component="div"
-          count={data?.metaData?.total || 0}
+          count={orderSup?.metaData?.total || 0}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={onChangePage}

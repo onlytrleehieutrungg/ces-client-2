@@ -12,7 +12,7 @@ import {
   TableBody,
   TableContainer,
   TablePagination,
-  Tooltip,
+  Tooltip
 } from '@mui/material'
 import { paramCase } from 'change-case'
 import NextLink from 'next/link'
@@ -31,6 +31,7 @@ import {
   TableHeadCustom,
   TableNoData,
   TableSelectedActions,
+  TableSkeleton
 } from 'src/components/table'
 import RoleBasedGuard from 'src/guards/RoleBasedGuard'
 import { useCategoryList } from 'src/hooks/@ces'
@@ -182,9 +183,9 @@ export default function ProductPage() {
   const denseHeight = dense ? 52 : 72
 
   const isNotFound =
-    (!dataFiltered.length && !!filterName) ||
-    (!dataFiltered.length && !!filterRole) ||
-    (!dataFiltered.length && !!filterStatus)
+    (!dataFiltered.length && !!filterOptions) ||
+    (!dataFiltered.length && !!filterStatus) ||
+    (!dataFiltered.length && !!filterAttribute)
   return (
     <RoleBasedGuard hasContent roles={[Role['Supplier Admin']]}>
       <Page title="Product: List">
@@ -226,7 +227,7 @@ export default function ProductPage() {
                   <TableSelectedActions
                     dense={dense}
                     numSelected={selected.length}
-                    rowCount={tableData.length}
+                    rowCount={data?.metaData?.total}
                     onSelectAllRows={(checked) =>
                       onSelectAllRows(
                         checked,
@@ -248,7 +249,7 @@ export default function ProductPage() {
                     order={order}
                     orderBy={orderBy}
                     headLabel={TABLE_HEAD}
-                    rowCount={tableData.length}
+                    rowCount={data?.metaData?.total}
                     numSelected={selected.length}
                     onSort={onSort}
                     onSelectAllRows={(checked) =>
@@ -261,23 +262,28 @@ export default function ProductPage() {
 
                   <Divider />
                   <TableBody>
-                    {dataFiltered.map((row) => (
-                      <ProductTableRow
-                        key={`${row.id}`}
-                        row={row}
-                        isValidating={isLoading}
-                        selected={selected.includes(`${row.id}`)}
-                        onSelectRow={() => onSelectRow(`${row.id}`)}
-                        onDeleteRow={() => handleDeleteRow(`${row.id}`)}
-                        onEditRow={() => handleEditRow(row.id)}
+                    {isLoading
+                      ? Array.from(Array(rowsPerPage)).map((e) => (
+                          <TableSkeleton sx={{ height: denseHeight, px: dense ? 1 : 0 }} key={e} />
+                        ))
+                      : dataFiltered.map((row) => (
+                          <ProductTableRow
+                            key={`${row.id}`}
+                            row={row}
+                            isValidating={isLoading}
+                            selected={selected.includes(`${row.id}`)}
+                            onSelectRow={() => onSelectRow(`${row.id}`)}
+                            onDeleteRow={() => handleDeleteRow(`${row.id}`)}
+                            onEditRow={() => handleEditRow(row.id)}
+                          />
+                        ))}
+                    {!isLoading && (
+                      <TableEmptyRows
+                        height={denseHeight}
+                        emptyRows={emptyRows(page + 1, rowsPerPage, data?.metaData?.total)}
                       />
-                    ))}
-
-                    <TableEmptyRows
-                      height={denseHeight}
-                      emptyRows={emptyRows(page, rowsPerPage, tableData.length)}
-                    />
-                    <TableNoData isNotFound={isNotFound} />
+                    )}
+                    <TableNoData isNotFound={isNotFound && !isLoading} />
                   </TableBody>
                 </Table>
               </TableContainer>
@@ -287,7 +293,7 @@ export default function ProductPage() {
               <TablePagination
                 rowsPerPageOptions={[5, 10]}
                 component="div"
-                count={data?.metaData?.total}
+                count={data?.metaData?.total || 0}
                 rowsPerPage={rowsPerPage}
                 page={page}
                 onPageChange={onChangePage}

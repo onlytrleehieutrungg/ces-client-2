@@ -12,7 +12,7 @@ export const categoryApi = {
     supplierId: string,
     params: Partial<Params>
   ): Promise<BaseResponse<Category[]>> {
-    return axiosClient.get(`/category?${supplierId}`, { params })
+    return axiosClient.get(`/category?supplierId=${supplierId}`, { params })
   },
   create: async (payload: CategoryPayload) => await axiosClient.post('/category', payload),
   delete: async (id: number) => await axiosClient.delete(`/category/${id}`),

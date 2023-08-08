@@ -9,7 +9,6 @@ type UseAccountProps = {
   roleId?: string
 }
 
-
 export function useAccountEmployeeCompany({ options, params }: UseAccountProps) {
   const { data, error, mutate, isValidating, isLoading } = useSWR(
     ['account-employee-company-list', params],
@@ -25,8 +24,6 @@ export function useAccountEmployeeCompany({ options, params }: UseAccountProps) 
       ...options,
     }
   )
-
-
   return {
     data,
     error,
@@ -65,18 +62,20 @@ export function useAccountList({ options, params }: UseAccountProps) {
 
 export function useAccountListByRoleId({ options, params, roleId }: UseAccountProps) {
   const { data, error, mutate, isValidating, isLoading } = useSWR(
-    ['account-list', params],
+    ['account-list-by-roleId', params],
     () => accountApi.getAllByRoleId(roleId!, params!),
     {
+      keepPreviousData: true,
+      revalidateOnFocus: true,
       // dedupingInterval: 10 * 1000, // 10s
       // revalidateOnFocus: false,
       // keepPreviousData: true,
-      // fallbackData: {
-      //   code: 0,
-      //   message: '',
-      //   metaData: null,
-      //   data: [],
-      // },
+      fallbackData: {
+        code: 0,
+        message: '',
+        metaData: null,
+        data: [],
+      },
       ...options,
     }
   )
@@ -92,7 +91,6 @@ export function useAccountListByRoleId({ options, params, roleId }: UseAccountPr
 
 export function useAccountDetails({ id, options }: UseAccountProps) {
   const { data, error, mutate } = useSWR(['account', id], () => accountApi.getById(id!), {
-
     ...options,
   })
 

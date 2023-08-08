@@ -14,6 +14,8 @@ export function useCategoryList({ options, params }: UseCategoryProps) {
     ['category', params],
     () => categoryApi.getAll(params!),
     {
+      keepPreviousData: true,
+      revalidateOnFocus: true,
       ...options,
     }
   )
@@ -32,6 +34,8 @@ export function useCategoryListBySupplier({ supplierId, options, params }: UseCa
     ['category-supplierId', params],
     () => categoryApi.getAllBySupplierId(supplierId!, params!),
     {
+      revalidateOnFocus: false,
+      keepPreviousData: true,
       ...options,
     }
   )

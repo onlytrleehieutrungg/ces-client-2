@@ -6,7 +6,7 @@ import { Params } from 'src/@types/@ces'
 import HeaderBreadcrumbs from 'src/components/HeaderBreadcrumbs'
 import Iconify from 'src/components/Iconify'
 import Page from 'src/components/Page'
-import { useAccountListByRoleId } from 'src/hooks/@ces'
+import { useAccountList } from 'src/hooks/@ces'
 import useSettings from 'src/hooks/useSettings'
 import Layout from 'src/layouts'
 import { PATH_CES } from 'src/routes/paths'
@@ -24,7 +24,7 @@ export default function AccountPage() {
   const { themeStretch } = useSettings()
   const [params, setParams] = useState<Partial<Params>>()
 
-  const { data, isLoading } = useAccountListByRoleId({ roleId: '3', params })
+  const { data, isLoading } = useAccountList({ params })
 
   return (
     <Page title="Account: List">
@@ -40,7 +40,7 @@ export default function AccountPage() {
             </NextLink>
           }
         />
-        <AccountTable data={data} isLoading={isLoading} setParams={setParams} />
+        <AccountTable data={data} isLoading={isLoading} setParams={setParams} roleId="3" />
       </Container>
     </Page>
   )
