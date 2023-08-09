@@ -49,11 +49,11 @@ const TABLE_HEAD = [
   { id: '' },
 ]
 
-OrderPage.getLayout = function getLayout(page: React.ReactElement) {
+TransactionPage.getLayout = function getLayout(page: React.ReactElement) {
   return <Layout>{page}</Layout>
 }
 
-export default function OrderPage() {
+export default function TransactionPage() {
   const {
     dense,
     page,

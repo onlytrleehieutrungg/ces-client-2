@@ -22,6 +22,7 @@ import { AccountBilling } from '../../../sections/@dashboard/user/account'
 // _mock_
 import AccountNewEditForm from 'src/sections/@ces/account/AccountNewEditForm'
 import { _userAddressBook, _userInvoices, _userPayment } from '../../../_mock'
+import TransactionTableCustom from 'src/sections/@ces/account/TransactionTableCustom'
 
 // ----------------------------------------------------------------------
 
@@ -71,6 +72,11 @@ export default function UserAccount() {
       value: 'change password',
       icon: <Iconify icon={'ic:round-vpn-key'} width={20} height={20} />,
       component: <AccountChangePasswordForm onSubmit={handleChangePasswordSubmit} />,
+    })
+    ACCOUNT_TABS.push({
+      value: 'Transaction',
+      icon: <Iconify icon={'ic:round-vpn-key'} width={20} height={20} />,
+      component: <TransactionTableCustom/>,
     })
   } else {
     ACCOUNT_TABS.push({
